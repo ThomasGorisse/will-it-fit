@@ -45,7 +45,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
-import com.gorisse.thomas.willitfit.capture.captureWindow
+import com.gorisse.thomas.willitfit.capture.captureScene
 import com.gorisse.thomas.willitfit.capture.savePhoto
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.LengthUnit
@@ -179,9 +179,7 @@ fun ArScreen(
                             val activity = context as? Activity ?: return@Shutter
                             scope.launch {
                                 capturing = true
-                                // Two frames so the controls are gone from the window.
-                                withFrameNanos { }; withFrameNanos { }; delay(60)
-                                val bitmap = captureWindow(activity)
+                                val bitmap = captureScene(activity)
                                 capturing = false
                                 if (bitmap != null) onPhoto(savePhoto(context, bitmap, name, summary, brand))
                             }

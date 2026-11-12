@@ -31,6 +31,7 @@
     <string name="result_share">Compartilhar</string>
     <string name="result_retake">Tirar outra</string>
     <string name="share_chooser">Compartilhar a foto</string>
+    <string name="door_enter">Digite as medidas da porta</string>
     <string name="door_width">Largura da porta</string>
     <string name="door_height">Altura da porta</string>
     <string name="door_help">Meça o vão por dentro do batente. Em linha reta, sem inclinar.</string>

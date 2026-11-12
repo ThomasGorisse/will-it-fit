@@ -31,6 +31,7 @@
     <string name="result_share">Partager</string>
     <string name="result_retake">Reprendre</string>
     <string name="share_chooser">Partager la photo</string>
+    <string name="door_enter">Entrez les cotes de la porte</string>
     <string name="door_width">Largeur de la porte</string>
     <string name="door_height">Hauteur de la porte</string>
     <string name="door_help">Mesurez le passage, dans le cadre. Tout droit, sans l\'incliner.</string>

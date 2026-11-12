@@ -31,6 +31,7 @@
     <string name="result_share">Condividi</string>
     <string name="result_retake">Rifai</string>
     <string name="share_chooser">Condividi la foto</string>
+    <string name="door_enter">Inserisci le misure della porta</string>
     <string name="door_width">Larghezza della porta</string>
     <string name="door_height">Altezza della porta</string>
     <string name="door_help">Misura il vano dentro il telaio. Dritto, senza inclinarlo.</string>

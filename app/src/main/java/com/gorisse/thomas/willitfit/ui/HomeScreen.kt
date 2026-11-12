@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -82,6 +83,7 @@ fun HomeScreen(
 ) {
     val density = LocalDensity.current
     var sheetPx by remember { mutableIntStateOf(0) }
+    var fieldsValid by remember { mutableStateOf(true) }
     val dark = isSystemInDarkTheme()
     val scheme = MaterialTheme.colorScheme
     Box(Modifier.fillMaxSize().imePadding()) {
@@ -141,6 +143,7 @@ fun HomeScreen(
                         )
                     },
                     modifier = Modifier.padding(horizontal = 16.dp),
+                    onValidChange = { fieldsValid = it },
                 )
                 Spacer(Modifier.height(12.dp))
                 PresetRow(dims, onPick = { onDims(it) })
@@ -152,7 +155,7 @@ fun HomeScreen(
                 ) {
                     Button(
                         onClick = onAr,
-                        enabled = arAvailable && dims.isValid,
+                        enabled = arAvailable && dims.isValid && fieldsValid,
                         modifier = Modifier.fillMaxWidth().height(56.dp),
                     ) {
                         Icon(Icons.Outlined.ViewInAr, null, Modifier.size(ButtonDefaults.IconSize))
@@ -161,7 +164,7 @@ fun HomeScreen(
                     }
                     FilledTonalButton(
                         onClick = onDoor,
-                        enabled = dims.isValid,
+                        enabled = dims.isValid && fieldsValid,
                         modifier = Modifier.fillMaxWidth().height(56.dp),
                     ) {
                         Icon(Icons.Outlined.DoorFront, null, Modifier.size(ButtonDefaults.IconSize))

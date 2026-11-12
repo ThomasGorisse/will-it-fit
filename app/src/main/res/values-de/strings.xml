@@ -31,6 +31,7 @@
     <string name="result_share">Teilen</string>
     <string name="result_retake">Neu aufnehmen</string>
     <string name="share_chooser">Foto teilen</string>
+    <string name="door_enter">Geben Sie die Türmaße ein</string>
     <string name="door_width">Türbreite</string>
     <string name="door_height">Türhöhe</string>
     <string name="door_help">Messen Sie die lichte Öffnung im Rahmen. Gerade hindurch, ohne Kippen.</string>

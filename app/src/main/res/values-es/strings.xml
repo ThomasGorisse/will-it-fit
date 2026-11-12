@@ -31,6 +31,7 @@
     <string name="result_share">Compartir</string>
     <string name="result_retake">Repetir</string>
     <string name="share_chooser">Compartir la foto</string>
+    <string name="door_enter">Introduce las medidas de la puerta</string>
     <string name="door_width">Ancho de la puerta</string>
     <string name="door_height">Alto de la puerta</string>
     <string name="door_help">Mide el hueco por dentro del marco. En línea recta, sin inclinarlo.</string>

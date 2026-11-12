@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -67,6 +68,7 @@ fun DoorScreen(
     val dark = isSystemInDarkTheme()
     val density = LocalDensity.current
     var sheetPx by remember { mutableIntStateOf(0) }
+    var fieldsValid by remember { mutableStateOf(true) }
     Box(Modifier.fillMaxSize().imePadding()) {
         DoorScene(
             dims = dims, door = door, verdict = verdict,
@@ -93,7 +95,9 @@ fun DoorScreen(
                         color = scheme.onSurfaceVariant,
                     )
                     Spacer(Modifier.height(8.dp))
-                    AnimatedContent(verdict.fits to verdict.isTight, label = "verdict") { (fits, tight) ->
+                    if (!fieldsValid) {
+                        Text(stringResource(R.string.door_enter), style = MaterialTheme.typography.headlineSmall)
+                    } else AnimatedContent(verdict.fits to verdict.isTight, label = "verdict") { (fits, tight) ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 if (fits) Icons.Outlined.CheckCircle else Icons.Outlined.Cancel,
@@ -115,14 +119,14 @@ fun DoorScreen(
                         }
                     }
                     Spacer(Modifier.height(4.dp))
-                    Text(
+                    if (fieldsValid) Text(
                         text = stringResource(
                             if (verdict.fits) R.string.door_margin_spare else R.string.door_margin_over,
                             formatLength(abs(verdict.marginCm), unit),
                         ) + " · " + stringResource(verdict.carry.label()),
                         style = MaterialTheme.typography.bodyLarge,
                     )
-                    if (!verdict.fits && dims.shape == Shape.SOFA) {
+                    if (fieldsValid && !verdict.fits && dims.shape == Shape.SOFA) {
                         Spacer(Modifier.height(4.dp))
                         Text(
                             stringResource(R.string.door_sofa_hint),
@@ -138,6 +142,7 @@ fun DoorScreen(
                     unit = unit,
                     onChange = { i, cm -> onDoor(if (i == 0) door.copy(widthCm = cm) else door.copy(heightCm = cm)) },
                     modifier = Modifier.padding(horizontal = 16.dp),
+                    onValidChange = { fieldsValid = it },
                 )
                 Text(
                     stringResource(R.string.door_help),

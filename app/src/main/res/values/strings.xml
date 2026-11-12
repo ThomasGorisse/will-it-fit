@@ -39,6 +39,7 @@
     <string name="share_chooser">Share the photo</string>
 
     <string name="door_object">%1$s · %2$s</string>
+    <string name="door_enter">Enter the door\'s size</string>
     <string name="door_width">Door width</string>
     <string name="door_height">Door height</string>
     <string name="door_help">Measure the opening, inside the frame. Straight through, without tilting.</string>

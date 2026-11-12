@@ -11,6 +11,9 @@ import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.view.PixelCopy
+import android.view.SurfaceView
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -19,18 +22,25 @@ import java.io.File
 import kotlin.coroutines.resume
 
 /**
- * The app's own window, camera image included (PixelCopy reads the composited frame, the
- * SceneView SurfaceView with it). Needs no permission and captures nothing outside the app.
+ * What the scene renders — the camera image and the object, composited by Filament in the
+ * scene's SurfaceView — read back with PixelCopy. The Compose controls are not in it, by design:
+ * the caption is drawn on the photo afterwards. Needs no permission.
  */
-suspend fun captureWindow(activity: Activity): Bitmap? {
-    val view = activity.window.decorView
-    if (view.width == 0 || view.height == 0) return null
-    val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+suspend fun captureScene(activity: Activity): Bitmap? {
+    val surface = findSurfaceView(activity.window.decorView) ?: return null
+    if (surface.width == 0 || surface.height == 0) return null
+    val bitmap = Bitmap.createBitmap(surface.width, surface.height, Bitmap.Config.ARGB_8888)
     return suspendCancellableCoroutine { cont ->
-        PixelCopy.request(activity.window, bitmap, { result ->
+        PixelCopy.request(surface, bitmap, { result ->
             cont.resume(if (result == PixelCopy.SUCCESS) bitmap else null)
         }, Handler(Looper.getMainLooper()))
     }
+}
+
+private fun findSurfaceView(view: View): SurfaceView? {
+    if (view is SurfaceView && view.isShown) return view
+    if (view is ViewGroup) for (i in 0 until view.childCount) findSurfaceView(view.getChildAt(i))?.let { return it }
+    return null
 }
 
 /** Writes the caption on the photo (so it survives sharing) and saves it as a JPEG. */

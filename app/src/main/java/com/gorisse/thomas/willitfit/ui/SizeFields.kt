@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,7 +31,11 @@ fun LengthFields(
     unit: LengthUnit,
     onChange: (index: Int, cm: Float) -> Unit,
     modifier: Modifier = Modifier,
+    onValidChange: (Boolean) -> Unit = {},
 ) {
+    val valid = remember { mutableStateMapOf<Int, Boolean>() }
+    val allValid = labels.indices.all { valid[it] != false }
+    LaunchedEffect(allValid) { onValidChange(allValid) }
     val focus = LocalFocusManager.current
     Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         labels.forEachIndexed { i, label ->
@@ -43,6 +48,7 @@ fun LengthFields(
                 }
             }
             val error = parseLength(text, unit) == null
+            LaunchedEffect(error) { valid[i] = !error }
             OutlinedTextField(
                 value = text,
                 onValueChange = { t ->
