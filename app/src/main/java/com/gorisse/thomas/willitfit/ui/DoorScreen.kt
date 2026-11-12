@@ -76,7 +76,7 @@ fun DoorScreen(
             accent = FurnitureTeal,
             palette = if (dark) RoomPalette.Night else RoomPalette.Day,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = with(density) { sheetPx.toDp() } - 28.dp),
+            contentPadding = PaddingValues(bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp)),
         )
         FilledTonalIconButton(
             onClick = onBack,

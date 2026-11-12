@@ -97,7 +97,7 @@ fun HomeScreen(
             labelBackground = Color(0xF2FFFFFF),
             modifier = Modifier.fillMaxSize(),
             // Keep the object centred in what the sheet leaves free, minus its rounded top.
-            contentPadding = PaddingValues(bottom = with(density) { sheetPx.toDp() } - 28.dp),
+            contentPadding = PaddingValues(bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp)),
         )
         Surface(
             modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().onSizeChanged { sheetPx = it.height },
