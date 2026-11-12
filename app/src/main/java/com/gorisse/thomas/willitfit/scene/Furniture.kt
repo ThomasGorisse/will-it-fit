@@ -53,6 +53,9 @@ internal fun NodeImpl.makeFixedSelectable() {
     isScaleEditable = false
 }
 
+/** The object's own fabric, the same on every phone (not the wallpaper's colour): the brand teal. */
+val FurnitureTeal = Color(0xFF1F6F78)
+
 private val Oak = Color(0xFFB98B5E)
 private val Charcoal = Color(0xFF2A2B2F)
 private val Steel = Color(0xFFB9BEC5)
@@ -66,7 +69,7 @@ fun SceneScope.rememberFurnitureLook(
     transparent: Boolean = false,
     selectable: Boolean = false,
 ): FurnitureLook {
-    val soft = lerp(accent, Color.White, 0.45f)
+    val soft = lerp(accent, Color.White, 0.18f)
     val start = if (transparent) 0f else 1f
     val look = remember(materialLoader, transparent, selectable) {
         fun mat(c: Color, metallic: Float = 0f, roughness: Float = 0.75f) =

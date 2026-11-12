@@ -45,6 +45,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
+import com.gorisse.thomas.willitfit.scene.FurnitureTeal
 import com.gorisse.thomas.willitfit.capture.captureScene
 import com.gorisse.thomas.willitfit.capture.savePhoto
 import com.gorisse.thomas.willitfit.fit.Dimensions
@@ -115,7 +116,7 @@ fun ArScreen(
         ) { placement ->
             AutoPlacementNode(placement, state) { opacity ->
                 val look = rememberFurnitureLook(
-                    scheme.primary, opacity = opacity, transparent = true, selectable = true,
+                    FurnitureTeal, opacity = opacity, transparent = true, selectable = true,
                 )
                 Furniture(dims, look)
                 DimensionMarks(

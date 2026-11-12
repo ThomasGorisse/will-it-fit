@@ -28,6 +28,7 @@
     <string name="ar_turn">Um 90° drehen</string>
     <string name="ar_reset">Neu platzieren</string>
     <string name="result_title">Ihr Foto</string>
+    <string name="result_missing">Das Foto lässt sich nicht lesen. Nehmen Sie es neu auf.</string>
     <string name="result_share">Teilen</string>
     <string name="result_retake">Neu aufnehmen</string>
     <string name="share_chooser">Foto teilen</string>

@@ -28,6 +28,7 @@
     <string name="ar_turn">Girar um quarto</string>
     <string name="ar_reset">Posicionar de novo</string>
     <string name="result_title">Sua foto</string>
+    <string name="result_missing">Não foi possível ler a foto. Tire outra.</string>
     <string name="result_share">Compartilhar</string>
     <string name="result_retake">Tirar outra</string>
     <string name="share_chooser">Compartilhar a foto</string>

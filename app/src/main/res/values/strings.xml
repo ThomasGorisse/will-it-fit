@@ -34,6 +34,7 @@
     <string name="photo_brand">Will It Fit</string>
 
     <string name="result_title">Your photo</string>
+    <string name="result_missing">The photo could not be read. Take it again.</string>
     <string name="result_share">Share</string>
     <string name="result_retake">Retake</string>
     <string name="share_chooser">Share the photo</string>

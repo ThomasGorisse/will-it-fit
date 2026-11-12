@@ -58,6 +58,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
+import com.gorisse.thomas.willitfit.scene.FurnitureTeal
 import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.LengthUnit
@@ -90,7 +91,7 @@ fun HomeScreen(
         RoomScene(
             dims = dims,
             unit = unit,
-            accent = scheme.primary,
+            accent = FurnitureTeal,
             palette = if (dark) RoomPalette.Night else RoomPalette.Day,
             labelText = Color(0xFF1C1B1F),
             labelBackground = Color(0xF2FFFFFF),

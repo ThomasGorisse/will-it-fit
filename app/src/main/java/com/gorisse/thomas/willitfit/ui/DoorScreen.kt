@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
+import com.gorisse.thomas.willitfit.scene.FurnitureTeal
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
 import com.gorisse.thomas.willitfit.fit.LengthUnit
@@ -72,7 +73,7 @@ fun DoorScreen(
     Box(Modifier.fillMaxSize().imePadding()) {
         DoorScene(
             dims = dims, door = door, verdict = verdict,
-            accent = scheme.primary,
+            accent = FurnitureTeal,
             palette = if (dark) RoomPalette.Night else RoomPalette.Day,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = with(density) { sheetPx.toDp() } - 28.dp),

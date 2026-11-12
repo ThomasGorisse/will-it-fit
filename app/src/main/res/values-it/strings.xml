@@ -28,6 +28,7 @@
     <string name="ar_turn">Ruota di un quarto</string>
     <string name="ar_reset">Riposiziona</string>
     <string name="result_title">La tua foto</string>
+    <string name="result_missing">Impossibile leggere la foto. Scattala di nuovo.</string>
     <string name="result_share">Condividi</string>
     <string name="result_retake">Rifai</string>
     <string name="share_chooser">Condividi la foto</string>

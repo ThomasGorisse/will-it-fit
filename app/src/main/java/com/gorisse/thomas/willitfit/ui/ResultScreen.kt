@@ -47,6 +47,7 @@ fun ResultScreen(file: File, onBack: () -> Unit, onRetake: () -> Unit) {
     AppScaffold(title = stringResource(R.string.result_title), onBack = onBack) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).navigationBarsPadding()) {
             Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
+                if (bitmap == null) Text(stringResource(R.string.result_missing), style = MaterialTheme.typography.bodyLarge)
                 bitmap?.let {
                     Image(
                         it, contentDescription = stringResource(R.string.result_title),
