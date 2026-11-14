@@ -465,6 +465,9 @@ fun SceneScope.DimensionMarks(
     selectable: Boolean = false,
     labelScale: Float = 1f,
     facing: (() -> Position)? = null,
+    // How much further right than the other marks the height line stands: the room view moves it
+    // clear of the object, so it never runs up an armrest; AR keeps it on the corner.
+    heightOffset: Float = 0f,
 ) {
     val w = dims.widthCm / 100f; val h = dims.heightCm / 100f; val d = dims.depthCm / 100f
     val off = 0.07f
@@ -472,10 +475,9 @@ fun SceneScope.DimensionMarks(
     val line = remember(materialLoader) { materialLoader.createUnlitColorInstance(lineColor) }
     SideEffect { line.setColor(lineColor) }
     val fixed: NodeImpl.() -> Unit = { if (selectable) makeFixedSelectable() }
-    // Marks are read, not lit: the height line and its top tick laid a blurred grey L on a
-    // wardrobe's door in the sun. Neither the lines nor the tags cast a shadow.
-    val tag: io.github.sceneview.node.TextNode.() -> Unit = { fixed(); isShadowCaster = false }
-    val mark: io.github.sceneview.node.CubeNode.() -> Unit = { fixed(); isShadowCaster = false }
+    // Marks are read, not lit: no shadow from the lines or the tags.
+    val tag: io.github.sceneview.node.TextNode.() -> Unit = { fixed(); isShadowCaster = false; isShadowReceiver = false }
+    val mark: io.github.sceneview.node.CubeNode.() -> Unit = { fixed(); isShadowCaster = false; isShadowReceiver = false }
     val front = d / 2f + off
     val right = w / 2f + off
     val tick = 0.06f
@@ -487,8 +489,10 @@ fun SceneScope.DimensionMarks(
     CubeNode(size = Size(t, t, d), position = Position(right, t / 2f, 0f), materialInstance = line, apply = mark)
     CubeNode(size = Size(t, tick, t), position = Position(right, tick / 2f, -d / 2f), materialInstance = line, apply = mark)
     // Height, up the right-front corner.
-    CubeNode(size = Size(t, h, t), position = Position(right, h / 2f, front), materialInstance = line, apply = mark)
-    CubeNode(size = Size(tick, t, t), position = Position(right, h, front), materialInstance = line, apply = mark)
+    val hx = right + heightOffset
+    CubeNode(size = Size(t, h, t), position = Position(hx, h / 2f, front), materialInstance = line, apply = mark)
+    CubeNode(size = Size(tick, t, t), position = Position(hx, h, front), materialInstance = line, apply = mark)
+    CubeNode(size = Size(tick, t, t), position = Position(hx, t / 2f, front), materialInstance = line, apply = mark)
 
     // Tags in the 4:1 bitmap TextNode draws (512 × 128 px), the figure filling most of it.
     val lw = 0.34f; val lh = 0.085f; val font = 82f
@@ -507,7 +511,7 @@ fun SceneScope.DimensionMarks(
         )
     }
     // Above the top of the height line, clear of the depth tag on the floor below it.
-    Node(position = Position(right + 0.02f, h + lh * labelScale / 2f + 0.04f, front + 0.02f), rotation = Rotation(y = 45f)) {
+    Node(position = Position(hx + 0.02f, h + lh * labelScale / 2f + 0.04f, front + 0.02f), rotation = Rotation(y = 45f)) {
         TextNode(
             text = formatLength(dims.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
             widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,

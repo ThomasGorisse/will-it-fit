@@ -151,7 +151,8 @@ fun RoomScene(
     // The whole window, edge to edge: screenHeightDp leaves the system bars out and reads 2:1.
     val window = LocalWindowInfo.current.containerSize
     val narrow = (window.height.toFloat() / window.width.coerceAtLeast(1)).coerceIn(2f, 2.6f) / 2f
-    val dist = (1.2f * seen + 0.5f * od + 0.9f) * narrow
+    // A step further back than a product shot: the room (rug, lamp, window) gives the scale.
+    val dist = (1.2f * seen + 0.5f * od + 0.9f) * narrow * 1.1f
     val target = Position(0.08f * seen, oh * 0.5f, objZ)
     val dir = Triple(0.45f, 0.3f, 1f).let { (x, y, z) ->
         val n = sqrt(x * x + y * y + z * z); Triple(x / n, y / n, z / n)
@@ -168,6 +169,23 @@ fun RoomScene(
     val dayIbl = remember(environment) { environment.indirectLight?.intensity ?: 30_000f }
     SideEffect { environment.indirectLight?.intensity = if (palette.isNight) dayIbl * 0.45f else dayIbl }
 
+    val sun = rememberMainLightNode(engine) {
+        intensity = if (palette.isNight) 12_000f else 80_000f
+        // Evening light is the lamp's: warm, like the target's dark picture.
+        if (palette.isNight) color = io.github.sceneview.math.Color(1f, 0.85f, 0.68f, 1f)
+        // Low afternoon sun from the window side: the object throws a real shadow sideways
+        // onto the floor, as in the target picture, instead of straight down under itself.
+        // It comes partly from the front too: grazing the fronts edge-on (z -0.18), it left
+        // them dark and hatched with shadow acne.
+        lightDirection = Direction(-0.55f, -0.7f, -0.45f)
+    }
+    // Set once, through SceneView: the raw LightManager.setShadowOptions of Filament 1.77 writes the
+    // shadow transform in the wrong order (google/filament#10565). Re-applied on every frame of the
+    // sway, it flipped the sun's shadows from run to run: the whole room shaded some runs, a grey
+    // square or L under the height tag on a wardrobe's door others. A finer map kept to the room:
+    // at the default 1024 over the whole view, a wardrobe's own frame laid a jagged streak down its
+    // door.
+    LaunchedEffect(sun) { sun.updateShadowOptions { mapSize = 2048; shadowFar = 10f; normalBias = 3f } }
     SceneView(
         modifier = modifier,
         engine = engine,
@@ -183,22 +201,7 @@ fun RoomScene(
         contentPadding = contentPadding,
         cameraNode = cameraNode,
         cameraManipulator = manipulator,
-        mainLightNode = rememberMainLightNode(engine) {
-            intensity = if (palette.isNight) 12_000f else 80_000f
-            // Evening light is the lamp's: warm, like the target's dark picture.
-            if (palette.isNight) color = io.github.sceneview.math.Color(1f, 0.85f, 0.68f, 1f)
-            // Low afternoon sun from the window side: the object throws a real shadow sideways
-            // onto the floor, as in the target picture, instead of straight down under itself.
-            // It comes partly from the front too: grazing the fronts edge-on (z -0.18), it left
-            // them dark and hatched with shadow acne.
-            lightDirection = Direction(-0.55f, -0.7f, -0.45f)
-            // A finer shadow map kept to the room: at the default 1024 over the whole view, a
-            // wardrobe's own frame laid a jagged streak down its door.
-            engine.lightManager.let { lm ->
-                val i = lm.getInstance(entity)
-                lm.setShadowOptions(i, lm.getShadowOptions(i).apply { mapSize = 2048; shadowFar = 10f; normalBias = 3f })
-            }
-        },
+        mainLightNode = sun,
         onTouchEvent = { e: MotionEvent, _ ->
             lastTouch = android.os.SystemClock.uptimeMillis()
             false
@@ -206,9 +209,9 @@ fun RoomScene(
     ) {
         Node(rotation = Rotation(y = sway), position = Position(0f, 0f, objZ)) {
             Node(position = Position(0f, 0f, -objZ)) {
-                // The floor lamp stands just right of the object, whatever its width, and stays
-                // whole in the frame.
-                Room(palette, lampX = shown.widthCm / 200f + 0.16f)
+                // The floor lamp stands right of the object and of its height line, as in the
+                // target, whatever its width, and stays whole in the frame.
+                Room(palette, lampX = shown.widthCm / 200f + 0.4f)
             }
             val look = rememberFurnitureLook(accent)
             Node(scale = Scale(pop.value)) {
@@ -220,6 +223,7 @@ fun RoomScene(
                 labelText = labelText, labelBackground = labelBackground,
                 labelScale = (size / 1.4f).coerceIn(1f, 1.8f),
                 facing = { cameraNode.worldPosition },
+                heightOffset = 0.2f,
             )
         }
     }
