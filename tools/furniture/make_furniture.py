@@ -27,8 +27,8 @@ MATERIALS = {
     # Upholstery: matte, with glTF sheen (KHR_materials_sheen) and a low specular
     # (KHR_materials_specular) so Filament's ubershader shades it like wool or velvet.
     # fabric_soft is the same teal: the target's cushions match the frame.
-    "fabric": ("1F6F78", 1.0, 0.0),
-    "fabric_soft": ("1F6F78", 1.0, 0.0),
+    "fabric": ("225254", 1.0, 0.0),
+    "fabric_soft": ("225254", 1.0, 0.0),
     "wood": ("C49A6C", 0.55, 0.0),
     "dark": ("2A2B2F", 0.60, 0.0),
     "metal": ("B9BEC5", 0.30, 0.9),
@@ -62,12 +62,13 @@ def srgb_to_linear(c):
 
 
 FABRICS = ("fabric", "fabric_soft")
-SHEEN_TINT = "6FB3B8"  # lighter teal
+SHEEN_TINT = "3A6E70"  # a breath above the cloth; anything lighter reads as cyan on the phone
 
 # Oak parquet (floor.glb) and its dark-theme walnut twin (floor_night.glb): same material names.
 # Close tones: the app's sun is strong, and wide steps read as a patchwork, not as oak.
-FLOOR_DAY = {"oak_1": ("B8926C", 0.62, 0.0), "oak_2": ("B08A64", 0.66, 0.0),
-             "oak_3": ("BE9874", 0.60, 0.0), "oak_4": ("AC865F", 0.68, 0.0)}
+# Greige natural oak: the sun warms it on screen, so the base stays cooler than it looks.
+FLOOR_DAY = {"oak_1": ("947E66", 0.62, 0.0), "oak_2": ("8C765E", 0.66, 0.0),
+             "oak_3": ("9A846B", 0.60, 0.0), "oak_4": ("88725B", 0.68, 0.0)}
 FLOOR_NIGHT = {"oak_1": ("6E5038", 0.55, 0.0), "oak_2": ("684B34", 0.58, 0.0),
                "oak_3": ("735540", 0.52, 0.0), "oak_4": ("634731", 0.60, 0.0)}
 
@@ -87,7 +88,7 @@ def make_material(name, table=MATERIALS):
     bsdf.inputs["Roughness"].default_value = rough
     bsdf.inputs["Metallic"].default_value = metal
     if name in FABRICS:
-        bsdf.inputs["Sheen Weight"].default_value = 1.0
+        bsdf.inputs["Sheen Weight"].default_value = 0.5
         bsdf.inputs["Sheen Roughness"].default_value = 0.5
         bsdf.inputs["Sheen Tint"].default_value = (*hex_linear(SHEEN_TINT), 1.0)
         bsdf.inputs["Specular IOR Level"].default_value = 0.2
@@ -673,7 +674,7 @@ def check_glb(name, path, size):
 
 # ---------------------------------------------------------------------------- floor (--floor)
 FLOOR_CENTRE, FLOOR_SIZE = (-0.05, 1.5), (6.5, 6.0)  # x, z; top surface at y = 0
-PLANK_W, PLANK_L, PLANK_T, PLANK_GAP, PLANK_BEVEL = 0.18, 1.2, 0.01, 0.0015, 0.0018
+PLANK_W, PLANK_L, PLANK_T, PLANK_GAP, PLANK_BEVEL = 0.14, 1.5, 0.01, 0.0015, 0.0018
 
 
 def plank(m, mat, x0, x1, z0, z1):
@@ -696,16 +697,17 @@ def floor_model(seed=7):
     xmin, xmax = FLOOR_CENTRE[0] - FLOOR_SIZE[0] / 2, FLOOR_CENTRE[0] + FLOOR_SIZE[0] / 2
     zmin, zmax = FLOOR_CENTRE[1] - FLOOR_SIZE[1] / 2, FLOOR_CENTRE[1] + FLOOR_SIZE[1] / 2
     g = PLANK_GAP / 2
-    z0 = zmin
-    while z0 < zmax - 1e-6:
-        z1 = min(z0 + PLANK_W, zmax)
-        x = xmin - rng.uniform(0.15, PLANK_L - 0.15)  # staggered joints
-        while x < xmax - 1e-6:
-            x0, x1 = max(x, xmin), min(x + PLANK_L, xmax)
-            if x1 - x0 > 0.02:
+    # Planks run away from the viewer (along z), as in the target picture.
+    x0 = xmin
+    while x0 < xmax - 1e-6:
+        x1 = min(x0 + PLANK_W, xmax)
+        z = zmin - rng.uniform(0.15, PLANK_L - 0.15)  # staggered joints
+        while z < zmax - 1e-6:
+            z0, z1 = max(z, zmin), min(z + PLANK_L, zmax)
+            if z1 - z0 > 0.02:
                 plank(m, rng.choice(sorted(FLOOR_DAY)), x0 + g, x1 - g, z0 + g, z1 - g)
-            x += PLANK_L
-        z0 = z1
+            z += PLANK_L
+        x0 = x1
     return m
 
 

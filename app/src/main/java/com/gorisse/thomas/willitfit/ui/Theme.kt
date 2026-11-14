@@ -13,10 +13,11 @@ private val Light = lightColorScheme(
     primaryContainer = Color(0xFF9DF0F7), onPrimaryContainer = Color(0xFF002022),
     secondary = Color(0xFF4A6365), onSecondary = Color.White,
     secondaryContainer = Color(0xFFCCE8EA), onSecondaryContainer = Color(0xFF051F21),
-    surface = Color(0xFFF5FAFB), onSurface = Color(0xFF171D1E),
-    surfaceContainerLowest = Color.White, surfaceContainerLow = Color(0xFFEFF5F5),
-    surfaceContainer = Color(0xFFE9EFEF), surfaceContainerHigh = Color(0xFFE3E9EA),
-    surfaceContainerHighest = Color(0xFFDEE4E4),
+    // Warm paper surfaces, as in the target: the teal reads better on them than on mint.
+    surface = Color(0xFFFAF7F2), onSurface = Color(0xFF1C1B1A),
+    surfaceContainerLowest = Color.White, surfaceContainerLow = Color(0xFFF8F4EE),
+    surfaceContainer = Color(0xFFF2EDE6), surfaceContainerHigh = Color(0xFFEDE7DF),
+    surfaceContainerHighest = Color(0xFFE7E1D8),
     onSurfaceVariant = Color(0xFF3F4949), outline = Color(0xFF6F7979), outlineVariant = Color(0xFFBEC8C9),
 )
 

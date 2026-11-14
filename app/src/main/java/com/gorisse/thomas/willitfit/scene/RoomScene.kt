@@ -55,7 +55,7 @@ data class RoomPalette(
 ) {
     companion object {
         val Day = RoomPalette(
-            wall = Color(0xFFEDE7DF), floor = Color(0xFFCDAE88), skirting = Color(0xFFF7F4EF),
+            wall = Color(0xFFF5E9D9), floor = Color(0xFFB59C80), skirting = Color(0xFFF7F4EF),
             window = Color(0xFFFFF7E6), lamp = Color(0xFFFFE2B0), isNight = false,
         )
         val Night = RoomPalette(
@@ -126,9 +126,12 @@ fun RoomScene(
     // Object pushed against the back wall, centred left-right.
     val objZ = BACK_WALL_Z + WALL_T / 2f + 0.04f + dims.depthCm / 200f
     val size = max(dims.widthCm, max(dims.depthCm, dims.heightCm)) / 100f
-    val dist = 1.55f * size + 1.7f
-    val target = Position(0f, dims.heightCm / 100f * 0.42f, objZ)
-    val dir = Triple(0.62f, 0.5f, 1f).let { (x, y, z) ->
+    // Near eye level and three-quarter front, like the product shot of the target picture.
+    // Close enough that the object fills most of the width; aimed a little right of it, so the
+    // object sits left of centre and its depth and height tags keep the room on the right.
+    val dist = 1.3f * size + 1.3f
+    val target = Position(0.1f * size, dims.heightCm / 100f * 0.45f, objZ)
+    val dir = Triple(0.45f, 0.3f, 1f).let { (x, y, z) ->
         val n = sqrt(x * x + y * y + z * z); Triple(x / n, y / n, z / n)
     }
     val eye = Position(target.x + dir.first * dist, target.y + dir.second * dist, target.z + dir.third * dist)
@@ -226,7 +229,7 @@ private fun SceneScope.Room(p: RoomPalette) {
     CubeNode(size = Size(ROOM_WIDTH, 0.08f, 0.015f), position = Position(cx, 0.04f, backZ + WALL_T / 2f + 0.0075f), materialInstance = skirting)
     CubeNode(size = Size(0.015f, 0.08f, doorZ0 - BACK_WALL_Z), position = Position(lx + WALL_T / 2f + 0.0075f, 0.04f, (BACK_WALL_Z + doorZ0) / 2f), materialInstance = skirting)
     // Rug in front, picture above where the object stands, a plant by the window.
-    val rug = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFD9CFC2), roughness = 1f) }
+    val rug = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFC4B8A6), roughness = 1f) }
     CubeNode(size = Size(2.2f, 0.012f, 1.5f), position = Position(-0.9f, 0.006f, 1.25f), rotation = Rotation(y = 8f), materialInstance = rug)
     val art = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFF8FA89A), roughness = 0.9f) }
     val artSky = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFE9E1D3), roughness = 0.9f) }

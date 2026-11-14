@@ -56,6 +56,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
@@ -114,7 +115,10 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(Modifier.weight(1f)) {
-                        Text(stringResource(R.string.home_title), style = MaterialTheme.typography.headlineSmall)
+                        Text(
+                            stringResource(R.string.home_title),
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                        )
                         Text(
                             text = when (dims.source) {
                                 DimensionSource.PRESET -> stringResource(R.string.home_subtitle_preset, objectName(dims))
