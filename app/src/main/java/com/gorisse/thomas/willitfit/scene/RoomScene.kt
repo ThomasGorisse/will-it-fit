@@ -76,7 +76,8 @@ private const val BACK_WALL_Z = -1.5f
 private const val LEFT_WALL_X = -2.3f
 private const val ROOM_WIDTH = 6.5f
 private const val ROOM_DEPTH = 6f
-private const val WALL_HEIGHT = 2.6f
+// 3 m, not 2.6: framing a 2 m wardrobe, the camera looked over a 2.6 m wall into the black.
+private const val WALL_HEIGHT = 3f
 private const val WALL_T = 0.1f
 
 /**
@@ -169,6 +170,12 @@ fun RoomScene(
             // Low afternoon sun from the window side: the object throws a real shadow sideways
             // onto the floor, as in the target picture, instead of straight down under itself.
             lightDirection = Direction(-0.6f, -0.72f, -0.18f)
+            // A finer shadow map kept to the room: at the default 1024 over the whole view, a
+            // wardrobe's own frame laid a jagged streak down its door.
+            engine.lightManager.let { lm ->
+                val i = lm.getInstance(entity)
+                lm.setShadowOptions(i, lm.getShadowOptions(i).apply { mapSize = 2048; shadowFar = 10f; normalBias = 3f })
+            }
         },
         onTouchEvent = { e: MotionEvent, _ ->
             lastTouch = android.os.SystemClock.uptimeMillis()
@@ -284,7 +291,8 @@ private fun SceneScope.Room(p: RoomPalette, lampX: Float) {
     CylinderNode(radius = 0.012f, height = 1.4f, position = Position(lampX, 0.72f, lampZ), materialInstance = bronze, apply = { isShadowCaster = true })
     CylinderNode(
         radius = 0.2f, height = 0.3f, position = Position(lampX, 1.52f, lampZ),
-        materialInstance = if (p.isNight) lamp else shade, apply = { isShadowCaster = !p.isNight },
+        // The shade casts no shadow: the low sun would lay it as a dark blotch across the object.
+        materialInstance = if (p.isNight) lamp else shade, apply = { isShadowCaster = false },
     )
     if (p.isNight) {
         LightNode(
