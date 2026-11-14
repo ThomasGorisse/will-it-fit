@@ -61,12 +61,20 @@ fun DoorScene(
         targetValue = 0f,
         animationSpec = infiniteRepeatable(
             keyframes {
-                durationMillis = 5200
+                durationMillis = 5600
                 0f at 0
                 0f at 700
-                stopAt at 3000 using FastOutSlowInEasing
-                stopAt at 4300
-                0f at 5200 using FastOutSlowInEasing
+                if (verdict.fits) {
+                    // A beat in the doorway, framed by it: that is the answer to the question.
+                    0.5f at 2100 using FastOutSlowInEasing
+                    0.5f at 3100
+                    1f at 4200 using FastOutSlowInEasing
+                    1f at 4800
+                } else {
+                    stopAt at 3000 using FastOutSlowInEasing
+                    stopAt at 4300
+                }
+                0f at 5600 using FastOutSlowInEasing
             },
             RepeatMode.Restart,
         ),
@@ -78,12 +86,13 @@ fun DoorScene(
     val z = if (verdict.fits) startZ + (endZ - startZ) * progress
     else startZ + (contactZ - startZ) * (progress / stopAt)
 
-    val size = max(max(dw, dh), max(across, up))
-    val dist = 1.4f * size + 2.4f
-    // From the side and a little above, so the object never hides the opening it heads for.
+    // Far enough back to hold the whole doorway and the object's whole path in view, from the
+    // front-right and a little above, aimed at the opening itself.
+    val size = max(max(dw, dh), max(max(across, up), along))
+    val dist = 1.5f * size + 3.2f
     val manipulator = rememberCameraManipulator(
-        orbitHomePosition = Position(dist * 0.78f, dh * 0.5f + dist * 0.3f, dist * 0.62f + along * 0.3f),
-        targetPosition = Position(0f, dh * 0.42f, along * 0.3f),
+        orbitHomePosition = Position(dist * 0.55f, dh * 0.5f + dist * 0.32f, dist * 0.8f),
+        targetPosition = Position(0f, dh * 0.45f, 0.35f),
     )
     SceneView(
         modifier = modifier,
@@ -102,6 +111,7 @@ fun DoorScene(
         val frame = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFF4F1EC), roughness = 0.5f) }
         SideEffect { wall.setColor(palette.wall); floor.setColor(palette.floor) }
         CubeNode(size = Size(12f, 0.04f, 12f), position = Position(0f, -0.02f, 0f), materialInstance = floor)
+        Parquet(palette.isNight, Position(0f, 0.001f, 1.2f))
         // Tall and wide enough that the camera never sees past it, and a far wall in the next
         // room, so neither the top of the frame nor the doorway opens onto the void.
         val wallW = 10f; val wallH = max(4.5f, dh + 0.4f)
@@ -121,7 +131,7 @@ fun DoorScene(
             Node(rotation = outerRotation(verdict.carry)) {
                 Node(rotation = innerRotation(verdict.carry)) {
                     Node(position = Position(0f, -dims.heightCm / 200f, 0f)) {
-                        Furniture(dims, look)
+                        Furniture(dims, look, contactShadow = false)
                     }
                 }
             }

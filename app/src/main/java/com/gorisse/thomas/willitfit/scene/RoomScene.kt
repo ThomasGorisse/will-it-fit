@@ -1,5 +1,8 @@
 package com.gorisse.thomas.willitfit.scene
 
+import androidx.compose.runtime.key
+import androidx.compose.ui.platform.LocalContext
+import io.github.sceneview.rememberModelInstance
 import android.view.MotionEvent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -26,6 +29,7 @@ import com.gorisse.thomas.willitfit.fit.shape
 import io.github.sceneview.SceneScope
 import io.github.sceneview.SceneView
 import io.github.sceneview.material.setColor
+import io.github.sceneview.math.Direction
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
@@ -142,6 +146,9 @@ fun RoomScene(
         cameraManipulator = manipulator,
         mainLightNode = rememberMainLightNode(engine) {
             intensity = if (palette.isNight) 28_000f else 80_000f
+            // Low afternoon sun from the window side: the object throws a real shadow sideways
+            // onto the floor, as in the target picture, instead of straight down under itself.
+            lightDirection = Direction(-0.6f, -0.72f, -0.18f)
         },
         onTouchEvent = { e: MotionEvent, _ ->
             lastTouch = android.os.SystemClock.uptimeMillis()
@@ -181,13 +188,18 @@ private fun SceneScope.Room(p: RoomPalette) {
     }
     val cx = LEFT_WALL_X + ROOM_WIDTH / 2f
     val cz = BACK_WALL_Z + ROOM_DEPTH / 2f
-    // Floor.
-    CubeNode(size = Size(ROOM_WIDTH, 0.04f, ROOM_DEPTH), position = Position(cx, -0.02f, cz), materialInstance = floor)
-    // Floorboards: thin seams, so the floor reads as wood and gives scale.
-    var x = LEFT_WALL_X + 0.18f
-    while (x < LEFT_WALL_X + ROOM_WIDTH) {
-        CubeNode(size = Size(0.004f, 0.001f, ROOM_DEPTH), position = Position(x, 0.0005f, cz), materialInstance = skirting)
-        x += 0.18f
+    // Floor: modelled oak planks when they ship with the app (tools/furniture), else a flat
+    // colour with thin seams. The flat floor stays underneath as the base either way.
+    CubeNode(
+        size = Size(ROOM_WIDTH, 0.04f, ROOM_DEPTH), position = Position(cx, -0.02f, cz), materialInstance = floor,
+        apply = { isShadowReceiver = true },
+    )
+    if (!Parquet(p.isNight, Position(cx, 0.001f, cz))) {
+        var x = LEFT_WALL_X + 0.18f
+        while (x < LEFT_WALL_X + ROOM_WIDTH) {
+            CubeNode(size = Size(0.004f, 0.001f, ROOM_DEPTH), position = Position(x, 0.0005f, cz), materialInstance = skirting)
+            x += 0.18f
+        }
     }
     // Back wall with a window on the right.
     val winX0 = 1.35f; val winX1 = 2.55f; val winY0 = 0.85f; val winY1 = 2.15f
@@ -253,4 +265,29 @@ private fun SceneScope.wallPiece(mat: com.google.android.filament.MaterialInstan
 @Composable
 private fun SceneScope.sideWallPiece(mat: com.google.android.filament.MaterialInstance, x: Float, z0: Float, z1: Float, y0: Float, y1: Float) {
     CubeNode(size = Size(WALL_T, y1 - y0, z1 - z0), position = Position(x, (y0 + y1) / 2f, (z0 + z1) / 2f), materialInstance = mat)
+}
+
+/**
+ * Modelled oak planks (tools/furniture, `--floor`), their top face on the floor plane, centred
+ * on [centre]. Returns false when the files do not ship with the app, so the caller can draw
+ * its plain floor instead.
+ */
+@Composable
+internal fun SceneScope.Parquet(night: Boolean, centre: Position): Boolean {
+    val file = if (night) "models/floor_night.glb" else "models/floor.glb"
+    val context = LocalContext.current
+    val bundled = remember(file) { runCatching { context.assets.open(file).close() }.isSuccess }
+    if (!bundled) return false
+    key(file) {
+        rememberModelInstance(modelLoader, file)?.let { planks ->
+            ModelNode(
+                modelInstance = planks,
+                autoAnimate = false,
+                centerOrigin = Position(0f, 1f, 0f),
+                position = centre,
+                apply = { isShadowReceiver = true; isShadowCaster = false },
+            )
+        }
+    }
+    return true
 }

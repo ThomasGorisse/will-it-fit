@@ -2,7 +2,10 @@
 
 Run headless:
   blender -b --factory-startup --python tools/furniture/make_furniture.py -- --out app/src/main/assets/models
-Options after `--`: --only sofa3,bed   --no-preview
+Options after `--`: --only sofa3,bed (--only "" builds no furniture)   --no-preview
+  --floor        also writes floor.glb / floor_night.glb (oak parquet) and their previews
+  --thumbs DIR   renders the preset thumbnails (288 px transparent webp) into DIR,
+                 e.g. app/src/main/res/drawable-nodpi, plus previews/thumbnails.png
 
 Everything is authored in app space (metres, +Y up, front +Z, origin bottom-centre), with
 analytic per-vertex normals, then rescaled to the exact preset box, converted to Blender space
@@ -21,8 +24,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # ---------------------------------------------------------------------------- materials
 MATERIALS = {
     #            sRGB hex   rough  metal
-    "fabric": ("1F6F78", 0.90, 0.0),
-    "fabric_soft": ("3C8A92", 0.92, 0.0),
+    # Upholstery: matte, with glTF sheen (KHR_materials_sheen) and a low specular
+    # (KHR_materials_specular) so Filament's ubershader shades it like wool or velvet.
+    # fabric_soft is the same teal: the target's cushions match the frame.
+    "fabric": ("1F6F78", 1.0, 0.0),
+    "fabric_soft": ("1F6F78", 1.0, 0.0),
     "wood": ("C49A6C", 0.55, 0.0),
     "dark": ("2A2B2F", 0.60, 0.0),
     "metal": ("B9BEC5", 0.30, 0.9),
@@ -55,8 +61,23 @@ def srgb_to_linear(c):
     return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
 
 
-def make_material(name):
-    hexa, rough, metal = MATERIALS[name]
+FABRICS = ("fabric", "fabric_soft")
+SHEEN_TINT = "6FB3B8"  # lighter teal
+
+# Oak parquet (floor.glb) and its dark-theme walnut twin (floor_night.glb): same material names.
+# Close tones: the app's sun is strong, and wide steps read as a patchwork, not as oak.
+FLOOR_DAY = {"oak_1": ("B8926C", 0.62, 0.0), "oak_2": ("B08A64", 0.66, 0.0),
+             "oak_3": ("BE9874", 0.60, 0.0), "oak_4": ("AC865F", 0.68, 0.0)}
+FLOOR_NIGHT = {"oak_1": ("6E5038", 0.55, 0.0), "oak_2": ("684B34", 0.58, 0.0),
+               "oak_3": ("735540", 0.52, 0.0), "oak_4": ("634731", 0.60, 0.0)}
+
+
+def hex_linear(hexa):
+    return [srgb_to_linear(int(hexa[i:i + 2], 16) / 255.0) for i in (0, 2, 4)]
+
+
+def make_material(name, table=MATERIALS):
+    hexa, rough, metal = table[name]
     m = bpy.data.materials.new(name)
     m.use_nodes = True
     m.use_backface_culling = True  # glTF doubleSided = false, like Filament's default
@@ -65,6 +86,11 @@ def make_material(name):
     bsdf.inputs["Base Color"].default_value = (*rgb, 1.0)
     bsdf.inputs["Roughness"].default_value = rough
     bsdf.inputs["Metallic"].default_value = metal
+    if name in FABRICS:
+        bsdf.inputs["Sheen Weight"].default_value = 1.0
+        bsdf.inputs["Sheen Roughness"].default_value = 0.5
+        bsdf.inputs["Sheen Tint"].default_value = (*hex_linear(SHEEN_TINT), 1.0)
+        bsdf.inputs["Specular IOR Level"].default_value = 0.2
     return m
 
 
@@ -477,13 +503,17 @@ def build_scene(name, size):
     hi = [max(v[k] for v in allv) for k in range(3)]
     sc = [size[k] / (hi[k] - lo[k]) for k in range(3)]
     off = [-(lo[0] + hi[0]) / 2, -lo[1], -(lo[2] + hi[2]) / 2]
+    return objects_from_model(name, m, sc, off), sc
+
+
+def objects_from_model(name, m, sc=(1, 1, 1), off=(0, 0, 0), table=MATERIALS):
     objs = []
     for mat_name, (verts, normals, faces) in m.parts.items():
         V = [((v[0] + off[0]) * sc[0], (v[1] + off[1]) * sc[1], (v[2] + off[2]) * sc[2]) for v in verts]
         N = [norm((n[0] / sc[0], n[1] / sc[1], n[2] / sc[2])) for n in normals]
         me = bpy.data.meshes.new(f"{name}_{mat_name}")
         me.from_pydata([(x, -z, y) for (x, y, z) in V], [], faces)
-        me.materials.append(make_material(mat_name))
+        me.materials.append(make_material(mat_name, table))
         me.shade_smooth()
         loop_normals = []
         for poly in me.polygons:
@@ -495,7 +525,7 @@ def build_scene(name, size):
         ob = bpy.data.objects.new(f"{name}_{mat_name}", me)
         bpy.context.scene.collection.objects.link(ob)
         objs.append(ob)
-    return objs, sc
+    return objs
 
 
 def export(objs, path):
@@ -641,18 +671,241 @@ def check_glb(name, path, size):
     return dict(name=name, kb=kb, tris=tris, lo=lo, hi=hi, top_z=top_z, front_z=front_z, mats=mats, flags=flags)
 
 
+# ---------------------------------------------------------------------------- floor (--floor)
+FLOOR_CENTRE, FLOOR_SIZE = (-0.05, 1.5), (6.5, 6.0)  # x, z; top surface at y = 0
+PLANK_W, PLANK_L, PLANK_T, PLANK_GAP, PLANK_BEVEL = 0.18, 1.2, 0.01, 0.0015, 0.0018
+
+
+def plank(m, mat, x0, x1, z0, z1):
+    b, t = PLANK_BEVEL, PLANK_T
+    top = [(x0 + b, 0.0, z0 + b), (x1 - b, 0.0, z0 + b), (x1 - b, 0.0, z1 - b), (x0 + b, 0.0, z1 - b)]
+    rim = [(x0, -b, z0), (x1, -b, z0), (x1, -b, z1), (x0, -b, z1)]
+    bot = [(x0, -t, z0), (x1, -t, z0), (x1, -t, z1), (x0, -t, z1)]
+    m.add(mat, top, [(0.0, 1.0, 0.0)] * 4, [[0, 1, 2, 3]])
+    outs = [(0.0, 0.0, -1.0), (1.0, 0.0, 0.0), (0.0, 0.0, 1.0), (-1.0, 0.0, 0.0)]
+    for i in range(4):
+        j = (i + 1) % 4
+        m.add(mat, [top[i], top[j], rim[j], rim[i]], [norm(add(outs[i], (0.0, 1.0, 0.0)))] * 4, [[0, 1, 2, 3]])
+        m.add(mat, [rim[i], rim[j], bot[j], bot[i]], [outs[i]] * 4, [[0, 1, 2, 3]])
+
+
+def floor_model(seed=7):
+    import random
+    rng = random.Random(seed)
+    m = Model()
+    xmin, xmax = FLOOR_CENTRE[0] - FLOOR_SIZE[0] / 2, FLOOR_CENTRE[0] + FLOOR_SIZE[0] / 2
+    zmin, zmax = FLOOR_CENTRE[1] - FLOOR_SIZE[1] / 2, FLOOR_CENTRE[1] + FLOOR_SIZE[1] / 2
+    g = PLANK_GAP / 2
+    z0 = zmin
+    while z0 < zmax - 1e-6:
+        z1 = min(z0 + PLANK_W, zmax)
+        x = xmin - rng.uniform(0.15, PLANK_L - 0.15)  # staggered joints
+        while x < xmax - 1e-6:
+            x0, x1 = max(x, xmin), min(x + PLANK_L, xmax)
+            if x1 - x0 > 0.02:
+                plank(m, rng.choice(sorted(FLOOR_DAY)), x0 + g, x1 - g, z0 + g, z1 - g)
+            x += PLANK_L
+        z0 = z1
+    return m
+
+
+def build_floor(out):
+    paths = []
+    for fname, table in (("floor", FLOOR_DAY), ("floor_night", FLOOR_NIGHT)):
+        clear_scene()
+        objs = objects_from_model(fname, floor_model(), table=table)
+        path = os.path.join(out, f"{fname}.glb")
+        export(objs, path)
+        paths.append(path)
+    return paths
+
+
+def floor_preview(floor_glb, sofa_glb, png):
+    clear_scene()
+    bpy.ops.import_scene.gltf(filepath=floor_glb)
+    bpy.ops.import_scene.gltf(filepath=sofa_glb)
+    from mathutils import Vector
+    scn = bpy.context.scene
+    world = bpy.data.worlds.new("w")
+    world.use_nodes = True
+    world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.9, 0.85, 0.78, 1)
+    world.node_tree.nodes["Background"].inputs["Strength"].default_value = 0.55
+    scn.world = world
+    sun = bpy.data.objects.new("sun", bpy.data.lights.new("sun", "SUN"))
+    sun.data.energy = 2.2
+    sun.data.angle = math.radians(8)
+    sun.rotation_euler = (math.radians(55), 0, math.radians(-40))
+    scn.collection.objects.link(sun)
+    cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam"))
+    cam.data.lens = 32
+    cam.location = Vector((-0.5, -3.9, 1.45))  # app (-0.5, 1.45, 3.9)
+    cam.rotation_euler = (Vector((0.0, 0.0, 0.35)) - cam.location).to_track_quat("-Z", "Y").to_euler()
+    scn.collection.objects.link(cam)
+    scn.camera = cam
+    scn.render.engine = "BLENDER_EEVEE"
+    scn.eevee.taa_render_samples = 24
+    scn.render.resolution_x, scn.render.resolution_y = 600, 450
+    scn.view_settings.view_transform = "Standard"
+    scn.render.image_settings.file_format = "PNG"
+    scn.render.filepath = png
+    bpy.ops.render.render(write_still=True)
+
+
+# ---------------------------------------------------------------------------- thumbnails (--thumbs)
+# drawable id -> (model, app-space scale x, y, z)
+THUMBS = [
+    ("sofa2", "sofa2", (1, 1, 1)), ("sofa3", "sofa3", (1, 1, 1)),
+    ("bed140", "bed", (1, 1, 1)), ("bed160", "bed", (1.70 / 1.50, 1, 2.15 / 2.05)),
+    ("wardrobe", "wardrobe", (1, 1, 1)), ("fridge", "fridge", (1, 1, 1)), ("washer", "washer", (1, 1, 1)),
+    ("tv55", "tv", (1, 1, 1)), ("tv65", "tv", (1.18, 1.18, 1.18)),
+    ("bike", "bike", (1, 1, 1)), ("stroller", "stroller", (1, 1, 1)),
+]
+THUMB_PX = 288
+
+
+def render_thumb(glb, png, s):
+    from mathutils import Vector
+    clear_scene()
+    bpy.ops.import_scene.gltf(filepath=glb)
+    obs = [o for o in bpy.context.scene.objects if o.type == "MESH"]
+    for o in obs:
+        o.scale = (s[0], s[2], s[1])  # app (x, y, z) -> Blender (x, z, y)
+    bpy.context.view_layer.update()
+    pts = [o.matrix_world @ v.co for o in obs for v in o.data.vertices]
+    lo = Vector([min(p[k] for p in pts) for k in range(3)])
+    hi = Vector([max(p[k] for p in pts) for k in range(3)])
+    ctr, R = (lo + hi) / 2, (hi - lo).length / 2
+    d = Vector((0.62, -1.0, 0.52)).normalized()
+    rot = d.to_track_quat("Z", "Y")
+    right, up = rot @ Vector((1, 0, 0)), rot @ Vector((0, 1, 0))
+    xs = [(p - ctr).dot(right) for p in pts]
+    ys = [(p - ctr).dot(up) for p in pts]
+    scn = bpy.context.scene
+    cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam"))
+    cam.data.type = "ORTHO"
+    cam.data.ortho_scale = max(max(xs) - min(xs), max(ys) - min(ys)) / 0.80
+    cam.data.clip_end = 200
+    cam.location = ctr + right * (max(xs) + min(xs)) / 2 + up * (max(ys) + min(ys)) / 2 + d * 30
+    cam.rotation_euler = rot.to_euler()
+    scn.collection.objects.link(cam)
+    scn.camera = cam
+    bpy.ops.mesh.primitive_plane_add(size=80, location=(ctr.x, ctr.y, 0))
+    bpy.context.object.is_shadow_catcher = True
+    world = bpy.data.worlds.new("w")
+    world.use_nodes = True
+    world.node_tree.nodes["Background"].inputs["Color"].default_value = (1, 1, 1, 1)
+    world.node_tree.nodes["Background"].inputs["Strength"].default_value = THUMB_WORLD
+    scn.world = world
+    key = bpy.data.objects.new("key", bpy.data.lights.new("key", "AREA"))
+    key.data.size = 3.0 * R
+    key.location = ctr + Vector((-0.2, -0.35, 3.0)).normalized() * 4 * R
+    key.data.energy = THUMB_KEY * (4 * R) ** 2
+    key.rotation_euler = (ctr - key.location).to_track_quat("-Z", "Y").to_euler()
+    scn.collection.objects.link(key)
+    scn.render.engine = "CYCLES"
+    scn.cycles.device = "CPU"
+    scn.cycles.samples = 96
+    scn.cycles.use_denoising = True
+    scn.render.film_transparent = True
+    scn.render.resolution_x = scn.render.resolution_y = THUMB_PX
+    scn.render.resolution_percentage = 100
+    scn.render.image_settings.file_format = "PNG"
+    scn.render.image_settings.color_mode = "RGBA"
+    scn.view_settings.view_transform = "Standard"
+    scn.render.filepath = png
+    bpy.ops.render.render(write_still=True)
+    clean_alpha(png)
+
+
+def clean_alpha(png, floor=0.035, fade_px=24):
+    """Drop the shadow catcher's faint veil and fade the shadow out before the frame edge."""
+    import numpy as np
+    img = bpy.data.images.load(png)
+    w, h = img.size
+    px = np.empty(w * h * 4, dtype=np.float32)
+    img.pixels.foreach_get(px)
+    px = px.reshape(h, w, 4)
+    a = np.clip((px[..., 3] - floor) / (1 - floor), 0, 1)
+    yy, xx = np.mgrid[0:h, 0:w]
+    edge = np.minimum(np.minimum(xx, w - 1 - xx), np.minimum(yy, h - 1 - yy)).astype(np.float32)
+    px[..., 3] = a * np.clip(edge / fade_px, 0, 1)
+    img.pixels.foreach_set(px.ravel())
+    img.save()
+    bpy.data.images.remove(img)
+
+
+THUMB_KEY = 11.0  # area light W per m^2 of distance
+THUMB_WORLD = 0.45  # exposure set so lit fabric reads close to #1F6F78
+
+
+def build_thumbs(models, out_dir, tmp_dir):
+    import subprocess
+    os.makedirs(out_dir, exist_ok=True)
+    os.makedirs(tmp_dir, exist_ok=True)
+    cwebp = next((p for p in ("/opt/homebrew/bin/cwebp", "/usr/local/bin/cwebp") if os.path.exists(p)), None)
+    made = []
+    for tid, model, s in THUMBS:
+        png = os.path.join(tmp_dir, f"preset_{tid}.png")
+        render_thumb(os.path.join(models, f"{model}.glb"), png, s)
+        webp = os.path.join(out_dir, f"preset_{tid}.webp")
+        for q in (85, 78, 70, 60):
+            subprocess.run([cwebp, "-quiet", "-q", str(q), "-alpha_q", "90", "-m", "6", "-exact", png, "-o", webp], check=True)
+            if os.path.getsize(webp) <= 40 * 1024:
+                break
+        made.append((tid, webp, os.path.getsize(webp)))
+    contact_sheet([w for _, w, _ in made], os.path.join(HERE, "previews", "thumbnails.png"))
+    return made
+
+
+def contact_sheet(files, png, cols=6, bg=(0.97, 0.955, 0.94)):
+    import numpy as np
+    n = THUMB_PX
+    rows = (len(files) + cols - 1) // cols
+    W, H = cols * n, rows * n
+    sheet = np.ones((H, W, 4), dtype=np.float32)
+    sheet[..., :3] = bg
+    for k, f in enumerate(files):
+        img = bpy.data.images.load(f)
+        a = np.empty(n * n * 4, dtype=np.float32)
+        img.pixels.foreach_get(a)
+        a = a.reshape(n, n, 4)
+        r, c = rows - 1 - k // cols, k % cols  # Blender rows go bottom-up
+        cell = sheet[r * n:(r + 1) * n, c * n:(c + 1) * n]
+        cell[..., :3] = cell[..., :3] * (1 - a[..., 3:4]) + a[..., :3] * a[..., 3:4]
+    out = bpy.data.images.new("sheet", W, H, alpha=False)
+    out.pixels.foreach_set(sheet.ravel())
+    out.filepath_raw = png
+    out.file_format = "PNG"
+    out.save()
+
+
+def material_report(path):
+    js, _ = read_glb(path)
+    rows = []
+    for m in js.get("materials", []):
+        ext = m.get("extensions", {})
+        pbr = m.get("pbrMetallicRoughness", {})
+        rows.append(f"{m['name']}: base {[round(c, 3) for c in pbr.get('baseColorFactor', [1, 1, 1, 1])[:3]]} "
+                    f"rough {pbr.get('roughnessFactor', 1)} metal {pbr.get('metallicFactor', 1)} ext {json.dumps(ext)}")
+    return js.get("extensionsUsed", []), rows
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     out = "app/src/main/assets/models"
-    only, preview = ORDER, True
+    only, preview, floor, thumbs = ORDER, True, False, None
     i = 0
     while i < len(argv):
         if argv[i] == "--out":
             out = argv[i + 1]; i += 1
         elif argv[i] == "--only":
-            only = argv[i + 1].split(","); i += 1
+            only = [n for n in argv[i + 1].split(",") if n]; i += 1
         elif argv[i] == "--no-preview":
             preview = False
+        elif argv[i] == "--floor":
+            floor = True
+        elif argv[i] == "--thumbs":
+            thumbs = argv[i + 1]; i += 1
         i += 1
     out = os.path.abspath(out)
     os.makedirs(out, exist_ok=True)
@@ -674,6 +927,32 @@ def main():
         print(f"{r['name']:<9}{r['kb']:6.1f}{r['tris']:8d}   "
               f"{lo[0]:+.4f} {lo[1]:+.4f} {lo[2]:+.4f}   {hi[0]:+.4f} {hi[1]:+.4f} {hi[2]:+.4f}  "
               f"{r['top_z']:+.2f}  {r['front_z']:+.2f}   {','.join(r['flags']) or 'ok':<6}  {' '.join(r['mats'])}")
+    for r in rows[:1]:
+        used, mats = material_report(os.path.join(out, f"{r['name']}.glb"))
+        print(f"\n{r['name']} extensionsUsed {used}")
+        for line in mats:
+            print("  " + line)
+    if floor:
+        paths = build_floor(out)
+        for p in paths:
+            js, _ = read_glb(p)
+            acc = [js["accessors"][pr["attributes"]["POSITION"]] for me in js["meshes"] for pr in me["primitives"]]
+            lo = [min(a["min"][k] for a in acc) for k in range(3)]
+            hi = [max(a["max"][k] for a in acc) for k in range(3)]
+            tris = sum(js["accessors"][pr["indices"]]["count"] // 3 for me in js["meshes"] for pr in me["primitives"])
+            print(f"[floor] {os.path.basename(p)} {os.path.getsize(p) / 1024:.1f} KB  {tris} tris  "
+                  f"min {[round(v, 4) for v in lo]} max {[round(v, 4) for v in hi]}  "
+                  f"materials {sorted(m['name'] for m in js['materials'])}")
+        if preview:
+            for p in paths:
+                floor_preview(p, os.path.join(out, "sofa3.glb"),
+                              os.path.join(prev_dir, os.path.basename(p).replace(".glb", ".png")))
+    if thumbs:
+        tmp = os.path.join(prev_dir, "_thumbs_png")
+        for tid, webp, size in build_thumbs(out, os.path.abspath(thumbs), tmp):
+            print(f"[thumb] {tid:<9} {size / 1024:5.1f} KB  {webp}")
+        import shutil
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 if __name__ == "__main__":

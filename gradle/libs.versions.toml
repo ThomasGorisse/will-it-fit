@@ -2,7 +2,7 @@
 agp = "9.5.1"
 kotlin = "2.4.21"
 # SceneView: latest on Maven Central, checked 2026-11-12.
-sceneview = "4.69.0"
+sceneview = "4.69.4"
 # Compose BOM 2026.09.00 = Compose 1.12.1, Material 3 1.4.0 (stable).
 composeBom = "2026.09.00"
 activityCompose = "1.13.0"

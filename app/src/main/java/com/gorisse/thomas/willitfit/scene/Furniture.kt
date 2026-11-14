@@ -1,7 +1,10 @@
 package com.gorisse.thomas.willitfit.scene
 
 import android.content.Context
+import android.os.SystemClock
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
@@ -26,6 +29,7 @@ import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
 import io.github.sceneview.math.Size
+import io.github.sceneview.node.ContactShadowContext
 import io.github.sceneview.node.RenderableNode
 import io.github.sceneview.rememberModelInstance
 import kotlin.math.atan2
@@ -85,7 +89,8 @@ fun SceneScope.rememberFurnitureLook(
     transparent: Boolean = false,
     selectable: Boolean = false,
 ): FurnitureLook {
-    val soft = lerp(accent, Color.White, 0.18f)
+    // Cushions a breath lighter than the frame, as on the target: same cloth, more light.
+    val soft = lerp(accent, Color.White, 0.04f)
     val start = if (transparent) 0f else 1f
     val look = remember(materialLoader, transparent, selectable) {
         fun mat(c: Color, metallic: Float = 0f, roughness: Float = 0.75f) =
@@ -125,7 +130,22 @@ fun SceneScope.rememberFurnitureLook(
  * the bounding box is exactly width × height × depth whatever the user types.
  */
 @Composable
-fun SceneScope.Furniture(dims: Dimensions, look: FurnitureLook, shape: Shape = dims.shape) {
+fun SceneScope.Furniture(
+    dims: Dimensions,
+    look: FurnitureLook,
+    shape: Shape = dims.shape,
+    contactShadow: Boolean = true,
+) {
+    // The soft pool under the object that makes it stand on the floor instead of hovering.
+    // A unit quad scaled to the footprint: resizing never rebuilds it.
+    if (contactShadow) {
+        ContactShadow(
+            size = Size(1f, 0f, 1f),
+            context = ContactShadowContext.Floor,
+            intensity = ContactShadowContext.Floor.intensity * look.opacity,
+            scale = Scale(dims.widthCm / 100f + 0.35f, 1f, dims.depthCm / 100f + 0.35f),
+        )
+    }
     val file = modelFile(shape, dims.presetId)
     val context = LocalContext.current
     val bundled = remember(file) { file != null && context.hasAsset(file) }
@@ -180,7 +200,13 @@ private fun Context.hasAsset(path: String): Boolean =
  */
 @Composable
 private fun SceneScope.ModelFurniture(file: String, dims: Dimensions, look: FurnitureLook) {
-    val instance = rememberModelInstance(modelLoader, file) ?: return
+    val asked = remember(file) { SystemClock.uptimeMillis() }
+    val instance = rememberModelInstance(modelLoader, file)
+    LaunchedEffect(instance) {
+        // Load time on real phones, read from logcat: the emulator is far slower.
+        if (instance != null) Log.i("WillItFit", "$file ready in ${SystemClock.uptimeMillis() - asked} ms")
+    }
+    if (instance == null) return
     val box = remember(instance) { instance.asset.boundingBox }
     val he = box.halfExtent
     val bw = (he[0] * 2f).coerceAtLeast(0.01f)
