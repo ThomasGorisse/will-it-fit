@@ -1,11 +1,18 @@
 package com.gorisse.thomas.willitfit.scene
 
+import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import com.google.android.filament.MaterialInstance
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.LengthUnit
@@ -20,6 +27,7 @@ import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
 import io.github.sceneview.math.Size
 import io.github.sceneview.node.RenderableNode
+import io.github.sceneview.rememberModelInstance
 import kotlin.math.atan2
 import kotlin.math.hypot
 import io.github.sceneview.node.Node as NodeImpl
@@ -39,6 +47,14 @@ class FurnitureLook internal constructor(
     /** Touches on a part reach the AR placement pivot instead of moving the part. */
     val selectable: Boolean,
 ) {
+    /** The colours the modelled furniture's fabrics take, and how present it is (AR fade). */
+    var accent: Color by mutableStateOf(FurnitureTeal)
+        internal set
+    var accentSoft: Color by mutableStateOf(FurnitureTeal)
+        internal set
+    var opacity: Float by mutableFloatStateOf(1f)
+        internal set
+
     val part: RenderableNode.() -> Unit = {
         isShadowCaster = true
         if (selectable) makeFixedSelectable()
@@ -86,6 +102,9 @@ fun SceneScope.rememberFurnitureLook(
         )
     }
     SideEffect {
+        look.accent = accent
+        look.accentSoft = soft
+        look.opacity = opacity
         val a = if (transparent) opacity else 1f
         look.body.setColor(accent.copy(alpha = a))
         look.soft.setColor(soft.copy(alpha = a))
@@ -99,12 +118,22 @@ fun SceneScope.rememberFurnitureLook(
 }
 
 /**
- * The object at [dims], bottom-centre on the origin, front toward +Z, in metres. Each
- * silhouette is drawn once at its preset's size and stretched to the dimensions, so the
- * bounding box is exactly width × height × depth whatever the user types.
+ * The object at [dims], bottom-centre on the origin, front toward +Z, in metres. The modelled
+ * furniture (`assets/models/<name>.glb`, made by `tools/furniture/make_furniture.py`) is drawn
+ * when it ships with the app; the silhouette built from boxes stands in for anything missing.
+ * Either way the object is drawn once at its authored size and stretched to the dimensions, so
+ * the bounding box is exactly width × height × depth whatever the user types.
  */
 @Composable
 fun SceneScope.Furniture(dims: Dimensions, look: FurnitureLook, shape: Shape = dims.shape) {
+    val file = modelFile(shape, dims.presetId)
+    val context = LocalContext.current
+    val bundled = remember(file) { file != null && context.hasAsset(file) }
+    if (file != null && bundled) {
+        // A new file gets its own load; nothing is drawn for the few frames it takes.
+        key(file) { ModelFurniture(file, dims, look) }
+        return
+    }
     val base = baseSize(shape, dims)
     Node(
         scale = Scale(
@@ -124,6 +153,65 @@ fun SceneScope.Furniture(dims: Dimensions, look: FurnitureLook, shape: Shape = d
             Shape.STROLLER -> Stroller(base, look)
             Shape.BOX -> Parcel(base, look)
         }
+    }
+}
+
+/** The modelled object for a shape, as an asset path. */
+private fun modelFile(shape: Shape, presetId: String?): String? = when (shape) {
+    Shape.SOFA -> if (presetId == Preset.SOFA_2.id) "models/sofa2.glb" else "models/sofa3.glb"
+    Shape.BED -> "models/bed.glb"
+    Shape.WARDROBE -> "models/wardrobe.glb"
+    Shape.FRIDGE -> "models/fridge.glb"
+    Shape.WASHER -> "models/washer.glb"
+    Shape.TV -> "models/tv.glb"
+    Shape.BIKE -> "models/bike.glb"
+    Shape.STROLLER -> "models/stroller.glb"
+    Shape.BOX -> "models/box.glb"
+}
+
+private fun Context.hasAsset(path: String): Boolean =
+    runCatching { assets.open(path).close() }.isSuccess
+
+/**
+ * One glTF object, stretched from its own bounding box to [dims]. Its `fabric` and
+ * `fabric_soft` materials take the look's colours, so the object wears the brand teal like the
+ * silhouettes did. glTF materials are opaque, so the AR fade becomes a cut: the object shows
+ * once it is more than half there.
+ */
+@Composable
+private fun SceneScope.ModelFurniture(file: String, dims: Dimensions, look: FurnitureLook) {
+    val instance = rememberModelInstance(modelLoader, file) ?: return
+    val box = remember(instance) { instance.asset.boundingBox }
+    val he = box.halfExtent
+    val bw = (he[0] * 2f).coerceAtLeast(0.01f)
+    val bh = (he[1] * 2f).coerceAtLeast(0.01f)
+    val bd = (he[2] * 2f).coerceAtLeast(0.01f)
+    SideEffect {
+        instance.materialInstances.forEach { mi ->
+            when (mi.name) {
+                "fabric" -> mi.setColor("baseColorFactor", look.accent)
+                "fabric_soft" -> mi.setColor("baseColorFactor", look.accentSoft)
+            }
+        }
+    }
+    Node(
+        scale = Scale(dims.widthCm / 100f / bw, dims.heightCm / 100f / bh, dims.depthCm / 100f / bd),
+    ) {
+        ModelNode(
+            modelInstance = instance,
+            autoAnimate = false,
+            // Bottom-centre on the origin, whatever the file's own pivot.
+            centerOrigin = Position(0f, -1f, 0f),
+            isVisible = look.opacity > 0.5f,
+            apply = {
+                isShadowCaster = true
+                isShadowReceiver = true
+                if (look.selectable) {
+                    makeFixedSelectable()
+                    renderableNodes.forEach { it.makeFixedSelectable() }
+                }
+            },
+        )
     }
 }
 
@@ -337,6 +425,7 @@ fun SceneScope.DimensionMarks(
     labelBackground: Color,
     selectable: Boolean = false,
     labelScale: Float = 1f,
+    facing: (() -> Position)? = null,
 ) {
     val w = dims.widthCm / 100f; val h = dims.heightCm / 100f; val d = dims.depthCm / 100f
     val off = 0.07f
@@ -358,24 +447,26 @@ fun SceneScope.DimensionMarks(
     CubeNode(size = Size(t, h, t), position = Position(right, h / 2f, front), materialInstance = line, apply = fixed)
     CubeNode(size = Size(tick, t, t), position = Position(right, h, front), materialInstance = line, apply = fixed)
 
-    val lw = 0.3f; val lh = 0.075f
+    // Tags in the 4:1 bitmap TextNode draws (512 × 128 px), the figure filling most of it.
+    val lw = 0.26f; val lh = 0.065f; val font = 82f
     val fg = labelText.toArgb(); val bg = labelBackground.toArgb()
     val s = Scale(labelScale)
     TextNode(
-        text = formatLength(dims.widthCm, unit), textColor = fg, backgroundColor = bg,
-        widthMeters = lw, heightMeters = lh, scale = s,
-        position = Position(0f, lh * labelScale / 2f + 0.02f, front + 0.01f), apply = fixed,
+        text = formatLength(dims.widthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
+        widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing,
+        position = Position(0f, lh * labelScale / 2f + 0.03f, front + 0.02f), apply = fixed,
     )
-    Node(position = Position(right + 0.01f, lh * labelScale / 2f + 0.02f, 0f), rotation = Rotation(y = 90f)) {
+    Node(position = Position(right + 0.02f, lh * labelScale / 2f + 0.03f, 0f), rotation = Rotation(y = 90f)) {
         TextNode(
-            text = formatLength(dims.depthCm, unit), textColor = fg, backgroundColor = bg,
-            widthMeters = lw, heightMeters = lh, scale = s, apply = fixed,
+            text = formatLength(dims.depthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
+            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = fixed,
         )
     }
-    Node(position = Position(right + 0.01f, h + lh * labelScale / 2f + 0.04f, front + 0.01f), rotation = Rotation(y = 45f)) {
+    Node(position = Position(right + 0.02f, h * 0.5f, front + 0.02f), rotation = Rotation(y = 45f)) {
         TextNode(
-            text = formatLength(dims.heightCm, unit), textColor = fg, backgroundColor = bg,
-            widthMeters = lw, heightMeters = lh, scale = s, apply = fixed,
+            text = formatLength(dims.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
+            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing,
+            position = Position(lw * labelScale / 2f + 0.03f, 0f, 0f), apply = fixed,
         )
     }
 }

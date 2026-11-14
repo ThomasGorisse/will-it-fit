@@ -1,17 +1,13 @@
 package com.gorisse.thomas.willitfit.ui
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 
-// Fallback scheme from one source colour, deep teal #1F6F78 (Android 11 and below).
+// The scheme from one source colour, deep teal #1F6F78.
 private val Light = lightColorScheme(
     primary = Color(0xFF00696F), onPrimary = Color.White,
     primaryContainer = Color(0xFF9DF0F7), onPrimaryContainer = Color(0xFF002022),
@@ -44,12 +40,8 @@ object FitColors {
 @Composable
 fun WillItFitTheme(content: @Composable () -> Unit) {
     val dark = isSystemInDarkTheme()
-    val context = LocalContext.current
-    val scheme = when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
-            if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        dark -> Dark
-        else -> Light
-    }
+    // The brand teal on every phone, not the wallpaper's colours: the furniture, the buttons
+    // and the store captures all speak the same colour.
+    val scheme = if (dark) Dark else Light
     MaterialTheme(colorScheme = scheme, content = content)
 }

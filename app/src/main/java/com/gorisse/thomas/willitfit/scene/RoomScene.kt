@@ -31,6 +31,7 @@ import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
 import io.github.sceneview.math.Size
 import io.github.sceneview.rememberCameraManipulator
+import io.github.sceneview.rememberCameraNode
 import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberMainLightNode
 import io.github.sceneview.rememberMaterialLoader
@@ -128,6 +129,7 @@ fun RoomScene(
     }
     val eye = Position(target.x + dir.first * dist, target.y + dir.second * dist, target.z + dir.third * dist)
     val manipulator = rememberCameraManipulator(orbitHomePosition = eye, targetPosition = target)
+    val cameraNode = rememberCameraNode(engine)
 
     SceneView(
         modifier = modifier,
@@ -136,6 +138,7 @@ fun RoomScene(
         materialLoader = materialLoader,
         autoCenterContent = false,
         contentPadding = contentPadding,
+        cameraNode = cameraNode,
         cameraManipulator = manipulator,
         mainLightNode = rememberMainLightNode(engine) {
             intensity = if (palette.isNight) 28_000f else 110_000f
@@ -158,6 +161,7 @@ fun RoomScene(
                 lineColor = Color.White,
                 labelText = labelText, labelBackground = labelBackground,
                 labelScale = (size / 1.4f).coerceIn(1f, 1.8f),
+                facing = { cameraNode.worldPosition },
             )
         }
     }

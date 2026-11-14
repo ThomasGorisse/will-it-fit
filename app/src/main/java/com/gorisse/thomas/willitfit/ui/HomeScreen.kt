@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -87,6 +88,9 @@ fun HomeScreen(
     var fieldsValid by remember { mutableStateOf(true) }
     val dark = isSystemInDarkTheme()
     val scheme = MaterialTheme.colorScheme
+    // Short phones (5", 16:9, or a big font) keep at least half the screen for the room.
+    val compact = LocalConfiguration.current.screenHeightDp < 760
+    val buttonHeight = if (compact) 48.dp else 52.dp
     Box(Modifier.fillMaxSize().imePadding()) {
         RoomScene(
             dims = dims,
@@ -104,7 +108,7 @@ fun HomeScreen(
             color = scheme.surfaceContainerLow,
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         ) {
-            Column(Modifier.navigationBarsPadding().padding(top = 20.dp, bottom = 16.dp)) {
+            Column(Modifier.navigationBarsPadding().padding(top = if (compact) 12.dp else 16.dp, bottom = 12.dp)) {
                 Row(
                     Modifier.padding(start = 24.dp, end = 12.dp).fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -125,7 +129,7 @@ fun HomeScreen(
                         Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.settings_title))
                     }
                 }
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(if (compact) 8.dp else 12.dp))
                 LengthFields(
                     labels = listOf(
                         stringResource(R.string.field_width),
@@ -146,9 +150,9 @@ fun HomeScreen(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     onValidChange = { fieldsValid = it },
                 )
-                Spacer(Modifier.height(12.dp))
-                PresetRow(dims, onPick = { onDims(it) })
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(if (compact) 8.dp else 12.dp))
+                PresetRow(dims, compact, onPick = { onDims(it) })
+                Spacer(Modifier.height(if (compact) 10.dp else 14.dp))
                 // The two answers, stacked at the bottom where the thumb rests.
                 Column(
                     Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
@@ -157,7 +161,7 @@ fun HomeScreen(
                     Button(
                         onClick = onAr,
                         enabled = arAvailable && dims.isValid && fieldsValid,
-                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        modifier = Modifier.fillMaxWidth().height(buttonHeight),
                     ) {
                         Icon(Icons.Outlined.ViewInAr, null, Modifier.size(ButtonDefaults.IconSize))
                         Spacer(Modifier.width(ButtonDefaults.IconSpacing))
@@ -166,7 +170,7 @@ fun HomeScreen(
                     FilledTonalButton(
                         onClick = onDoor,
                         enabled = dims.isValid && fieldsValid,
-                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        modifier = Modifier.fillMaxWidth().height(buttonHeight),
                     ) {
                         Icon(Icons.Outlined.DoorFront, null, Modifier.size(ButtonDefaults.IconSize))
                         Spacer(Modifier.width(ButtonDefaults.IconSpacing))
@@ -187,7 +191,8 @@ fun HomeScreen(
 }
 
 @Composable
-private fun PresetRow(dims: Dimensions, onPick: (Dimensions) -> Unit) {
+private fun PresetRow(dims: Dimensions, compact: Boolean, onPick: (Dimensions) -> Unit) {
+    val thumb = if (compact) 48.dp else 60.dp
     val state = rememberLazyListState()
     val selected = Preset.byId(dims.presetId)
     LaunchedEffect(Unit) {
@@ -201,6 +206,7 @@ private fun PresetRow(dims: Dimensions, onPick: (Dimensions) -> Unit) {
     ) {
         items(Preset.entries, key = { it.id }) { preset ->
             PresetCard(
+                compact = compact,
                 selected = preset == selected,
                 label = stringResource(preset.label()),
                 onClick = { onPick(preset.dimensions) },
@@ -209,19 +215,20 @@ private fun PresetRow(dims: Dimensions, onPick: (Dimensions) -> Unit) {
                     painter = painterResource(preset.thumbnail()),
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(72.dp),
+                    modifier = Modifier.size(thumb),
                 )
             }
         }
         item(key = "custom") {
             PresetCard(
+                compact = compact,
                 selected = selected == null,
                 label = stringResource(R.string.preset_custom),
                 onClick = {
                     onPick(Dimensions(dims.widthCm, dims.depthCm, dims.heightCm))
                 },
             ) {
-                Box(Modifier.size(72.dp), contentAlignment = Alignment.Center) {
+                Box(Modifier.size(thumb), contentAlignment = Alignment.Center) {
                     Icon(Icons.Outlined.Edit, null, tint = MaterialTheme.colorScheme.primary)
                 }
             }
@@ -230,11 +237,11 @@ private fun PresetRow(dims: Dimensions, onPick: (Dimensions) -> Unit) {
 }
 
 @Composable
-private fun PresetCard(selected: Boolean, label: String, onClick: () -> Unit, image: @Composable () -> Unit) {
+private fun PresetCard(compact: Boolean, selected: Boolean, label: String, onClick: () -> Unit, image: @Composable () -> Unit) {
     val scheme = MaterialTheme.colorScheme
     Card(
         onClick = onClick,
-        modifier = Modifier.width(96.dp).semantics { this.selected = selected; role = Role.RadioButton },
+        modifier = Modifier.width(if (compact) 80.dp else 88.dp).semantics { this.selected = selected; role = Role.RadioButton },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (selected) scheme.secondaryContainer else scheme.surfaceContainerHigh,
@@ -243,7 +250,7 @@ private fun PresetCard(selected: Boolean, label: String, onClick: () -> Unit, im
         border = if (selected) BorderStroke(2.dp, scheme.primary) else null,
     ) {
         Column(
-            Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 10.dp, start = 6.dp, end = 6.dp),
+            Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 8.dp, start = 6.dp, end = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             image()
