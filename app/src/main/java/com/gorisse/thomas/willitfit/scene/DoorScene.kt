@@ -72,7 +72,7 @@ fun DoorScene(
         ),
         label = "progress",
     )
-    val startZ = 0.4f + along / 2f + 0.6f
+    val startZ = along / 2f + 0.55f
     val endZ = -(along / 2f + 0.5f)
     val contactZ = WALL_THICKNESS / 2f + along / 2f + 0.005f
     val z = if (verdict.fits) startZ + (endZ - startZ) * progress
@@ -80,9 +80,10 @@ fun DoorScene(
 
     val size = max(max(dw, dh), max(across, up))
     val dist = 1.4f * size + 2.4f
+    // From the side and a little above, so the object never hides the opening it heads for.
     val manipulator = rememberCameraManipulator(
-        orbitHomePosition = Position(dist * 0.55f, dh * 0.55f + dist * 0.28f, dist * 0.8f),
-        targetPosition = Position(0f, dh * 0.45f, 0f),
+        orbitHomePosition = Position(dist * 0.78f, dh * 0.5f + dist * 0.3f, dist * 0.62f + along * 0.3f),
+        targetPosition = Position(0f, dh * 0.42f, along * 0.3f),
     )
     SceneView(
         modifier = modifier,
@@ -100,8 +101,11 @@ fun DoorScene(
         val floor = remember(materialLoader) { materialLoader.createColorInstance(palette.floor, roughness = 0.5f) }
         val frame = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFF4F1EC), roughness = 0.5f) }
         SideEffect { wall.setColor(palette.wall); floor.setColor(palette.floor) }
-        CubeNode(size = Size(8f, 0.04f, 8f), position = Position(0f, -0.02f, 0f), materialInstance = floor)
-        val wallW = 6f; val wallH = max(2.6f, dh + 0.4f)
+        CubeNode(size = Size(12f, 0.04f, 12f), position = Position(0f, -0.02f, 0f), materialInstance = floor)
+        // Tall and wide enough that the camera never sees past it, and a far wall in the next
+        // room, so neither the top of the frame nor the doorway opens onto the void.
+        val wallW = 10f; val wallH = max(4.5f, dh + 0.4f)
+        CubeNode(size = Size(wallW, wallH, WALL_THICKNESS), position = Position(0f, wallH / 2f, -3.6f), materialInstance = wall)
         val half = dw / 2f
         CubeNode(size = Size(wallW / 2f - half, wallH, WALL_THICKNESS), position = Position(-(half + (wallW / 2f - half) / 2f), wallH / 2f, 0f), materialInstance = wall)
         CubeNode(size = Size(wallW / 2f - half, wallH, WALL_THICKNESS), position = Position(half + (wallW / 2f - half) / 2f, wallH / 2f, 0f), materialInstance = wall)

@@ -31,7 +31,7 @@ MATERIALS = {
     "cardboard": ("C8A272", 0.85, 0.0),
     # Objects that keep their own colour (the app only recolours fabric/fabric_soft).
     "oak": ("D3AE80", 0.50, 0.0),
-    "steel": ("CDD1D6", 0.34, 0.75),
+    "steel": ("D9DDE1", 0.36, 0.35),
     "enamel": ("F5F5F2", 0.32, 0.0),
 }
 

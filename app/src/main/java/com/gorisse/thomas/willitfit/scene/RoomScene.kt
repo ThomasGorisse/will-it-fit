@@ -51,7 +51,7 @@ data class RoomPalette(
 ) {
     companion object {
         val Day = RoomPalette(
-            wall = Color(0xFFEDE7DF), floor = Color(0xFFC79C6E), skirting = Color(0xFFF7F4EF),
+            wall = Color(0xFFEDE7DF), floor = Color(0xFFCDAE88), skirting = Color(0xFFF7F4EF),
             window = Color(0xFFFFF7E6), lamp = Color(0xFFFFE2B0), isNight = false,
         )
         val Night = RoomPalette(
@@ -141,7 +141,7 @@ fun RoomScene(
         cameraNode = cameraNode,
         cameraManipulator = manipulator,
         mainLightNode = rememberMainLightNode(engine) {
-            intensity = if (palette.isNight) 28_000f else 110_000f
+            intensity = if (palette.isNight) 28_000f else 80_000f
         },
         onTouchEvent = { e: MotionEvent, _ ->
             lastTouch = android.os.SystemClock.uptimeMillis()

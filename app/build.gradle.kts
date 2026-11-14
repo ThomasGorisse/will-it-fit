@@ -25,6 +25,9 @@ android {
         debug {
             // Installs next to the Play version on a test phone.
             applicationIdSuffix = ".debug"
+            // Phones and the Apple-silicon emulator are all arm64: a lighter APK for the shared
+            // test devices, whose storage runs out first.
+            ndk { abiFilters += "arm64-v8a" }
         }
         release {
             isMinifyEnabled = true

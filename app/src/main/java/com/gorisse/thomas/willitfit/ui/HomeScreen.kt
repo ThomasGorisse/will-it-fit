@@ -196,8 +196,9 @@ private fun PresetRow(dims: Dimensions, compact: Boolean, onPick: (Dimensions) -
     val state = rememberLazyListState()
     val selected = Preset.byId(dims.presetId)
     LaunchedEffect(Unit) {
+        // The selected card with its left neighbour in full view, never a card cut in half.
         val i = Preset.entries.indexOf(selected)
-        if (i > 0) state.scrollToItem(i)
+        if (i > 1) state.scrollToItem(i - 1)
     }
     LazyRow(
         state = state,

@@ -448,7 +448,7 @@ fun SceneScope.DimensionMarks(
     CubeNode(size = Size(tick, t, t), position = Position(right, h, front), materialInstance = line, apply = fixed)
 
     // Tags in the 4:1 bitmap TextNode draws (512 × 128 px), the figure filling most of it.
-    val lw = 0.26f; val lh = 0.065f; val font = 82f
+    val lw = 0.34f; val lh = 0.085f; val font = 82f
     val fg = labelText.toArgb(); val bg = labelBackground.toArgb()
     val s = Scale(labelScale)
     TextNode(
@@ -456,17 +456,18 @@ fun SceneScope.DimensionMarks(
         widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing,
         position = Position(0f, lh * labelScale / 2f + 0.03f, front + 0.02f), apply = fixed,
     )
-    Node(position = Position(right + 0.02f, lh * labelScale / 2f + 0.03f, 0f), rotation = Rotation(y = 90f)) {
+    // Outside the depth line by half a tag, so the object never hides it.
+    Node(position = Position(right + 0.03f + lw * labelScale / 2f, lh * labelScale / 2f + 0.03f, 0f), rotation = Rotation(y = 90f)) {
         TextNode(
             text = formatLength(dims.depthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
             widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = fixed,
         )
     }
-    Node(position = Position(right + 0.02f, h * 0.5f, front + 0.02f), rotation = Rotation(y = 45f)) {
+    // Above the top of the height line, clear of the depth tag on the floor below it.
+    Node(position = Position(right + 0.02f, h + lh * labelScale / 2f + 0.04f, front + 0.02f), rotation = Rotation(y = 45f)) {
         TextNode(
             text = formatLength(dims.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
-            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing,
-            position = Position(lw * labelScale / 2f + 0.03f, 0f, 0f), apply = fixed,
+            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = fixed,
         )
     }
 }
