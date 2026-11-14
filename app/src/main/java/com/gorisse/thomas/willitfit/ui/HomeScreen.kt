@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -246,7 +247,8 @@ private fun PresetCard(compact: Boolean, selected: Boolean, label: String, onCli
     val scheme = MaterialTheme.colorScheme
     Card(
         onClick = onClick,
-        modifier = Modifier.width(if (compact) 80.dp else 88.dp).semantics { this.selected = selected; role = Role.RadioButton },
+        // As wide as its name needs ("Canapé 3 places", "Waschmaschine"), never cut with an ellipsis.
+        modifier = Modifier.widthIn(min = if (compact) 80.dp else 88.dp).semantics { this.selected = selected; role = Role.RadioButton },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (selected) scheme.secondaryContainer else scheme.surfaceContainerHigh,
@@ -255,7 +257,7 @@ private fun PresetCard(compact: Boolean, selected: Boolean, label: String, onCli
         border = if (selected) BorderStroke(2.dp, scheme.primary) else null,
     ) {
         Column(
-            Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 8.dp, start = 6.dp, end = 6.dp),
+            Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 8.dp, start = 10.dp, end = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             image()
@@ -263,7 +265,7 @@ private fun PresetCard(compact: Boolean, selected: Boolean, label: String, onCli
             Text(
                 label,
                 style = MaterialTheme.typography.labelMedium,
-                maxLines = 1, overflow = TextOverflow.Ellipsis,
+                maxLines = 1, softWrap = false,
             )
         }
     }

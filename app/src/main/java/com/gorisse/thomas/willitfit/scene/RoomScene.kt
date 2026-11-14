@@ -51,16 +51,18 @@ data class RoomPalette(
     val skirting: Color,
     val window: Color,
     val lamp: Color,
+    val rug: Color,
     val isNight: Boolean,
 ) {
     companion object {
         val Day = RoomPalette(
             wall = Color(0xFFF5E9D9), floor = Color(0xFFB59C80), skirting = Color(0xFFF7F4EF),
-            window = Color(0xFFFFF7E6), lamp = Color(0xFFFFE2B0), isNight = false,
+            window = Color(0xFFFFF7E6), lamp = Color(0xFFFFE2B0), rug = Color(0xFFC4B8A6), isNight = false,
         )
         val Night = RoomPalette(
-            wall = Color(0xFF5B5550), floor = Color(0xFF6E5038), skirting = Color(0xFF6A645E),
-            window = Color(0xFF22324F), lamp = Color(0xFFFFC27A), isNight = true,
+            // Warm taupe walls, a dusky window and a dim rug: lamp-lit, not a cold grey box.
+            wall = Color(0xFF5E5045), floor = Color(0xFF6E5038), skirting = Color(0xFF6A5E54),
+            window = Color(0xFF2C3646), lamp = Color(0xFFFFC27A), rug = Color(0xFF6B5F52), isNight = true,
         )
     }
 }
@@ -153,6 +155,8 @@ fun RoomScene(
         cameraManipulator = manipulator,
         mainLightNode = rememberMainLightNode(engine) {
             intensity = if (palette.isNight) 28_000f else 80_000f
+            // Evening light is the lamp's: warm, like the target's dark picture.
+            if (palette.isNight) color = io.github.sceneview.math.Color(1f, 0.85f, 0.68f, 1f)
             // Low afternoon sun from the window side: the object throws a real shadow sideways
             // onto the floor, as in the target picture, instead of straight down under itself.
             lightDirection = Direction(-0.6f, -0.72f, -0.18f)
@@ -233,7 +237,8 @@ private fun SceneScope.Room(p: RoomPalette) {
     CubeNode(size = Size(ROOM_WIDTH, 0.08f, 0.015f), position = Position(cx, 0.04f, backZ + WALL_T / 2f + 0.0075f), materialInstance = skirting)
     CubeNode(size = Size(0.015f, 0.08f, doorZ0 - BACK_WALL_Z), position = Position(lx + WALL_T / 2f + 0.0075f, 0.04f, (BACK_WALL_Z + doorZ0) / 2f), materialInstance = skirting)
     // Rug in front, picture above where the object stands, a plant by the window.
-    val rug = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFC4B8A6), roughness = 1f) }
+    val rug = remember(materialLoader) { materialLoader.createColorInstance(p.rug, roughness = 1f) }
+    SideEffect { rug.setColor(p.rug) }
     CubeNode(size = Size(2.2f, 0.012f, 1.5f), position = Position(-0.9f, 0.006f, 1.25f), rotation = Rotation(y = 8f), materialInstance = rug)
     val art = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFF8FA89A), roughness = 0.9f) }
     val artSky = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFE9E1D3), roughness = 0.9f) }
