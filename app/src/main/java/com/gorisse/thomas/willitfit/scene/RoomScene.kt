@@ -53,17 +53,20 @@ data class RoomPalette(
     val window: Color,
     val lamp: Color,
     val rug: Color,
+    val curtain: Color,
     val isNight: Boolean,
 ) {
     companion object {
         val Day = RoomPalette(
             wall = Color(0xFFF5E9D9), floor = Color(0xFFB59C80), skirting = Color(0xFFF7F4EF),
-            window = Color(0xFFFFF7E6), lamp = Color(0xFFFFE2B0), rug = Color(0xFFC4B8A6), isNight = false,
+            window = Color(0xFFFFF7E6), lamp = Color(0xFFFFE2B0), rug = Color(0xFFC4B8A6),
+            curtain = Color(0xFFF2EADF), isNight = false,
         )
         val Night = RoomPalette(
             // Warm taupe walls, a dusky window and a dim rug: lamp-lit, not a cold grey box.
-            wall = Color(0xFF5E5045), floor = Color(0xFF6E5038), skirting = Color(0xFF6A5E54),
-            window = Color(0xFF2C3646), lamp = Color(0xFFFFC27A), rug = Color(0xFF6B5F52), isNight = true,
+            wall = Color(0xFF7A6656), floor = Color(0xFF6E5038), skirting = Color(0xFF7A6C60),
+            window = Color(0xFF2C3646), lamp = Color(0xFFFFC27A), rug = Color(0xFF6B5F52),
+            curtain = Color(0xFF7C6C5C), isNight = true,
         )
     }
 }
@@ -174,7 +177,8 @@ fun RoomScene(
     ) {
         Node(rotation = Rotation(y = sway), position = Position(0f, 0f, objZ)) {
             Node(position = Position(0f, 0f, -objZ)) {
-                Room(palette)
+                // The floor lamp stands just right of the object, whatever its width.
+                Room(palette, lampX = shown.widthCm / 200f + 0.32f)
             }
             val look = rememberFurnitureLook(accent)
             Node(scale = Scale(pop.value)) {
@@ -192,16 +196,19 @@ fun RoomScene(
 }
 
 @Composable
-private fun SceneScope.Room(p: RoomPalette) {
+private fun SceneScope.Room(p: RoomPalette, lampX: Float) {
     val wall = remember(materialLoader) { materialLoader.createColorInstance(p.wall, roughness = 0.95f) }
     val floor = remember(materialLoader) { materialLoader.createColorInstance(p.floor, roughness = 0.5f) }
     val skirting = remember(materialLoader) { materialLoader.createColorInstance(p.skirting, roughness = 0.6f) }
     val window = remember(materialLoader) { materialLoader.createUnlitColorInstance(p.window) }
     val lamp = remember(materialLoader) { materialLoader.createUnlitColorInstance(p.lamp) }
+    val shade = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFF3ECE2), roughness = 0.9f) }
+    val bronze = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFF4A4038), metallic = 0.4f, roughness = 0.5f) }
+    val curtain = remember(materialLoader) { materialLoader.createColorInstance(p.curtain, roughness = 1f) }
     val frame = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFF4F1EC), roughness = 0.5f) }
     SideEffect {
         wall.setColor(p.wall); floor.setColor(p.floor); skirting.setColor(p.skirting)
-        window.setColor(p.window); lamp.setColor(p.lamp)
+        window.setColor(p.window); lamp.setColor(p.lamp); curtain.setColor(p.curtain)
     }
     val cx = LEFT_WALL_X + ROOM_WIDTH / 2f
     val cz = BACK_WALL_Z + ROOM_DEPTH / 2f
@@ -229,6 +236,14 @@ private fun SceneScope.Room(p: RoomPalette) {
     CubeNode(size = Size(winX1 - winX0, winY1 - winY0, 0.01f), position = Position((winX0 + winX1) / 2f, (winY0 + winY1) / 2f, backZ - 0.03f), materialInstance = window)
     CubeNode(size = Size(0.04f, winY1 - winY0, 0.06f), position = Position((winX0 + winX1) / 2f, (winY0 + winY1) / 2f, backZ), materialInstance = frame)
     CubeNode(size = Size(winX1 - winX0 + 0.1f, 0.04f, 0.16f), position = Position((winX0 + winX1) / 2f, winY0 - 0.02f, backZ + 0.05f), materialInstance = frame)
+    // Floor-length linen curtains on a rod: what makes the dark pane read as a window at night.
+    val cz0 = backZ + WALL_T / 2f + 0.07f
+    Curtain(curtain, winX0 - 0.2f, winX0 + 0.16f, cz0)
+    Curtain(curtain, winX1 - 0.16f, winX1 + 0.2f, cz0)
+    CylinderNode(
+        radius = 0.012f, height = winX1 - winX0 + 0.7f, position = Position((winX0 + winX1) / 2f, 2.44f, cz0),
+        rotation = Rotation(z = 90f), materialInstance = bronze,
+    )
     // Left wall with a doorway, nearer the viewer.
     val doorZ0 = 0.1f; val doorZ1 = 0.93f; val doorH = 2.04f
     val lx = LEFT_WALL_X
@@ -243,14 +258,17 @@ private fun SceneScope.Room(p: RoomPalette) {
     CubeNode(size = Size(ROOM_WIDTH, 0.08f, 0.015f), position = Position(cx, 0.04f, backZ + WALL_T / 2f + 0.0075f), materialInstance = skirting)
     CubeNode(size = Size(0.015f, 0.08f, doorZ0 - BACK_WALL_Z), position = Position(lx + WALL_T / 2f + 0.0075f, 0.04f, (BACK_WALL_Z + doorZ0) / 2f), materialInstance = skirting)
     // Rug in front, picture above where the object stands, a plant by the window.
-    val rug = remember(materialLoader) { materialLoader.createColorInstance(p.rug, roughness = 1f) }
-    SideEffect { rug.setColor(p.rug) }
-    CubeNode(size = Size(2.2f, 0.012f, 1.5f), position = Position(-0.9f, 0.006f, 1.25f), rotation = Rotation(y = 8f), materialInstance = rug)
+    if (!KnitRug(p, Position(-0.9f, 0.002f, 1.25f), Rotation(y = 8f))) {
+        val rug = remember(materialLoader) { materialLoader.createColorInstance(p.rug, roughness = 1f) }
+        SideEffect { rug.setColor(p.rug) }
+        CubeNode(size = Size(2.2f, 0.012f, 1.5f), position = Position(-0.9f, 0.006f, 1.25f), rotation = Rotation(y = 8f), materialInstance = rug)
+    }
     val art = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFF8FA89A), roughness = 0.9f) }
     val artSky = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFE9E1D3), roughness = 0.9f) }
-    CubeNode(size = Size(0.9f, 0.62f, 0.03f), position = Position(-0.2f, 1.75f, backZ + WALL_T / 2f + 0.015f), materialInstance = frame)
-    CubeNode(size = Size(0.8f, 0.52f, 0.01f), position = Position(-0.2f, 1.75f, backZ + WALL_T / 2f + 0.031f), materialInstance = artSky)
-    CubeNode(size = Size(0.8f, 0.2f, 0.012f), position = Position(-0.2f, 1.59f, backZ + WALL_T / 2f + 0.033f), materialInstance = art)
+    // A small print above the object, as in the target, not a poster cut by the top of the view.
+    CubeNode(size = Size(0.62f, 0.46f, 0.03f), position = Position(-0.15f, 1.52f, backZ + WALL_T / 2f + 0.015f), materialInstance = frame)
+    CubeNode(size = Size(0.54f, 0.38f, 0.01f), position = Position(-0.15f, 1.52f, backZ + WALL_T / 2f + 0.031f), materialInstance = artSky)
+    CubeNode(size = Size(0.54f, 0.14f, 0.012f), position = Position(-0.15f, 1.40f, backZ + WALL_T / 2f + 0.033f), materialInstance = art)
     val pot = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFE8E2DA), roughness = 0.7f) }
     val leaf = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFF3F6B45), roughness = 0.8f) }
     val plantX = 2.85f; val plantZ = BACK_WALL_Z + 0.4f
@@ -259,18 +277,36 @@ private fun SceneScope.Room(p: RoomPalette) {
     SphereNode(radius = 0.22f, position = Position(plantX - 0.12f, 1.0f, plantZ + 0.05f), materialInstance = leaf, apply = { isShadowCaster = true })
     SphereNode(radius = 0.18f, position = Position(plantX + 0.1f, 1.18f, plantZ - 0.05f), materialInstance = leaf, apply = { isShadowCaster = true })
 
-    // Floor lamp in the back-left corner: the evening light of the dark theme.
-    val lampX = LEFT_WALL_X + 0.35f; val lampZ = BACK_WALL_Z + 0.35f
-    CylinderNode(radius = 0.13f, height = 0.02f, position = Position(lampX, 0.01f, lampZ), materialInstance = skirting)
-    CylinderNode(radius = 0.012f, height = 1.45f, position = Position(lampX, 0.73f, lampZ), materialInstance = skirting)
-    CylinderNode(radius = 0.17f, height = 0.26f, position = Position(lampX, 1.55f, lampZ), materialInstance = lamp)
+    // Floor lamp beside the object: a linen drum by day, the evening's warm light by night,
+    // throwing a pool of light on the floor next to the object, as in the target.
+    val lampZ = BACK_WALL_Z + 0.32f
+    CylinderNode(radius = 0.14f, height = 0.02f, position = Position(lampX, 0.011f, lampZ), materialInstance = bronze, apply = { isShadowCaster = true })
+    CylinderNode(radius = 0.012f, height = 1.4f, position = Position(lampX, 0.72f, lampZ), materialInstance = bronze, apply = { isShadowCaster = true })
+    CylinderNode(
+        radius = 0.2f, height = 0.3f, position = Position(lampX, 1.52f, lampZ),
+        materialInstance = if (p.isNight) lamp else shade, apply = { isShadowCaster = !p.isNight },
+    )
     if (p.isNight) {
         LightNode(
             type = LightManager.Type.POINT,
-            intensity = 60_000f,
-            position = Position(lampX, 1.5f, lampZ + 0.1f),
+            intensity = 110_000f,
+            position = Position(lampX, 1.3f, lampZ + 0.15f),
             color = io.github.sceneview.math.Color(1f, 0.78f, 0.52f, 1f),
-            apply = { falloff(6f) },
+            apply = { falloff(4.5f) },
+        )
+    }
+}
+
+/** One curtain panel, gathered in soft vertical folds, from the rod down to the floor. */
+@Composable
+private fun SceneScope.Curtain(mat: com.google.android.filament.MaterialInstance, x0: Float, x1: Float, z: Float) {
+    val folds = 6
+    val r = (x1 - x0) / (2f * folds) * 1.25f
+    for (i in 0 until folds) {
+        val x = x0 + (x1 - x0) * (i + 0.5f) / folds
+        CylinderNode(
+            radius = r, height = 2.38f, position = Position(x, 1.23f, z + if (i % 2 == 0) 0.012f else -0.008f),
+            materialInstance = mat, apply = { isShadowCaster = true },
         )
     }
 }
@@ -283,6 +319,32 @@ private fun SceneScope.wallPiece(mat: com.google.android.filament.MaterialInstan
 @Composable
 private fun SceneScope.sideWallPiece(mat: com.google.android.filament.MaterialInstance, x: Float, z0: Float, z1: Float, y0: Float, y1: Float) {
     CubeNode(size = Size(WALL_T, y1 - y0, z1 - z0), position = Position(x, (y0 + y1) / 2f, (z0 + z1) / 2f), materialInstance = mat)
+}
+
+/**
+ * The knit rug (models/rug.glb, the one textured asset) in the foreground: its stitches give the
+ * room depth. Dimmed in the evening through its base colour factor. False when not bundled.
+ */
+@Composable
+private fun SceneScope.KnitRug(p: RoomPalette, position: Position, rotation: Rotation): Boolean {
+    val file = "models/rug.glb"
+    val context = LocalContext.current
+    val bundled = remember { runCatching { context.assets.open(file).close() }.isSuccess }
+    if (!bundled) return false
+    rememberModelInstance(modelLoader, file)?.let { rug ->
+        SideEffect {
+            val tint = if (p.isNight) Color(0xFF6E655C) else Color(0xFFB5AB9F)
+            rug.materialInstances.forEach { it.setColor("baseColorFactor", tint) }
+        }
+        ModelNode(
+            modelInstance = rug,
+            autoAnimate = false,
+            position = position,
+            rotation = rotation,
+            apply = { isShadowReceiver = true; isShadowCaster = false },
+        )
+    }
+    return true
 }
 
 /**

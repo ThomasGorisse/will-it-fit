@@ -722,6 +722,81 @@ def build_floor(out):
     return paths
 
 
+# ---------------------------------------------------------------------------- rug (--rug IMAGE)
+RUG_W, RUG_D, RUG_T = 2.2, 1.5, 0.012  # x, z metres; centred on the origin, bottom at y = 0
+
+
+def build_rug(image_path, out, px=1024):
+    """rug.glb: a thin slab wearing a knit photo (top view) and a relief derived from it.
+
+    The one textured asset: a knit has no believable flat-colour version. The normal map comes
+    from the photo's own luminance, so stitches catch the room's light."""
+    import numpy as np
+    clear_scene()
+    img = bpy.data.images.load(os.path.abspath(image_path))
+    img.scale(px, round(px * RUG_D / RUG_W))
+    w, h = img.size
+    rgba = np.array(img.pixels[:], dtype=np.float32).reshape(h, w, 4)
+    lum = rgba[..., :3] @ np.array([0.2126, 0.7152, 0.0722], dtype=np.float32)
+    # Rows run bottom-up in Blender: +v is +row, the OpenGL tangent convention glTF uses.
+    k = 6.0
+    du = (np.roll(lum, -1, 1) - np.roll(lum, 1, 1)) * 0.5
+    dv = (np.roll(lum, -1, 0) - np.roll(lum, 1, 0)) * 0.5
+    n = np.dstack([-du * k, -dv * k, np.ones_like(lum)])
+    n /= np.linalg.norm(n, axis=2, keepdims=True)
+    nimg = bpy.data.images.new("rug_normal", w, h, alpha=False)
+    nimg.colorspace_settings.name = "Non-Color"
+    nimg.pixels[:] = np.dstack([n * 0.5 + 0.5, np.ones_like(lum)]).astype(np.float32).ravel()
+    nimg.pack()
+    img.pack()
+
+    m = bpy.data.materials.new("rug")
+    m.use_nodes = True
+    nt = m.node_tree
+    bsdf = next(nd for nd in nt.nodes if nd.type == "BSDF_PRINCIPLED")
+    tex = nt.nodes.new("ShaderNodeTexImage"); tex.image = img
+    ntex = nt.nodes.new("ShaderNodeTexImage"); ntex.image = nimg
+    nmap = nt.nodes.new("ShaderNodeNormalMap")
+    nt.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+    nt.links.new(ntex.outputs["Color"], nmap.inputs["Color"])
+    nt.links.new(nmap.outputs["Normal"], bsdf.inputs["Normal"])
+    bsdf.inputs["Roughness"].default_value = 1.0
+    bsdf.inputs["Specular IOR Level"].default_value = 0.1
+    # No sheen: seen at the camera's grazing angle it turns the wool white, and the app's tint
+    # (baseColorFactor) cannot reach it.
+
+    # Blender is Z-up: glTF (x, y, z) = Blender (x, z, -y). Top face carries the photo; the
+    # thin sides reuse its edge pixels.
+    hx, hz, t = RUG_W / 2, RUG_D / 2, RUG_T
+    verts = [(-hx, -hz, 0), (hx, -hz, 0), (hx, hz, 0), (-hx, hz, 0),
+             (-hx, -hz, t), (hx, -hz, t), (hx, hz, t), (-hx, hz, t)]
+    faces = [(4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)]
+    me = bpy.data.meshes.new("rug")
+    me.from_pydata(verts, [], faces)
+    uv = me.uv_layers.new(name="UVMap")
+    for poly in me.polygons:
+        for li in poly.loop_indices:
+            x, y, _ = verts[me.loops[li].vertex_index]
+            uv.data[li].uv = ((x + hx) / RUG_W, (y + hz) / RUG_D)
+    me.materials.append(m)
+    me.update()
+    ob = bpy.data.objects.new("rug", me)
+    bpy.context.scene.collection.objects.link(ob)
+    path = os.path.join(out, "rug.glb")
+    for o in bpy.context.scene.objects:
+        o.select_set(o is ob)
+    kw = dict(filepath=path, export_format="GLB", use_selection=True, export_yup=True, export_apply=True,
+              export_texcoords=True, export_normals=True, export_tangents=True, export_materials="EXPORT",
+              export_cameras=False, export_lights=False, export_animations=False, export_extras=False,
+              export_skins=False, export_morph=False, export_image_format="JPEG")
+    try:
+        bpy.ops.export_scene.gltf(**kw, export_image_quality=82)
+    except TypeError:
+        bpy.ops.export_scene.gltf(**kw)
+    print(f"[rug] {path} {os.path.getsize(path) / 1024:.1f} KB  {w}x{h} texture + normal map")
+    return path
+
+
 def floor_preview(floor_glb, sofa_glb, png):
     clear_scene()
     bpy.ops.import_scene.gltf(filepath=floor_glb)
@@ -895,7 +970,7 @@ def material_report(path):
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     out = "app/src/main/assets/models"
-    only, preview, floor, thumbs = ORDER, True, False, None
+    only, preview, floor, thumbs, rug_image = ORDER, True, False, None, None
     i = 0
     while i < len(argv):
         if argv[i] == "--out":
@@ -906,6 +981,8 @@ def main():
             preview = False
         elif argv[i] == "--floor":
             floor = True
+        elif argv[i] == "--rug":
+            rug_image = argv[i + 1]; i += 1
         elif argv[i] == "--thumbs":
             thumbs = argv[i + 1]; i += 1
         i += 1
@@ -934,6 +1011,8 @@ def main():
         print(f"\n{r['name']} extensionsUsed {used}")
         for line in mats:
             print("  " + line)
+    if rug_image:
+        build_rug(rug_image, out)
     if floor:
         paths = build_floor(out)
         for p in paths:
