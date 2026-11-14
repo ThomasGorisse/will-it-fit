@@ -6,7 +6,7 @@ feature-graphic.png is 1024×500 RGB; made with the built-in image generation to
 
 Phone screenshots (`screenshots/phone/<locale>/1-sofa.jpg`…`5-dark.jpg`, 1280×2560, 2:1, cm): one
 series per locale with the app UI in that language (en-US uses the en-GB UI, for centimetres), taken
-on the Pixel 7a emulator on 2026-11-14 from build `2041529` + tighter door framing, status bar in
+on the Pixel 7a emulator on 2026-11-14 from build `caabb3e`, status bar in
 demo mode (9:41). Still missing: an AR shot on a real phone.
 
 ### Framed screenshots (local only; do not upload)
