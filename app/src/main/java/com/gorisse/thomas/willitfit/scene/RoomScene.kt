@@ -1,6 +1,7 @@
 package com.gorisse.thomas.willitfit.scene
 
 import androidx.compose.runtime.key
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.LocalContext
 import io.github.sceneview.rememberModelInstance
 import android.view.MotionEvent
@@ -135,7 +136,12 @@ fun RoomScene(
     // sits left of centre and its depth and height tags keep the room on the right.
     val ow = dims.widthCm / 100f; val od = dims.depthCm / 100f; val oh = dims.heightCm / 100f
     val seen = max(0.91f * ow + 0.41f * od, oh + 0.27f * od + 0.3f)
-    val dist = 1.2f * seen + 0.5f * od + 0.9f
+    // Taller, narrower phones (a Pixel 4a or 9, about 2.2:1) see less width than a 2:1 screen,
+    // so the camera steps back in proportion and the object and its tags keep their margins.
+    // The whole window, edge to edge: screenHeightDp leaves the system bars out and reads 2:1.
+    val window = LocalWindowInfo.current.containerSize
+    val narrow = (window.height.toFloat() / window.width.coerceAtLeast(1)).coerceIn(2f, 2.6f) / 2f
+    val dist = (1.2f * seen + 0.5f * od + 0.9f) * narrow
     val target = Position(0.08f * seen, oh * 0.5f, objZ)
     val dir = Triple(0.45f, 0.3f, 1f).let { (x, y, z) ->
         val n = sqrt(x * x + y * y + z * z); Triple(x / n, y / n, z / n)
