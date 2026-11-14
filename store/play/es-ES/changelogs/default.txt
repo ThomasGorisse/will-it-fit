@@ -1,0 +1,2 @@
+Novedades de la versión 3.0
+Rediseñada desde cero: elige un objeto con medidas habituales o introduce las tuyas en cm o pulgadas. Habitación en 3D, vista en RA a tamaño real con escala fija y fotos con medidas para compartir. Comprueba una puerta con resultado, margen y posición de transporte animada. Totalmente gratis, sin anuncios ni cuenta. Funciona sin conexión; la habitación en 3D y la comprobación de puertas también funcionan sin RA.

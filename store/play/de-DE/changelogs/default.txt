@@ -1,0 +1,2 @@
+Neu in Version 3.0
+Von Grund auf neu entwickelt: Wähle einen Gegenstand mit üblichen Maßen oder gib eigene Maße in cm oder Zoll ein. Interaktiver 3D-Raum, AR-Vorschau in Originalgröße mit festem Maßstab und Fotos mit Maßen zum Teilen. Türcheck mit Ergebnis, verbleibendem Platz und animierter Trageposition. Komplett kostenlos, ohne Werbung und Konto. Funktioniert offline; 3D-Raum und Türcheck gehen auch ohne AR.

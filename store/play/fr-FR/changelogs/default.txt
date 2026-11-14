@@ -1,0 +1,2 @@
+Les nouveautés de la version 3.0
+Tout a été reconstruit : choisissez un objet aux dimensions courantes ou saisissez les vôtres en cm ou en pouces. Pièce en 3D, aperçu en AR à taille réelle et échelle verrouillée, photo avec les cotes à partager. Testez une porte avec verdict, marge et position de transport animée. Entièrement gratuit, sans publicité ni compte. Fonctionne hors ligne ; la pièce en 3D et le test de porte fonctionnent aussi sans AR.
