@@ -176,6 +176,15 @@ fun HomeScreen(
                         onClick = onDoor,
                         enabled = dims.isValid && fieldsValid,
                         modifier = Modifier.fillMaxWidth().height(buttonHeight),
+                        // In the evening a solid deep teal, as in the target, not a grey-teal tone.
+                        colors = if (dark) {
+                            ButtonDefaults.filledTonalButtonColors(
+                                containerColor = scheme.primaryContainer,
+                                contentColor = scheme.onPrimaryContainer,
+                            )
+                        } else {
+                            ButtonDefaults.filledTonalButtonColors()
+                        },
                     ) {
                         Icon(Icons.Outlined.DoorFront, null, Modifier.size(ButtonDefaults.IconSize))
                         Spacer(Modifier.width(ButtonDefaults.IconSpacing))

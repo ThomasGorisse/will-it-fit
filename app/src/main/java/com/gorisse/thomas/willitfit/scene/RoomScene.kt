@@ -38,6 +38,12 @@ import io.github.sceneview.math.Size
 import io.github.sceneview.rememberCameraManipulator
 import io.github.sceneview.rememberCameraNode
 import io.github.sceneview.rememberEngine
+import io.github.sceneview.rememberEnvironment
+import io.github.sceneview.rememberEnvironmentLoader
+import io.github.sceneview.rememberFillLightNode
+import io.github.sceneview.rememberView
+import io.github.sceneview.DEFAULT_FILL_LIGHT_INTENSITY
+import com.google.android.filament.Colors
 import io.github.sceneview.rememberMainLightNode
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
@@ -154,22 +160,38 @@ fun RoomScene(
     val manipulator = rememberCameraManipulator(orbitHomePosition = eye, targetPosition = target)
     val cameraNode = rememberCameraNode(engine)
 
+    // Evening: the lamp is the light. The sky's ambient (IBL) and the fill light drop low, so the
+    // room falls dark towards its edges around the lamp's warm pool, as in the target.
+    val view = rememberView(engine)
+    val environmentLoader = rememberEnvironmentLoader(engine)
+    val environment = rememberEnvironment(environmentLoader)
+    val dayIbl = remember(environment) { environment.indirectLight?.intensity ?: 30_000f }
+    SideEffect { environment.indirectLight?.intensity = if (palette.isNight) dayIbl * 0.45f else dayIbl }
+
     SceneView(
         modifier = modifier,
         engine = engine,
         modelLoader = modelLoader,
         materialLoader = materialLoader,
+        environmentLoader = environmentLoader,
+        view = view,
+        environment = environment,
+        fillLightNode = rememberFillLightNode(engine) {
+            intensity = if (palette.isNight) 600f else DEFAULT_FILL_LIGHT_INTENSITY
+        },
         autoCenterContent = false,
         contentPadding = contentPadding,
         cameraNode = cameraNode,
         cameraManipulator = manipulator,
         mainLightNode = rememberMainLightNode(engine) {
-            intensity = if (palette.isNight) 28_000f else 80_000f
+            intensity = if (palette.isNight) 12_000f else 80_000f
             // Evening light is the lamp's: warm, like the target's dark picture.
             if (palette.isNight) color = io.github.sceneview.math.Color(1f, 0.85f, 0.68f, 1f)
             // Low afternoon sun from the window side: the object throws a real shadow sideways
             // onto the floor, as in the target picture, instead of straight down under itself.
-            lightDirection = Direction(-0.6f, -0.72f, -0.18f)
+            // It comes partly from the front too: grazing the fronts edge-on (z -0.18), it left
+            // them dark and hatched with shadow acne.
+            lightDirection = Direction(-0.55f, -0.7f, -0.45f)
             // A finer shadow map kept to the room: at the default 1024 over the whole view, a
             // wardrobe's own frame laid a jagged streak down its door.
             engine.lightManager.let { lm ->
@@ -184,8 +206,9 @@ fun RoomScene(
     ) {
         Node(rotation = Rotation(y = sway), position = Position(0f, 0f, objZ)) {
             Node(position = Position(0f, 0f, -objZ)) {
-                // The floor lamp stands just right of the object, whatever its width.
-                Room(palette, lampX = shown.widthCm / 200f + 0.32f)
+                // The floor lamp stands just right of the object, whatever its width, and stays
+                // whole in the frame.
+                Room(palette, lampX = shown.widthCm / 200f + 0.16f)
             }
             val look = rememberFurnitureLook(accent)
             Node(scale = Scale(pop.value)) {
@@ -200,6 +223,12 @@ fun RoomScene(
             )
         }
     }
+    // After SceneView, so its render-quality preset (applied once) does not undo it: a little
+    // more bloom in the evening, for the lamp's halo. No vignette: the view's centre sits under
+    // the sheet, so a screen vignette darkens the whole visible room, not its edges.
+    LaunchedEffect(view, palette.isNight) {
+        view.bloomOptions = view.bloomOptions.apply { strength = if (palette.isNight) 0.2f else 0.1f }
+    }
 }
 
 @Composable
@@ -209,6 +238,10 @@ private fun SceneScope.Room(p: RoomPalette, lampX: Float) {
     val skirting = remember(materialLoader) { materialLoader.createColorInstance(p.skirting, roughness = 0.6f) }
     val window = remember(materialLoader) { materialLoader.createUnlitColorInstance(p.window) }
     val lamp = remember(materialLoader) { materialLoader.createUnlitColorInstance(p.lamp) }
+    // Brighter than white (linear HDR): the bloom turns the lit shade into a glow.
+    val glow = remember(materialLoader) { materialLoader.createUnlitColorInstance(Color(0xFFFFF1DA)) }
+    val halo = remember(materialLoader) { materialLoader.createUnlitColorInstance(Color(0x1FFFC98A)) }
+    val haloWide = remember(materialLoader) { materialLoader.createUnlitColorInstance(Color(0x0FFFB870)) }
     val shade = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFF3ECE2), roughness = 0.9f) }
     val bronze = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFF4A4038), metallic = 0.4f, roughness = 0.5f) }
     val curtain = remember(materialLoader) { materialLoader.createColorInstance(p.curtain, roughness = 1f) }
@@ -216,6 +249,7 @@ private fun SceneScope.Room(p: RoomPalette, lampX: Float) {
     SideEffect {
         wall.setColor(p.wall); floor.setColor(p.floor); skirting.setColor(p.skirting)
         window.setColor(p.window); lamp.setColor(p.lamp); curtain.setColor(p.curtain)
+        glow.setParameter("color", Colors.RgbaType.LINEAR, 4f, 3.3f, 2.4f, 1f)
     }
     val cx = LEFT_WALL_X + ROOM_WIDTH / 2f
     val cz = BACK_WALL_Z + ROOM_DEPTH / 2f
@@ -288,19 +322,33 @@ private fun SceneScope.Room(p: RoomPalette, lampX: Float) {
     // throwing a pool of light on the floor next to the object, as in the target.
     val lampZ = BACK_WALL_Z + 0.32f
     CylinderNode(radius = 0.14f, height = 0.02f, position = Position(lampX, 0.011f, lampZ), materialInstance = bronze, apply = { isShadowCaster = true })
-    CylinderNode(radius = 0.012f, height = 1.4f, position = Position(lampX, 0.72f, lampZ), materialInstance = bronze, apply = { isShadowCaster = true })
+    CylinderNode(radius = 0.012f, height = 1.28f, position = Position(lampX, 0.66f, lampZ), materialInstance = bronze, apply = { isShadowCaster = true })
     CylinderNode(
-        radius = 0.2f, height = 0.3f, position = Position(lampX, 1.52f, lampZ),
+        radius = 0.15f, height = 0.24f, position = Position(lampX, 1.42f, lampZ),
         // The shade casts no shadow: the low sun would lay it as a dark blotch across the object.
-        materialInstance = if (p.isNight) lamp else shade, apply = { isShadowCaster = false },
+        materialInstance = if (p.isNight) glow else shade, apply = { isShadowCaster = false },
     )
     if (p.isNight) {
+        // A soft halo round the lit shade, then the light itself just under it: a warm pool on
+        // the floor, the wall behind and the object's near side, raking across the velvet.
+        SphereNode(radius = 0.24f, position = Position(lampX, 1.42f, lampZ), materialInstance = halo, apply = { isShadowCaster = false; isShadowReceiver = false })
+        SphereNode(radius = 0.36f, position = Position(lampX, 1.42f, lampZ), materialInstance = haloWide, apply = { isShadowCaster = false; isShadowReceiver = false })
         LightNode(
             type = LightManager.Type.POINT,
-            intensity = 110_000f,
-            position = Position(lampX, 1.3f, lampZ + 0.15f),
+            intensity = 300_000f,
+            position = Position(lampX, 1.22f, lampZ + 0.12f),
             color = io.github.sceneview.math.Color(1f, 0.78f, 0.52f, 1f),
-            apply = { falloff(4.5f) },
+            apply = { falloff(3.8f) },
+        )
+        // And a cone from the shade down and forward: the warm pool on the floor in front of
+        // the object's near end, where the camera sees it (the lamp's own foot is behind it).
+        LightNode(
+            type = LightManager.Type.SPOT,
+            intensity = 220_000f,
+            position = Position(lampX, 1.3f, lampZ + 0.05f),
+            direction = Direction(-0.2f, -1f, 0.7f),
+            color = io.github.sceneview.math.Color(1f, 0.76f, 0.5f, 1f),
+            apply = { falloff(4f); spotLightCone(0.35f, 0.95f) },
         )
     }
 }
