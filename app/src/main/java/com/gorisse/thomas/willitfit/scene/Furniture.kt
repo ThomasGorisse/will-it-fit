@@ -472,6 +472,8 @@ fun SceneScope.DimensionMarks(
     val line = remember(materialLoader) { materialLoader.createUnlitColorInstance(lineColor) }
     SideEffect { line.setColor(lineColor) }
     val fixed: NodeImpl.() -> Unit = { if (selectable) makeFixedSelectable() }
+    // Marks are read, not lit: a tag over a wardrobe laid its shadow on the door in the sun.
+    val tag: io.github.sceneview.node.TextNode.() -> Unit = { fixed(); isShadowCaster = false }
     val front = d / 2f + off
     val right = w / 2f + off
     val tick = 0.06f
@@ -493,20 +495,20 @@ fun SceneScope.DimensionMarks(
     TextNode(
         text = formatLength(dims.widthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
         widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing,
-        position = Position(0f, lh * labelScale / 2f + 0.03f, front + 0.02f), apply = fixed,
+        position = Position(0f, lh * labelScale / 2f + 0.03f, front + 0.02f), apply = tag,
     )
     // Outside the depth line by half a tag, so the object never hides it.
     Node(position = Position(right + 0.03f + lw * labelScale / 2f, lh * labelScale / 2f + 0.03f, 0f), rotation = Rotation(y = 90f)) {
         TextNode(
             text = formatLength(dims.depthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
-            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = fixed,
+            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
         )
     }
     // Above the top of the height line, clear of the depth tag on the floor below it.
     Node(position = Position(right + 0.02f, h + lh * labelScale / 2f + 0.04f, front + 0.02f), rotation = Rotation(y = 45f)) {
         TextNode(
             text = formatLength(dims.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
-            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = fixed,
+            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
         )
     }
 }
