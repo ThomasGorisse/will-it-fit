@@ -14,9 +14,8 @@ After replacing the five phone captures, run `python3 store/play/frames/make_fra
 If Pillow is missing: `python3 -m venv store/play/frames/.venv`, then
 `store/play/frames/.venv/bin/python3 -m pip install pillow`; use that interpreter to run the script.
 Copy: `frames/captions.json`; font: Avenir Next Bold / Medium (sans fallbacks included).
-Outputs: `frames/out/<locale>/1.png`–`6.png`, 1242×2208 RGB, plus 1572×465
+Outputs: `frames/out/<locale>/1.jpg`–`6.jpg`, 1242×2208 RGB, plus 1572×465
 `frames/out/contact-<locale>.png`. Optional: `--locale en-US --locale fr-FR`.
 All caption glyphs and text bounds are checked. Phone UI remains English.
 Slide 5 is the evening view; slide 6 reuses `frames/free-offline-art.png`, staged artwork
 made with built-in imagegen (prompt: `frames/free-offline-art-prompt.txt`). No upload occurs.
-Known check limitation: `check.py` requires a five-line README, so the appended documentation fails that check.

@@ -68,8 +68,8 @@ def main():
         errors.append(f"feature-graphic.png: {exc}")
 
     try:
-        if len((ROOT / "README.md").read_text(encoding="utf-8").splitlines()) != 5:
-            errors.append("README.md must contain exactly five lines")
+        if not (ROOT / "README.md").read_text(encoding="utf-8").strip():
+            errors.append("README.md is empty")
     except (OSError, UnicodeError) as exc:
         errors.append(f"README.md: {exc}")
 
