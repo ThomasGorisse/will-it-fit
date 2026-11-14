@@ -472,21 +472,23 @@ fun SceneScope.DimensionMarks(
     val line = remember(materialLoader) { materialLoader.createUnlitColorInstance(lineColor) }
     SideEffect { line.setColor(lineColor) }
     val fixed: NodeImpl.() -> Unit = { if (selectable) makeFixedSelectable() }
-    // Marks are read, not lit: a tag over a wardrobe laid its shadow on the door in the sun.
+    // Marks are read, not lit: the height line and its top tick laid a blurred grey L on a
+    // wardrobe's door in the sun. Neither the lines nor the tags cast a shadow.
     val tag: io.github.sceneview.node.TextNode.() -> Unit = { fixed(); isShadowCaster = false }
+    val mark: io.github.sceneview.node.CubeNode.() -> Unit = { fixed(); isShadowCaster = false }
     val front = d / 2f + off
     val right = w / 2f + off
     val tick = 0.06f
     // Width, along the floor in front.
-    CubeNode(size = Size(w, t, t), position = Position(0f, t / 2f, front), materialInstance = line, apply = fixed)
-    CubeNode(size = Size(t, tick, t), position = Position(-w / 2f, tick / 2f, front), materialInstance = line, apply = fixed)
-    CubeNode(size = Size(t, tick, t), position = Position(w / 2f, tick / 2f, front), materialInstance = line, apply = fixed)
+    CubeNode(size = Size(w, t, t), position = Position(0f, t / 2f, front), materialInstance = line, apply = mark)
+    CubeNode(size = Size(t, tick, t), position = Position(-w / 2f, tick / 2f, front), materialInstance = line, apply = mark)
+    CubeNode(size = Size(t, tick, t), position = Position(w / 2f, tick / 2f, front), materialInstance = line, apply = mark)
     // Depth, along the floor on the right.
-    CubeNode(size = Size(t, t, d), position = Position(right, t / 2f, 0f), materialInstance = line, apply = fixed)
-    CubeNode(size = Size(t, tick, t), position = Position(right, tick / 2f, -d / 2f), materialInstance = line, apply = fixed)
+    CubeNode(size = Size(t, t, d), position = Position(right, t / 2f, 0f), materialInstance = line, apply = mark)
+    CubeNode(size = Size(t, tick, t), position = Position(right, tick / 2f, -d / 2f), materialInstance = line, apply = mark)
     // Height, up the right-front corner.
-    CubeNode(size = Size(t, h, t), position = Position(right, h / 2f, front), materialInstance = line, apply = fixed)
-    CubeNode(size = Size(tick, t, t), position = Position(right, h, front), materialInstance = line, apply = fixed)
+    CubeNode(size = Size(t, h, t), position = Position(right, h / 2f, front), materialInstance = line, apply = mark)
+    CubeNode(size = Size(tick, t, t), position = Position(right, h, front), materialInstance = line, apply = mark)
 
     // Tags in the 4:1 bitmap TextNode draws (512 × 128 px), the figure filling most of it.
     val lw = 0.34f; val lh = 0.085f; val font = 82f
