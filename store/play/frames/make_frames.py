@@ -232,11 +232,13 @@ def main():
     captions = json.loads((ROOT / "captions.json").read_text(encoding="utf-8"))
     validate_captions(captions)
     print("Fonts:", font("bold", 100).getname(), "/", font("regular", 40).getname())
-    # Load all six sources before writing. Source captures and generated art stay untouched.
-    bases = [phone_slide(i, phone(CAPTURES / f"{slide}.jpg"))
-             for i, slide in enumerate(SLIDES[:5], 1)] + [art_slide()]
+    # Each locale frames its own captures, so the phone speaks the caption's language.
+    # Source captures and generated art stay untouched.
+    art = art_slide()
     locales = tuple(dict.fromkeys(args.locale or LOCALES))
     for locale in locales:
+        bases = [phone_slide(i, phone(CAPTURES / locale / f"{slide}.jpg"))
+                 for i, slide in enumerate(SLIDES[:5], 1)] + [art]
         for index, (slide, base) in enumerate(zip(SLIDES, bases), 1):
             canvas = base.copy()
             add_copy(canvas, captions[locale][slide], index)

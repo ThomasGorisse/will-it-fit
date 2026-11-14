@@ -127,10 +127,14 @@ fun RoomScene(
     val objZ = BACK_WALL_Z + WALL_T / 2f + 0.04f + dims.depthCm / 200f
     val size = max(dims.widthCm, max(dims.depthCm, dims.heightCm)) / 100f
     // Near eye level and three-quarter front, like the product shot of the target picture.
-    // Close enough that the object fills most of the width; aimed a little right of it, so the
-    // object sits left of centre and its depth and height tags keep the room on the right.
-    val dist = 1.3f * size + 1.3f
-    val target = Position(0.1f * size, dims.heightCm / 100f * 0.45f, objZ)
+    // Framed on what the camera actually sees: the width and depth as they turn towards it, or
+    // the height with its tag on top, whichever is larger; deep objects (a bed) come nearer the
+    // lens at the front, so they stand further back. Aimed a little right of the object, so it
+    // sits left of centre and its depth and height tags keep the room on the right.
+    val ow = dims.widthCm / 100f; val od = dims.depthCm / 100f; val oh = dims.heightCm / 100f
+    val seen = max(0.91f * ow + 0.41f * od, oh + 0.27f * od + 0.3f)
+    val dist = 1.2f * seen + 0.5f * od + 0.9f
+    val target = Position(0.08f * seen, oh * 0.5f, objZ)
     val dir = Triple(0.45f, 0.3f, 1f).let { (x, y, z) ->
         val n = sqrt(x * x + y * y + z * z); Triple(x / n, y / n, z / n)
     }

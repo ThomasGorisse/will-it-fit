@@ -86,13 +86,13 @@ fun DoorScene(
     val z = if (verdict.fits) startZ + (endZ - startZ) * progress
     else startZ + (contactZ - startZ) * (progress / stopAt)
 
-    // Far enough back to hold the whole doorway and the object's whole path in view, from the
-    // front-right and a little above, aimed at the opening itself.
+    // Close on the doorway, from the front-right and a little above: the doorway and the object
+    // in it fill the view, which is the answer to the question; the approach may run off-frame.
     val size = max(max(dw, dh), max(max(across, up), along))
-    val dist = 1.5f * size + 3.2f
+    val dist = 1.0f * size + 1.2f
     val manipulator = rememberCameraManipulator(
-        orbitHomePosition = Position(dist * 0.55f, dh * 0.5f + dist * 0.32f, dist * 0.8f),
-        targetPosition = Position(0f, dh * 0.45f, 0.35f),
+        orbitHomePosition = Position(dist * 0.5f, dh * 0.5f + dist * 0.25f, 0.35f + dist * 0.83f),
+        targetPosition = Position(0f, dh * 0.5f, 0.35f),
     )
     SceneView(
         modifier = modifier,
