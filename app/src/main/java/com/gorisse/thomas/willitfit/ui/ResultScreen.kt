@@ -35,14 +35,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
+import com.gorisse.thomas.willitfit.capture.STORE_LINK
 import com.gorisse.thomas.willitfit.capture.sharePhoto
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.formatDimensions
 import java.io.File
-
-/** Where the photo's recipient finds the app: the store page of the release build, whatever build shares. */
-private const val STORE_LINK = "https://play.google.com/store/apps/details?id=com.gorisse.thomas.willitfit"
 
 /**
  * Screen 3, "Result": the photo with its dimensions written on it, ready to send. The message

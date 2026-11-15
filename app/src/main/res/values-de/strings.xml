@@ -49,6 +49,8 @@
     <string name="door_no">Nein, das passt nicht durch</string>
     <string name="door_margin_spare">%1$s Luft</string>
     <string name="door_margin_over">%1$s zu groß</string>
+    <string name="door_share">Antwort teilen</string>
+    <string name="photo_door">Tür · %1$s</string>
     <string name="door_sofa_hint">Sofas passen oft nach hinten gekippt, Füße voran: die Sitzfläche braucht weniger Platz als diese Box. Schraub auch die Füße ab.</string>
     <string name="carry_upright">aufrecht, zur Tür gewandt</string>
     <string name="carry_upright_sideways">aufrecht, seitlich</string>

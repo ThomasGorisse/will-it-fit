@@ -42,7 +42,7 @@ class PhotoCardTest {
             for (preset in listOf(Preset.SOFA_3, Preset.WARDROBE)) {
                 val title = res.getString(if (preset == Preset.SOFA_3) R.string.preset_sofa3 else R.string.preset_wardrobe)
                 val caption = res.getString(R.string.ar_real_size, formatDimensions(preset.dimensions, unit))
-                val file = savePhoto(res, standIn(), title, caption, res.getString(R.string.photo_signature))
+                val file = savePhoto(res, standIn(), title, listOf(caption), res.getString(R.string.photo_signature))
                 val photo = BitmapFactory.decodeFile(file.path)
                 assertEquals(1080, photo.width)
                 // The card's dark ground sits where the floor was light.
@@ -50,6 +50,17 @@ class PhotoCardTest {
                 assertTrue("no card at the bottom ($tag)", android.graphics.Color.luminance(ground) < 0.1f)
                 file.copyTo(File(keep, "$tag-${preset.name.lowercase()}.jpg"), overwrite = true)
             }
+            // The door's answer: a coloured title and three lines, the longest card there is.
+            val door = savePhoto(
+                res, standIn(), res.getString(R.string.door_no),
+                listOf(
+                    res.getString(R.string.door_object, res.getString(R.string.preset_wardrobe), formatDimensions(Preset.WARDROBE.dimensions, unit)),
+                    res.getString(R.string.photo_door, "78 × 200 ${unit.symbol}"),
+                    res.getString(R.string.door_margin_over, "3 ${unit.symbol}") + " · " + res.getString(R.string.carry_on_back_sideways),
+                ),
+                res.getString(R.string.photo_signature), 0xFFFFB4AB.toInt(),
+            )
+            door.copyTo(File(keep, "$tag-door.jpg"), overwrite = true)
         }
     }
 

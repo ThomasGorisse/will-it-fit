@@ -1,5 +1,6 @@
 package com.gorisse.thomas.willitfit.ui
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,14 +33,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
+import com.gorisse.thomas.willitfit.capture.STORE_LINK
+import com.gorisse.thomas.willitfit.capture.captureScene
+import com.gorisse.thomas.willitfit.capture.savePhoto
+import com.gorisse.thomas.willitfit.capture.sharePhoto
 import com.gorisse.thomas.willitfit.scene.FurnitureTeal
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
@@ -47,14 +55,18 @@ import com.gorisse.thomas.willitfit.fit.Shape
 import com.gorisse.thomas.willitfit.fit.checkDoor
 import com.gorisse.thomas.willitfit.fit.formatDimensions
 import com.gorisse.thomas.willitfit.fit.formatLength
+import com.gorisse.thomas.willitfit.fit.formatNumber
 import com.gorisse.thomas.willitfit.fit.shape
 import com.gorisse.thomas.willitfit.scene.DoorScene
 import com.gorisse.thomas.willitfit.scene.RoomPalette
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 /**
  * Screen 4, "Through the door?". No camera: the door's opening, and the answer — yes or no, by
- * how much, and which way to carry it — acted out in 3D above.
+ * how much, and which way to carry it — acted out in 3D above. Share sends that answer as a
+ * picture: the scene held on the doorway, with the answer written on it.
  */
 @Composable
 fun DoorScreen(
@@ -70,6 +82,28 @@ fun DoorScreen(
     val density = LocalDensity.current
     var sheetPx by remember { mutableIntStateOf(0) }
     var fieldsValid by remember { mutableStateOf(true) }
+    var holding by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val answer = stringResource(
+        when {
+            !verdict.fits -> R.string.door_no
+            verdict.isTight -> R.string.door_tight
+            else -> R.string.door_yes
+        },
+    )
+    val margin = stringResource(
+        if (verdict.fits) R.string.door_margin_spare else R.string.door_margin_over,
+        formatLength(abs(verdict.marginCm), unit),
+    ) + " · " + stringResource(verdict.carry.label())
+    val objectLine = stringResource(R.string.door_object, objectName(dims), formatDimensions(dims, unit))
+    val doorLine = stringResource(
+        R.string.photo_door, "${formatNumber(door.widthCm, unit)} × ${formatNumber(door.heightCm, unit)} ${unit.symbol}",
+    )
+    val signature = stringResource(R.string.photo_signature)
+    val chooser = stringResource(R.string.share_chooser)
+
     Box(Modifier.fillMaxSize().imePadding()) {
         DoorScene(
             dims = dims, door = door, verdict = verdict,
@@ -77,11 +111,35 @@ fun DoorScreen(
             palette = if (dark) RoomPalette.Night else RoomPalette.Day,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp)),
+            hold = holding,
         )
         FilledTonalIconButton(
             onClick = onBack,
             modifier = Modifier.statusBarsPadding().padding(12.dp).size(48.dp),
         ) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, stringResource(R.string.action_back)) }
+        if (fieldsValid) FilledTonalIconButton(
+            onClick = {
+                val activity = context as? Activity ?: return@FilledTonalIconButton
+                if (holding) return@FilledTonalIconButton
+                scope.launch {
+                    // Hold the object on the answer and let the scene draw it before reading it back.
+                    holding = true
+                    delay(250)
+                    val bitmap = captureScene(activity)
+                    holding = false
+                    if (bitmap != null) {
+                        val color = when {
+                            !verdict.fits -> 0xFFFFB4AB // the dark scheme's error
+                            verdict.isTight -> 0xFFF2C46D
+                            else -> 0xFF8DD99A // FitColors.success, dark
+                        }.toInt()
+                        val file = savePhoto(context, bitmap, answer, listOf(objectLine, doorLine, margin), signature, color)
+                        sharePhoto(context, file, chooser, "$answer · $margin\n$objectLine · $doorLine\n$STORE_LINK")
+                    }
+                }
+            },
+            modifier = Modifier.align(Alignment.TopEnd).statusBarsPadding().padding(12.dp).size(48.dp),
+        ) { Icon(Icons.Outlined.Share, stringResource(R.string.door_share)) }
 
         Surface(
             modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().onSizeChanged { sheetPx = it.height },

@@ -49,6 +49,8 @@
     <string name="door_no">No, non passa</string>
     <string name="door_margin_spare">%1$s di margine</string>
     <string name="door_margin_over">%1$s di troppo</string>
+    <string name="door_share">Condividi la risposta</string>
+    <string name="photo_door">Porta · %1$s</string>
     <string name="door_sofa_hint">Spesso un divano passa inclinato all\'indietro, piedi avanti: la seduta occupa meno di questa scatola. Togli anche i piedini.</string>
     <string name="carry_upright">in piedi, di fronte alla porta</string>
     <string name="carry_upright_sideways">in piedi, di lato</string>

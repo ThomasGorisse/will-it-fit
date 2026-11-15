@@ -49,6 +49,8 @@
     <string name="door_no">Non, ça ne passe pas</string>
     <string name="door_margin_spare">%1$s de marge</string>
     <string name="door_margin_over">%1$s de trop</string>
+    <string name="door_share">Partager la réponse</string>
+    <string name="photo_door">Porte · %1$s</string>
     <string name="door_sofa_hint">Un canapé passe souvent incliné sur le dos, pieds devant : l\'assise prend moins de place que cette boîte. Démontez aussi les pieds.</string>
     <string name="carry_upright">debout, face à la porte</string>
     <string name="carry_upright_sideways">debout, de profil</string>

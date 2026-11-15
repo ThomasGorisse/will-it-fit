@@ -33,6 +33,7 @@ import kotlin.math.max
 /**
  * A wall with the door opening, and the object carried towards it the way the verdict says.
  * When it fits it slides through and comes back; when it does not, it stops against the frame.
+ * [hold] stops it on that answer — in the doorway, or against the frame — for a picture.
  */
 @Composable
 fun DoorScene(
@@ -43,6 +44,7 @@ fun DoorScene(
     palette: RoomPalette,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
+    hold: Boolean = false,
 ) {
     val engine = rememberEngine()
     val modelLoader = rememberModelLoader(engine)
@@ -83,8 +85,10 @@ fun DoorScene(
     val startZ = along / 2f + 0.55f
     val endZ = -(along / 2f + 0.5f)
     val contactZ = WALL_THICKNESS / 2f + along / 2f + 0.005f
-    val z = if (verdict.fits) startZ + (endZ - startZ) * progress
-    else startZ + (contactZ - startZ) * (progress / stopAt)
+    // Held for a picture: the object in the doorway, or against the frame.
+    val at = if (hold) (if (verdict.fits) 0.5f else stopAt) else progress
+    val z = if (verdict.fits) startZ + (endZ - startZ) * at
+    else startZ + (contactZ - startZ) * (at / stopAt)
 
     // Close on the doorway, from the front-right and a little above: the doorway and the object
     // in it fill the view, which is the answer to the question; the approach may run off-frame.

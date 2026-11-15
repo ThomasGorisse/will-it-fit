@@ -56,6 +56,8 @@
     <string name="door_no">No, it won\'t go through</string>
     <string name="door_margin_spare">%1$s to spare</string>
     <string name="door_margin_over">%1$s too big</string>
+    <string name="door_share">Share the answer</string>
+    <string name="photo_door">Door · %1$s</string>
     <string name="door_sofa_hint">Sofas often pass tilted back, feet first: the seat takes less room than this box. Take its legs off too.</string>
     <string name="carry_upright">upright, facing the door</string>
     <string name="carry_upright_sideways">upright, turned sideways</string>

@@ -217,7 +217,7 @@ fun ArScreen(
                                 capturing = true
                                 val bitmap = captureScene(activity)
                                 capturing = false
-                                if (bitmap != null) onPhoto(savePhoto(context, bitmap, name, realSize, signature))
+                                if (bitmap != null) onPhoto(savePhoto(context, bitmap, name, listOf(realSize), signature))
                             }
                         },
                     )

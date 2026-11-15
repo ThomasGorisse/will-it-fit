@@ -49,15 +49,25 @@ private fun findSurfaceView(view: View): SurfaceView? {
     return null
 }
 
+/** Where whoever receives a picture finds the app: the release build's store page, whatever build shares. */
+const val STORE_LINK = "https://play.google.com/store/apps/details?id=com.gorisse.thomas.willitfit"
+
 /**
- * Writes the caption card on the photo (so it survives sharing) and saves it as a JPEG: the app
- * icon, what the object is, "Real size · W × D × H", and where the app comes from, for whoever
- * receives it.
+ * Writes the caption card on the picture (so it survives sharing) and saves it as a JPEG: the app
+ * icon, a title ("Sofa, 3 seats", or the door's answer in its colour), a line or three under it,
+ * and where the app comes from, for whoever receives it.
  */
-suspend fun savePhoto(context: Context, bitmap: Bitmap, title: String, caption: String, signature: String): File =
+suspend fun savePhoto(
+    context: Context,
+    bitmap: Bitmap,
+    title: String,
+    lines: List<String>,
+    signature: String,
+    titleColor: Int = 0xFFFFFFFF.toInt(),
+): File =
     withContext(Dispatchers.Default) {
         val out = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-        drawCaptionCard(context, Canvas(out), out.width.toFloat(), out.height.toFloat(), title, caption, signature)
+        drawCaptionCard(context, Canvas(out), out.width.toFloat(), out.height.toFloat(), title, titleColor, lines, signature)
         val dir = File(context.cacheDir, "photos").apply { mkdirs() }
         dir.listFiles()?.forEach { it.delete() } // keep only the latest photo
         val file = File(dir, "will-it-fit-${System.currentTimeMillis()}.jpg")
@@ -66,14 +76,18 @@ suspend fun savePhoto(context: Context, bitmap: Bitmap, title: String, caption: 
     }
 
 private fun drawCaptionCard(
-    context: Context, c: Canvas, w: Float, h: Float, title: String, caption: String, signature: String,
+    context: Context, c: Canvas, w: Float, h: Float,
+    title: String, titleColor: Int, lines: List<String>, signature: String,
 ) {
     val u = w / 100f // every size is in hundredths of the photo's width
     val margin = 4f * u
     val pad = 4f * u
     val iconSize = 13f * u
+    val lineStep = 5.2f * u
+    // The row is the icon's height, or the text's when it runs longer.
+    val rowHeight = maxOf(iconSize, 10.1f * u + (lines.size - 1).coerceAtLeast(0) * lineStep + 1.6f * u)
     val bottom = h - 9f * u // clear of the gesture bar
-    val card = RectF(margin, bottom - (pad + iconSize + 6.3f * u + 3.6f * u), w - margin, bottom)
+    val card = RectF(margin, bottom - (pad + rowHeight + 6.3f * u + 3.6f * u), w - margin, bottom)
     c.drawRoundRect(card, 5f * u, 5f * u, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xE6141218.toInt() })
 
     // The launcher icon as a launcher draws it: the middle two thirds of the adaptive foreground
@@ -94,13 +108,15 @@ private fun drawCaptionCard(
     val textLeft = icon.right + 3.5f * u
     val textWidth = card.right - pad - textLeft
     val titlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = 0xFFFFFFFF.toInt(); textSize = 5f * u; typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        color = titleColor; textSize = 5f * u; typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
     }
-    val captionPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xEBFFFFFF.toInt(); textSize = 3.9f * u }
     c.drawText(fit(title, titlePaint, textWidth), textLeft, icon.top + 4.4f * u, titlePaint)
-    c.drawText(fit(caption, captionPaint, textWidth), textLeft, icon.top + 10.1f * u, captionPaint)
+    lines.forEachIndexed { i, line ->
+        val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xEBFFFFFF.toInt(); textSize = 3.9f * u }
+        c.drawText(fit(line, paint, textWidth), textLeft, icon.top + 10.1f * u + i * lineStep, paint)
+    }
 
-    val rule = icon.bottom + 2.2f * u
+    val rule = icon.top + rowHeight + 2.2f * u
     c.drawRect(card.left + pad, rule, card.right - pad, rule + 0.15f * u, Paint().apply { color = 0x29FFFFFF })
     val signaturePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xFF9FE3E6.toInt(); textSize = 3.1f * u }
     c.drawText(fit(signature, signaturePaint, card.width() - 2 * pad), card.left + pad, rule + 4.4f * u, signaturePaint)

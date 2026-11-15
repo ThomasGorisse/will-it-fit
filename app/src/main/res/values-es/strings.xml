@@ -49,6 +49,8 @@
     <string name="door_no">No, no pasa</string>
     <string name="door_margin_spare">%1$s de margen</string>
     <string name="door_margin_over">%1$s de más</string>
+    <string name="door_share">Compartir la respuesta</string>
+    <string name="photo_door">Puerta · %1$s</string>
     <string name="door_sofa_hint">Un sofá suele pasar inclinado hacia atrás, patas primero: el asiento ocupa menos que esta caja. Quítale también las patas.</string>
     <string name="carry_upright">de pie, de frente a la puerta</string>
     <string name="carry_upright_sideways">de pie, de lado</string>
