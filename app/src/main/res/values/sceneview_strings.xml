@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SceneView's AR texts (coaching, camera and ARCore cards) ship in English only, and speak of a
+     "demo": the app gives them in its own words and languages. Same names, so these win. -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="sceneview_coaching_scan_surface_detail">Point it at the floor</string>
+    <string name="sceneview_camera_permission_body">The camera shows your room so the object can stand in it. Nothing is recorded or sent.</string>
+    <string name="sceneview_arcore_unsupported_body">This phone doesn\'t support ARCore. The door check still works.</string>
+    <string name="sceneview_arcore_not_installed_body">Install Google Play Services for AR to see the object in your room.</string>
+    <string name="sceneview_arcore_needs_update_body">The installed version is too old to see the object in your room.</string>
+</resources>

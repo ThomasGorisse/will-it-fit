@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SceneView's AR texts (coaching, camera and ARCore cards) ship in English only, and speak of a
+     "demo": the app gives them in its own words and languages. Same names, so these win. -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="sceneview_coaching_initializing" tools:ignore="ExtraTranslation">Preparando</string>
+    <string name="sceneview_coaching_initializing_detail" tools:ignore="ExtraTranslation">Sostén el móvil en alto y mira a tu alrededor</string>
+    <string name="sceneview_coaching_scan_surface" tools:ignore="ExtraTranslation">Mueve el móvil despacio</string>
+    <string name="sceneview_coaching_scan_surface_detail" tools:ignore="ExtraTranslation">Apúntalo al suelo</string>
+    <string name="sceneview_coaching_scan_lingering_detail" tools:ignore="ExtraTranslation">Prueba en un sitio con más luz y más textura</string>
+    <string name="sceneview_coaching_found_surface" tools:ignore="ExtraTranslation">Superficie encontrada</string>
+    <string name="sceneview_coaching_limited" tools:ignore="ExtraTranslation">Sigue mirando alrededor</string>
+    <string name="sceneview_coaching_limited_detail" tools:ignore="ExtraTranslation">Muévete despacio, en un sitio bien iluminado</string>
+    <string name="sceneview_coaching_relocalizing" tools:ignore="ExtraTranslation">Vuelve a apuntar a tu objeto</string>
+    <string name="sceneview_coaching_relocalizing_detail" tools:ignore="ExtraTranslation">Mira donde lo colocaste</string>
+    <string name="sceneview_coaching_hint_too_dark" tools:ignore="ExtraTranslation">Demasiado oscuro</string>
+    <string name="sceneview_coaching_hint_too_dark_action" tools:ignore="ExtraTranslation">Ve a un sitio con más luz</string>
+    <string name="sceneview_coaching_hint_too_fast" tools:ignore="ExtraTranslation">Demasiado rápido</string>
+    <string name="sceneview_coaching_hint_too_fast_action" tools:ignore="ExtraTranslation">Mueve el móvil más despacio</string>
+    <string name="sceneview_coaching_hint_low_detail" tools:ignore="ExtraTranslation">Poco detalle</string>
+    <string name="sceneview_coaching_hint_low_detail_action" tools:ignore="ExtraTranslation">Apunta a algo con más textura</string>
+    <string name="sceneview_camera_permission_title" tools:ignore="ExtraTranslation">Se necesita acceso a la cámara</string>
+    <string name="sceneview_camera_permission_body" tools:ignore="ExtraTranslation">La cámara muestra tu habitación para colocar el objeto. No se graba ni se envía nada.</string>
+    <string name="sceneview_camera_permission_body_settings" tools:ignore="ExtraTranslation">El acceso a la cámara está desactivado para esta app. Actívalo en Ajustes para iniciar la RA.</string>
+    <string name="sceneview_camera_permission_grant" tools:ignore="ExtraTranslation">Permitir la cámara</string>
+    <string name="sceneview_camera_permission_settings" tools:ignore="ExtraTranslation">Abrir Ajustes</string>
+    <string name="sceneview_arcore_unsupported_title" tools:ignore="ExtraTranslation">La RA no está disponible en este dispositivo</string>
+    <string name="sceneview_arcore_unsupported_body" tools:ignore="ExtraTranslation">Este móvil no es compatible con ARCore. La prueba de la puerta sí funciona.</string>
+    <string name="sceneview_arcore_not_installed_title" tools:ignore="ExtraTranslation">La RA necesita Servicios de Google Play para RA</string>
+    <string name="sceneview_arcore_not_installed_body" tools:ignore="ExtraTranslation">Instala Servicios de Google Play para RA para ver el objeto en tu casa.</string>
+    <string name="sceneview_arcore_install" tools:ignore="ExtraTranslation">Instalar</string>
+    <string name="sceneview_arcore_needs_update_title" tools:ignore="ExtraTranslation">Actualiza Servicios de Google Play para RA</string>
+    <string name="sceneview_arcore_needs_update_body" tools:ignore="ExtraTranslation">La versión instalada es demasiado antigua para ver el objeto en tu casa.</string>
+    <string name="sceneview_arcore_update" tools:ignore="ExtraTranslation">Actualizar</string>
+    <string name="sceneview_arcore_check_failed_title" tools:ignore="ExtraTranslation">No se pudo comprobar la compatibilidad con RA</string>
+    <string name="sceneview_arcore_check_failed_body" tools:ignore="ExtraTranslation">Falló la comprobación de Servicios de Google Play para RA. Revisa tu conexión y vuelve a intentarlo.</string>
+    <string name="sceneview_arcore_session_failed_title" tools:ignore="ExtraTranslation">No se pudo iniciar la RA</string>
+    <string name="sceneview_arcore_session_failed_body" tools:ignore="ExtraTranslation">La cámara está ocupada o la RA no pudo iniciarse. Cierra otras apps de cámara y vuelve a intentarlo.</string>
+    <string name="sceneview_arcore_retry" tools:ignore="ExtraTranslation">Reintentar</string>
+</resources>

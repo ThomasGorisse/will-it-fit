@@ -27,6 +27,13 @@
     <string name="ar_photo">Prendre une photo</string>
     <string name="ar_turn">Tourner d\'un quart</string>
     <string name="ar_reset">Replacer</string>
+    <string name="ar_no_floor_title">Le sol n\'est pas encore trouvé</string>
+    <string name="ar_no_floor_detail">Pointez le téléphone vers le sol et bougez-le lentement de gauche à droite. Une bonne lumière aide.</string>
+    <string name="ar_keep_looking">Continuer à chercher</string>
+    <string name="ar_lost_title">Repère perdu</string>
+    <string name="ar_lost_detail">Revenez vers l\'endroit où il était, ou replacez-le.</string>
+    <string name="ar_camera_title">La caméra n\'est pas disponible</string>
+    <string name="ar_camera_detail">Une autre app l\'utilise peut-être. Fermez-la, puis revenez.</string>
     <string name="result_title">Votre photo</string>
     <string name="result_missing">Impossible de lire la photo. Reprenez-la.</string>
     <string name="result_share">Partager</string>

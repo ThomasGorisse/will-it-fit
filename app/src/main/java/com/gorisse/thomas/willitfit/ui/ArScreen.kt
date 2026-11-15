@@ -5,12 +5,16 @@ import android.os.SystemClock
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -23,11 +27,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Rotate90DegreesCw
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -152,6 +159,29 @@ fun ArScreen(
                 Modifier.align(Alignment.BottomCenter).fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                // The states SceneView leaves to the app: no coaching runs then, so without a card
+                // the camera just sat there with greyed buttons after 10 s without a floor.
+                val card = when (state.phase) {
+                    PlacementPhase.NO_SURFACE -> ArCard.NO_FLOOR
+                    PlacementPhase.RECOVERY_FAILED -> ArCard.LOST
+                    PlacementPhase.CAMERA_ERROR -> ArCard.CAMERA
+                    else -> null
+                }
+                // Kept through the exit fade, so the card does not go blank while it leaves.
+                var shownCard by remember { mutableStateOf(ArCard.NO_FLOOR) }
+                if (card != null) shownCard = card
+                AnimatedVisibility(
+                    card != null,
+                    enter = fadeIn() + slideInVertically { it / 3 },
+                    exit = fadeOut(),
+                ) {
+                    StatusCard(
+                        card = shownCard,
+                        onKeepLooking = { state.keepScanning(SystemClock.uptimeMillis()) },
+                        onPlaceAgain = { state.resetPlacement(SystemClock.uptimeMillis()) },
+                        onBack = onBack,
+                    )
+                }
                 AnimatedVisibility(showHint && placed, enter = fadeIn(), exit = fadeOut()) {
                     Surface(
                         color = Color(0xCC141218), contentColor = Color.White, shape = RoundedCornerShape(12.dp),
@@ -191,6 +221,61 @@ fun ArScreen(
                         enabled = state.hasPlacement,
                         modifier = Modifier.size(56.dp),
                     ) { Icon(Icons.Outlined.Refresh, stringResource(R.string.ar_reset)) }
+                }
+            }
+        }
+    }
+}
+
+private enum class ArCard { NO_FLOOR, LOST, CAMERA }
+
+/** What went wrong, in one line and one hint, with the way on: above the bottom bar. */
+@Composable
+private fun StatusCard(card: ArCard, onKeepLooking: () -> Unit, onPlaceAgain: () -> Unit, onBack: () -> Unit) {
+    val (title, detail) = when (card) {
+        ArCard.NO_FLOOR -> R.string.ar_no_floor_title to R.string.ar_no_floor_detail
+        ArCard.LOST -> R.string.ar_lost_title to R.string.ar_lost_detail
+        ArCard.CAMERA -> R.string.ar_camera_title to R.string.ar_camera_detail
+    }
+    Surface(
+        color = Color(0xE6141218),
+        contentColor = Color.White,
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 20.dp).widthIn(max = 420.dp),
+    ) {
+        Column(Modifier.padding(start = 20.dp, end = 12.dp, top = 18.dp, bottom = 10.dp)) {
+            Text(stringResource(title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(end = 8.dp))
+            Spacer(Modifier.height(6.dp))
+            Text(
+                stringResource(detail),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.82f),
+                modifier = Modifier.padding(end = 8.dp),
+            )
+            Spacer(Modifier.height(8.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                if (card != ArCard.CAMERA) {
+                    TextButton(onClick = onBack, colors = ButtonDefaults.textButtonColors(contentColor = Color.White)) {
+                        Text(stringResource(R.string.action_back))
+                    }
+                    Spacer(Modifier.size(8.dp))
+                }
+                Button(
+                    onClick = when (card) {
+                        ArCard.NO_FLOOR -> onKeepLooking
+                        ArCard.LOST -> onPlaceAgain
+                        ArCard.CAMERA -> onBack
+                    },
+                ) {
+                    Text(
+                        stringResource(
+                            when (card) {
+                                ArCard.NO_FLOOR -> R.string.ar_keep_looking
+                                ArCard.LOST -> R.string.ar_reset
+                                ArCard.CAMERA -> R.string.action_back
+                            },
+                        ),
+                    )
                 }
             }
         }

@@ -27,6 +27,13 @@
     <string name="ar_photo">Scatta una foto</string>
     <string name="ar_turn">Ruota di un quarto</string>
     <string name="ar_reset">Riposiziona</string>
+    <string name="ar_no_floor_title">Pavimento non ancora trovato</string>
+    <string name="ar_no_floor_detail">Punta il telefono verso il pavimento e muovilo piano da un lato all\'altro. Una buona luce aiuta.</string>
+    <string name="ar_keep_looking">Continua a cercare</string>
+    <string name="ar_lost_title">Posizione persa</string>
+    <string name="ar_lost_detail">Torna a inquadrare il punto dov\'era, o riposizionalo.</string>
+    <string name="ar_camera_title">La fotocamera non è disponibile</string>
+    <string name="ar_camera_detail">Forse la sta usando un\'altra app. Chiudila e torna qui.</string>
     <string name="result_title">La tua foto</string>
     <string name="result_missing">Impossibile leggere la foto. Scattala di nuovo.</string>
     <string name="result_share">Condividi</string>

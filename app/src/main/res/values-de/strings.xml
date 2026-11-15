@@ -27,6 +27,13 @@
     <string name="ar_photo">Foto aufnehmen</string>
     <string name="ar_turn">Um 90° drehen</string>
     <string name="ar_reset">Neu platzieren</string>
+    <string name="ar_no_floor_title">Noch kein Boden gefunden</string>
+    <string name="ar_no_floor_detail">Richte das Handy auf den Boden und bewege es langsam hin und her. Gutes Licht hilft.</string>
+    <string name="ar_keep_looking">Weitersuchen</string>
+    <string name="ar_lost_title">Position verloren</string>
+    <string name="ar_lost_detail">Richte das Handy wieder dorthin, wo es stand, oder platziere es neu.</string>
+    <string name="ar_camera_title">Die Kamera ist nicht verfügbar</string>
+    <string name="ar_camera_detail">Vielleicht nutzt eine andere App sie. Schließ die App und komm zurück.</string>
     <string name="result_title">Dein Foto</string>
     <string name="result_missing">Das Foto lässt sich nicht lesen. Nimm es neu auf.</string>
     <string name="result_share">Teilen</string>

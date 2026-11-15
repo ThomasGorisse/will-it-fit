@@ -31,6 +31,13 @@
     <string name="ar_photo">Take photo</string>
     <string name="ar_turn">Turn a quarter</string>
     <string name="ar_reset">Place again</string>
+    <string name="ar_no_floor_title">No floor found yet</string>
+    <string name="ar_no_floor_detail">Point the phone at the floor and move it slowly from side to side. Good light helps.</string>
+    <string name="ar_keep_looking">Keep looking</string>
+    <string name="ar_lost_title">Lost the spot</string>
+    <string name="ar_lost_detail">Point back to where it stood, or place it again.</string>
+    <string name="ar_camera_title">The camera isn\'t available</string>
+    <string name="ar_camera_detail">Another app may be using it. Close that app, then come back.</string>
     <string name="photo_brand">Will It Fit</string>
 
     <string name="result_title">Your photo</string>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SceneView's AR texts (coaching, camera and ARCore cards) ship in English only, and speak of a
+     "demo": the app gives them in its own words and languages. Same names, so these win. -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="sceneview_coaching_initializing" tools:ignore="ExtraTranslation">Preparazione</string>
+    <string name="sceneview_coaching_initializing_detail" tools:ignore="ExtraTranslation">Tieni il telefono sollevato e guardati intorno</string>
+    <string name="sceneview_coaching_scan_surface" tools:ignore="ExtraTranslation">Muovi il telefono lentamente</string>
+    <string name="sceneview_coaching_scan_surface_detail" tools:ignore="ExtraTranslation">Puntalo verso il pavimento</string>
+    <string name="sceneview_coaching_scan_lingering_detail" tools:ignore="ExtraTranslation">Prova in un punto più luminoso e con più texture</string>
+    <string name="sceneview_coaching_found_surface" tools:ignore="ExtraTranslation">Superficie trovata</string>
+    <string name="sceneview_coaching_limited" tools:ignore="ExtraTranslation">Continua a guardarti intorno</string>
+    <string name="sceneview_coaching_limited_detail" tools:ignore="ExtraTranslation">Muoviti piano, in un punto ben illuminato</string>
+    <string name="sceneview_coaching_relocalizing" tools:ignore="ExtraTranslation">Torna a inquadrare l\'oggetto</string>
+    <string name="sceneview_coaching_relocalizing_detail" tools:ignore="ExtraTranslation">Guarda dove l\'hai posizionato</string>
+    <string name="sceneview_coaching_hint_too_dark" tools:ignore="ExtraTranslation">Troppo buio</string>
+    <string name="sceneview_coaching_hint_too_dark_action" tools:ignore="ExtraTranslation">Spostati in un punto più luminoso</string>
+    <string name="sceneview_coaching_hint_too_fast" tools:ignore="ExtraTranslation">Troppo veloce</string>
+    <string name="sceneview_coaching_hint_too_fast_action" tools:ignore="ExtraTranslation">Muovi il telefono più lentamente</string>
+    <string name="sceneview_coaching_hint_low_detail" tools:ignore="ExtraTranslation">Pochi dettagli</string>
+    <string name="sceneview_coaching_hint_low_detail_action" tools:ignore="ExtraTranslation">Inquadra qualcosa con più texture</string>
+    <string name="sceneview_camera_permission_title" tools:ignore="ExtraTranslation">Serve l\'accesso alla fotocamera</string>
+    <string name="sceneview_camera_permission_body" tools:ignore="ExtraTranslation">La fotocamera mostra la tua stanza per posizionarci l\'oggetto. Nulla viene registrato o inviato.</string>
+    <string name="sceneview_camera_permission_body_settings" tools:ignore="ExtraTranslation">L\'accesso alla fotocamera è disattivato per questa app. Attivalo nelle Impostazioni per avviare la realtà aumentata.</string>
+    <string name="sceneview_camera_permission_grant" tools:ignore="ExtraTranslation">Consenti la fotocamera</string>
+    <string name="sceneview_camera_permission_settings" tools:ignore="ExtraTranslation">Apri Impostazioni</string>
+    <string name="sceneview_arcore_unsupported_title" tools:ignore="ExtraTranslation">La realtà aumentata non è disponibile su questo dispositivo</string>
+    <string name="sceneview_arcore_unsupported_body" tools:ignore="ExtraTranslation">Questo telefono non supporta ARCore. La prova della porta funziona comunque.</string>
+    <string name="sceneview_arcore_not_installed_title" tools:ignore="ExtraTranslation">La realtà aumentata richiede Google Play Services per AR</string>
+    <string name="sceneview_arcore_not_installed_body" tools:ignore="ExtraTranslation">Installa Google Play Services per AR per vedere l\'oggetto nella tua stanza.</string>
+    <string name="sceneview_arcore_install" tools:ignore="ExtraTranslation">Installa</string>
+    <string name="sceneview_arcore_needs_update_title" tools:ignore="ExtraTranslation">Aggiorna Google Play Services per AR</string>
+    <string name="sceneview_arcore_needs_update_body" tools:ignore="ExtraTranslation">La versione installata è troppo vecchia per vedere l\'oggetto nella tua stanza.</string>
+    <string name="sceneview_arcore_update" tools:ignore="ExtraTranslation">Aggiorna</string>
+    <string name="sceneview_arcore_check_failed_title" tools:ignore="ExtraTranslation">Impossibile verificare il supporto AR</string>
+    <string name="sceneview_arcore_check_failed_body" tools:ignore="ExtraTranslation">Il controllo di Google Play Services per AR non è riuscito. Controlla la connessione e riprova.</string>
+    <string name="sceneview_arcore_session_failed_title" tools:ignore="ExtraTranslation">Impossibile avviare la realtà aumentata</string>
+    <string name="sceneview_arcore_session_failed_body" tools:ignore="ExtraTranslation">La fotocamera è occupata o la realtà aumentata non è partita. Chiudi le altre app della fotocamera e riprova.</string>
+    <string name="sceneview_arcore_retry" tools:ignore="ExtraTranslation">Riprova</string>
+</resources>

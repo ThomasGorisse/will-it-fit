@@ -27,6 +27,13 @@
     <string name="ar_photo">Tirar foto</string>
     <string name="ar_turn">Girar um quarto</string>
     <string name="ar_reset">Posicionar de novo</string>
+    <string name="ar_no_floor_title">O chão ainda não foi encontrado</string>
+    <string name="ar_no_floor_detail">Aponte o celular para o chão e mova devagar de um lado para o outro. Uma boa luz ajuda.</string>
+    <string name="ar_keep_looking">Continuar procurando</string>
+    <string name="ar_lost_title">A posição se perdeu</string>
+    <string name="ar_lost_detail">Aponte de novo para onde ele estava ou posicione outra vez.</string>
+    <string name="ar_camera_title">A câmera não está disponível</string>
+    <string name="ar_camera_detail">Outro app pode estar usando a câmera. Feche esse app e volte.</string>
     <string name="result_title">Sua foto</string>
     <string name="result_missing">Não foi possível ler a foto. Tire outra.</string>
     <string name="result_share">Compartilhar</string>
