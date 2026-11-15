@@ -6,6 +6,7 @@ import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.Preset
+import com.gorisse.thomas.willitfit.fit.withMatchingPreset
 import java.util.Locale
 
 /** The last object, the last door and the unit. On the phone only; nothing leaves it. */
@@ -26,7 +27,7 @@ class Prefs(context: Context) {
                     ?: DimensionSource.TYPED,
                 presetId = p.getString("preset", null),
             )
-            return if (d.isValid) d else Preset.DEFAULT.dimensions
+            return if (d.isValid) d.withMatchingPreset() else Preset.DEFAULT.dimensions
         }
         set(d) = p.edit().putFloat("w", d.widthCm).putFloat("d", d.depthCm).putFloat("h", d.heightCm)
             .putString("src", d.source.name).putString("preset", d.presetId).apply()

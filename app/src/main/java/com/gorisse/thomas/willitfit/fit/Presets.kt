@@ -43,6 +43,19 @@ enum class Preset(val id: String, val shape: Shape, val dimensions: Dimensions) 
 private fun preset(id: String, w: Float, d: Float, h: Float) =
     Dimensions(w, d, h, DimensionSource.PRESET, id)
 
+/**
+ * A size with no preset that is exactly a preset's (2.x saved sizes without naming the object)
+ * becomes that preset again: the stroller comes back as a stroller, not as "your size" in a box.
+ */
+fun Dimensions.withMatchingPreset(): Dimensions {
+    if (presetId != null) return this
+    fun same(a: Float, b: Float) = kotlin.math.abs(a - b) < 0.05f
+    return Preset.entries.firstOrNull {
+        val p = it.dimensions
+        same(p.widthCm, widthCm) && same(p.depthCm, depthCm) && same(p.heightCm, heightCm)
+    }?.dimensions ?: this
+}
+
 /** The silhouette for any dimensions: the preset's own, or a plain box for typed sizes. */
 val Dimensions.shape: Shape
     get() = Preset.byId(presetId)?.shape ?: Shape.BOX

@@ -74,4 +74,15 @@ class DimensionsTest {
         assertTrue(Preset.entries.all { it.dimensions.isValid && it.dimensions.presetId == it.id })
         assertEquals(Preset.entries.size, Preset.entries.map { it.id }.toSet().size)
     }
+
+    @Test
+    fun `a saved size equal to a preset becomes that preset again`() {
+        val saved = Dimensions(60f, 90f, 105f, DimensionSource.TYPED, null)
+        assertEquals("stroller", saved.withMatchingPreset().presetId)
+        assertEquals(DimensionSource.PRESET, saved.withMatchingPreset().source)
+        val own = Dimensions(61f, 90f, 105f, DimensionSource.TYPED, null)
+        assertNull(own.withMatchingPreset().presetId)
+        val edited = Dimensions(60f, 90f, 105f, DimensionSource.TYPED, "sofa3")
+        assertEquals("sofa3", edited.withMatchingPreset().presetId)
+    }
 }

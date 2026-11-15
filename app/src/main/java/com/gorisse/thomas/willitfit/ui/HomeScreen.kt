@@ -123,7 +123,9 @@ fun HomeScreen(
                         Text(
                             text = when (dims.source) {
                                 DimensionSource.PRESET -> stringResource(R.string.home_subtitle_preset, objectName(dims))
-                                DimensionSource.TYPED -> stringResource(R.string.home_subtitle_typed, objectName(dims))
+                                // "Your size · your size" for a size typed from scratch: the name says it.
+                                DimensionSource.TYPED -> if (dims.presetId == null) objectName(dims)
+                                else stringResource(R.string.home_subtitle_typed, objectName(dims))
                             },
                             style = MaterialTheme.typography.bodyMedium,
                             color = scheme.onSurfaceVariant,
