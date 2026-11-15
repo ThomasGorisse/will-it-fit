@@ -239,13 +239,19 @@ private fun SceneScope.ModelFurniture(file: String, dims: Dimensions, look: Furn
     val bw = (he[0] * 2f).coerceAtLeast(0.01f)
     val bh = (he[1] * 2f).coerceAtLeast(0.01f)
     val bd = (he[2] * 2f).coerceAtLeast(0.01f)
+    // Read here, not inside the SideEffect: a read there subscribes to nothing, so a colour change
+    // alone (the door's answer turning from no to yes) left the object red.
+    val accent = look.accent
+    val accentSoft = look.accentSoft
+    val oak = if (look.roomLit) RoomOak else SourceOak
+    val wood = if (look.roomLit) RoomWood else SourceWood
     SideEffect {
         instance.materialInstances.forEach { mi ->
             when (mi.name) {
-                "fabric" -> mi.setColor("baseColorFactor", look.accent)
-                "fabric_soft" -> mi.setColor("baseColorFactor", look.accentSoft)
-                "oak" -> mi.setColor("baseColorFactor", if (look.roomLit) RoomOak else SourceOak)
-                "wood" -> mi.setColor("baseColorFactor", if (look.roomLit) RoomWood else SourceWood)
+                "fabric" -> mi.setColor("baseColorFactor", accent)
+                "fabric_soft" -> mi.setColor("baseColorFactor", accentSoft)
+                "oak" -> mi.setColor("baseColorFactor", oak)
+                "wood" -> mi.setColor("baseColorFactor", wood)
             }
         }
     }
