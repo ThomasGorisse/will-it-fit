@@ -25,6 +25,7 @@ import com.gorisse.thomas.willitfit.fit.formatLength
 import com.gorisse.thomas.willitfit.fit.shape
 import io.github.sceneview.SceneScope
 import io.github.sceneview.material.setColor
+import io.github.sceneview.math.Direction
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
@@ -58,6 +59,9 @@ class FurnitureLook internal constructor(
         internal set
     var opacity: Float by mutableFloatStateOf(1f)
         internal set
+    /** Under the app's own warm sun (room, door), not the real light of AR. */
+    var roomLit: Boolean by mutableStateOf(false)
+        internal set
 
     val part: RenderableNode.() -> Unit = {
         isShadowCaster = true
@@ -80,6 +84,14 @@ internal fun NodeImpl.makeFixedSelectable() {
 val FurnitureTeal = Color(0xFF225254)
 
 private val Oak = Color(0xFFB98B5E)
+
+// The modelled oak and wood as tools/furniture/make_furniture.py writes them, and as the 3D
+// scenes show them: their warm sun and tone mapping turned the source oak peach (a wardrobe read
+// 234, 189, 137 on screen), so there it starts cooler and a step darker, like the parquet.
+private val SourceOak = Color(0xFFD3AE80)
+private val SourceWood = Color(0xFFC49A6C)
+private val RoomOak = Color(0xFFC4A783)
+private val RoomWood = Color(0xFFB59470)
 private val Charcoal = Color(0xFF2A2B2F)
 private val Steel = Color(0xFFB9BEC5)
 private val Linen = Color(0xFFF3F0EA)
@@ -91,6 +103,7 @@ fun SceneScope.rememberFurnitureLook(
     opacity: Float = 1f,
     transparent: Boolean = false,
     selectable: Boolean = false,
+    roomLit: Boolean = false,
 ): FurnitureLook {
     // Cushions a breath lighter than the frame, as on the target: same cloth, more light.
     val soft = lerp(accent, Color.White, 0.04f)
@@ -113,6 +126,7 @@ fun SceneScope.rememberFurnitureLook(
         look.accent = accent
         look.accentSoft = soft
         look.opacity = opacity
+        look.roomLit = roomLit
         val a = if (transparent) opacity else 1f
         look.body.setColor(accent.copy(alpha = a))
         look.soft.setColor(soft.copy(alpha = a))
@@ -230,6 +244,8 @@ private fun SceneScope.ModelFurniture(file: String, dims: Dimensions, look: Furn
             when (mi.name) {
                 "fabric" -> mi.setColor("baseColorFactor", look.accent)
                 "fabric_soft" -> mi.setColor("baseColorFactor", look.accentSoft)
+                "oak" -> mi.setColor("baseColorFactor", if (look.roomLit) RoomOak else SourceOak)
+                "wood" -> mi.setColor("baseColorFactor", if (look.roomLit) RoomWood else SourceWood)
             }
         }
     }
@@ -468,6 +484,9 @@ fun SceneScope.DimensionMarks(
     // How much further right than the other marks the height line stands: the room view moves it
     // clear of the object, so it never runs up an armrest; AR keeps it on the corner.
     heightOffset: Float = 0f,
+    // The screen's right, flat on the floor: given, the height tag starts at its line and runs
+    // right, off the object behind it; AR leaves it null and keeps it centred on top.
+    heightTagSide: Direction? = null,
 ) {
     val w = dims.widthCm / 100f; val h = dims.heightCm / 100f; val d = dims.depthCm / 100f
     val off = 0.07f
@@ -510,11 +529,23 @@ fun SceneScope.DimensionMarks(
             widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
         )
     }
-    // Above the top of the height line, clear of the depth tag on the floor below it.
-    Node(position = Position(hx + 0.02f, h + lh * labelScale / 2f + 0.04f, front + 0.02f), rotation = Rotation(y = 45f)) {
+    if (heightTagSide != null) {
+        // On top of the height line like a flag, starting just left of it: centred over it, the
+        // tag ran across the back of a sofa; fully beside it, it left the frame on the right.
+        val side = lw * labelScale / 2f - 0.07f
+        val y = h + lh * labelScale / 2f + 0.04f
         TextNode(
             text = formatLength(dims.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
-            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
+            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing,
+            position = Position(hx + heightTagSide.x * side, y, front + heightTagSide.z * side), apply = tag,
         )
+    } else {
+        // Above the top of the height line, clear of the depth tag on the floor below it.
+        Node(position = Position(hx + 0.02f, h + lh * labelScale / 2f + 0.04f, front + 0.02f), rotation = Rotation(y = 45f)) {
+            TextNode(
+                text = formatLength(dims.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
+                widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
+            )
+        }
     }
 }

@@ -153,7 +153,7 @@ fun RoomScene(
     val narrow = (window.height.toFloat() / window.width.coerceAtLeast(1)).coerceIn(2f, 2.6f) / 2f
     // A step further back than a product shot: the room (rug, lamp, window) gives the scale.
     val dist = (1.2f * seen + 0.5f * od + 0.9f) * narrow * 1.1f
-    val target = Position(0.08f * seen, oh * 0.5f, objZ)
+    val target = Position(0.11f * seen, oh * 0.5f, objZ)
     val dir = Triple(0.45f, 0.3f, 1f).let { (x, y, z) ->
         val n = sqrt(x * x + y * y + z * z); Triple(x / n, y / n, z / n)
     }
@@ -213,7 +213,7 @@ fun RoomScene(
                 // target, whatever its width, and stays whole in the frame.
                 Room(palette, lampX = shown.widthCm / 200f + 0.4f)
             }
-            val look = rememberFurnitureLook(accent)
+            val look = rememberFurnitureLook(accent, roomLit = true)
             Node(scale = Scale(pop.value)) {
                 Furniture(shown, look)
             }
@@ -224,6 +224,8 @@ fun RoomScene(
                 labelScale = (size / 1.4f).coerceIn(1f, 1.8f),
                 facing = { cameraNode.worldPosition },
                 heightOffset = 0.2f,
+                // The camera's right, flat: its view direction turned a quarter.
+                heightTagSide = sqrt(dir.first * dir.first + dir.third * dir.third).let { Direction(dir.third / it, 0f, -dir.first / it) },
             )
         }
     }

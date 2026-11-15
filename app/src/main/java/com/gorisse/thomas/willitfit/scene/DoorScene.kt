@@ -125,7 +125,7 @@ fun DoorScene(
         CubeNode(size = Size(0.06f, dh, WALL_THICKNESS + 0.03f), position = Position(half + 0.03f, dh / 2f, 0f), materialInstance = frame)
         CubeNode(size = Size(dw + 0.12f, 0.06f, WALL_THICKNESS + 0.03f), position = Position(0f, dh + 0.03f, 0f), materialInstance = frame)
 
-        val look = rememberFurnitureLook(if (verdict.fits) accent else Color(0xFFB3261E))
+        val look = rememberFurnitureLook(if (verdict.fits) accent else Color(0xFFB3261E), roomLit = true)
         // Carried: lifted by half its "up" side, turned about its own centre.
         Node(position = Position(0f, up / 2f, z)) {
             Node(rotation = outerRotation(verdict.carry)) {
