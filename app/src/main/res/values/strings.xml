@@ -38,8 +38,8 @@
     <string name="ar_lost_detail">Point back to where it stood, or place it again.</string>
     <string name="ar_camera_title">The camera isn\'t available</string>
     <string name="ar_camera_detail">Another app may be using it. Close that app, then come back.</string>
-    <string name="photo_brand">Will It Fit</string>
 
+    <string name="photo_signature">Will It Fit · on Google Play</string>
     <string name="result_title">Your photo</string>
     <string name="result_missing">The photo could not be read. Take it again.</string>
     <string name="result_share">Share</string>

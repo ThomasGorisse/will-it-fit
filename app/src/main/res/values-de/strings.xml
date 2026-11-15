@@ -34,6 +34,7 @@
     <string name="ar_lost_detail">Richte das Handy wieder dorthin, wo es stand, oder platziere es neu.</string>
     <string name="ar_camera_title">Die Kamera ist nicht verfügbar</string>
     <string name="ar_camera_detail">Vielleicht nutzt eine andere App sie. Schließ die App und komm zurück.</string>
+    <string name="photo_signature">Will It Fit · bei Google Play</string>
     <string name="result_title">Dein Foto</string>
     <string name="result_missing">Das Foto lässt sich nicht lesen. Nimm es neu auf.</string>
     <string name="result_share">Teilen</string>

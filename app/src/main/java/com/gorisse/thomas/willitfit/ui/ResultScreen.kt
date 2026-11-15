@@ -36,14 +36,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.capture.sharePhoto
+import com.gorisse.thomas.willitfit.fit.Dimensions
+import com.gorisse.thomas.willitfit.fit.LengthUnit
+import com.gorisse.thomas.willitfit.fit.formatDimensions
 import java.io.File
 
-/** Screen 3, "Result": the photo with its dimensions written on it, ready to send. */
+/** Where the photo's recipient finds the app: the store page of the release build, whatever build shares. */
+private const val STORE_LINK = "https://play.google.com/store/apps/details?id=com.gorisse.thomas.willitfit"
+
+/**
+ * Screen 3, "Result": the photo with its dimensions written on it, ready to send. The message
+ * carries the same line and a link to the app, which messaging apps keep as the photo's caption.
+ */
 @Composable
-fun ResultScreen(file: File, onBack: () -> Unit, onRetake: () -> Unit) {
+fun ResultScreen(file: File, dims: Dimensions, unit: LengthUnit, onBack: () -> Unit, onRetake: () -> Unit) {
     val context = LocalContext.current
     val bitmap = remember(file) { BitmapFactory.decodeFile(file.path)?.asImageBitmap() }
     val chooser = stringResource(R.string.share_chooser)
+    val message = objectName(dims) + " · " + stringResource(R.string.ar_real_size, formatDimensions(dims, unit)) + "\n" + STORE_LINK
     AppScaffold(title = stringResource(R.string.result_title), onBack = onBack) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).navigationBarsPadding()) {
             Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
@@ -66,7 +76,7 @@ fun ResultScreen(file: File, onBack: () -> Unit, onRetake: () -> Unit) {
                     Spacer(Modifier.width(ButtonDefaults.IconSpacing))
                     Text(stringResource(R.string.result_retake))
                 }
-                Button(onClick = { sharePhoto(context, file, chooser) }, modifier = Modifier.weight(1f).height(56.dp)) {
+                Button(onClick = { sharePhoto(context, file, chooser, message) }, modifier = Modifier.weight(1f).height(56.dp)) {
                     Icon(Icons.Outlined.Share, null, Modifier.size(ButtonDefaults.IconSize))
                     Spacer(Modifier.width(ButtonDefaults.IconSpacing))
                     Text(stringResource(R.string.result_share))

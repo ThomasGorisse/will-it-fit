@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
                                 onPhoto = { photoPath = it.path; route = Route.RESULT },
                             )
                             Route.RESULT -> photoPath?.let { File(it) }?.takeIf { it.exists() }?.let { file ->
-                                ResultScreen(file, onBack = { route = Route.HOME }, onRetake = { route = Route.AR })
+                                ResultScreen(file, dims, unit, onBack = { route = Route.HOME }, onRetake = { route = Route.AR })
                             } ?: LaunchedEffect(Unit) { route = Route.HOME }
                             Route.DOOR -> DoorScreen(
                                 dims = dims, door = door, unit = unit,

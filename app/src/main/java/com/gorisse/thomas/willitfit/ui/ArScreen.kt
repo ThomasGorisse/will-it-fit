@@ -109,7 +109,8 @@ fun ArScreen(
     val scheme = MaterialTheme.colorScheme
     val name = objectName(dims)
     val summary = formatDimensions(dims, unit)
-    val brand = stringResource(R.string.photo_brand)
+    val realSize = stringResource(R.string.ar_real_size, summary)
+    val signature = stringResource(R.string.photo_signature)
 
     Box(Modifier.fillMaxSize()) {
         AutoPlacementScene(
@@ -151,7 +152,7 @@ fun ArScreen(
             ) {
                 Column(Modifier.padding(horizontal = 14.dp, vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(name, style = MaterialTheme.typography.labelLarge)
-                    Text(stringResource(R.string.ar_real_size, summary), style = MaterialTheme.typography.labelMedium)
+                    Text(realSize, style = MaterialTheme.typography.labelMedium)
                 }
             }
 
@@ -212,7 +213,7 @@ fun ArScreen(
                                 capturing = true
                                 val bitmap = captureScene(activity)
                                 capturing = false
-                                if (bitmap != null) onPhoto(savePhoto(context, bitmap, name, summary, brand))
+                                if (bitmap != null) onPhoto(savePhoto(context, bitmap, name, realSize, signature))
                             }
                         },
                     )

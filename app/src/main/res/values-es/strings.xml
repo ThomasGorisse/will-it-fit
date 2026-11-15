@@ -34,6 +34,7 @@
     <string name="ar_lost_detail">Vuelve a apuntar adonde estaba o colócalo de nuevo.</string>
     <string name="ar_camera_title">La cámara no está disponible</string>
     <string name="ar_camera_detail">Puede que otra app la esté usando. Ciérrala y vuelve.</string>
+    <string name="photo_signature">Will It Fit · en Google Play</string>
     <string name="result_title">Tu foto</string>
     <string name="result_missing">No se puede leer la foto. Vuelve a hacerla.</string>
     <string name="result_share">Compartir</string>
