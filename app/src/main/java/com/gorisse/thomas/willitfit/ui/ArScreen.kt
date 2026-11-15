@@ -101,6 +101,9 @@ fun ArScreen(
     @Suppress("UNUSED_VARIABLE") val tool = ArTool.OBJECT
 
     var capturing by remember { mutableStateOf(false) }
+    // SceneView draws its own card while ARCore cannot run ("Couldn't start AR" and its Try
+    // again, install, update): ours stays away then, so the screen says one thing at a time.
+    var arCoreCard by remember { mutableStateOf(false) }
     var showHint by remember { mutableStateOf(false) }
     LaunchedEffect(state.hasPlacement) {
         if (state.hasPlacement) { showHint = true; delay(4_000); showHint = false }
@@ -121,6 +124,7 @@ fun ArScreen(
             modelLoader = modelLoader,
             materialLoader = materialLoader,
             coachingContentPadding = PaddingValues(bottom = 132.dp),
+            onARCoreAvailability = { arCoreCard = it != null },
         ) { placement ->
             AutoPlacementNode(placement, state) { opacity ->
                 val look = rememberFurnitureLook(
@@ -162,7 +166,7 @@ fun ArScreen(
             ) {
                 // The states SceneView leaves to the app: no coaching runs then, so without a card
                 // the camera just sat there with greyed buttons after 10 s without a floor.
-                val card = when (state.phase) {
+                val card = if (arCoreCard) null else when (state.phase) {
                     PlacementPhase.NO_SURFACE -> ArCard.NO_FLOOR
                     PlacementPhase.RECOVERY_FAILED -> ArCard.LOST
                     PlacementPhase.CAMERA_ERROR -> ArCard.CAMERA
