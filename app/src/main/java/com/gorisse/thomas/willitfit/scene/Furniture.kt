@@ -152,35 +152,20 @@ fun SceneScope.Furniture(
     look: FurnitureLook,
     shape: Shape = dims.shape,
     contactShadow: Boolean = true,
+    onShown: () -> Unit = {},
 ) {
-    // The soft pool under the object that makes it stand on the floor instead of hovering.
-    // A unit quad scaled to the footprint: resizing never rebuilds it.
-    if (contactShadow) {
-        // Just above the parquet's top face (1 mm up), or the planks hide it and the object floats:
-        // a broad soft pool, and a tight darker one where it meets the floor.
-        ContactShadow(
-            size = Size(1f, 0f, 1f),
-            context = ContactShadowContext.Floor,
-            intensity = 0.5f * look.opacity,
-            position = Position(y = 0.004f),
-            scale = Scale(dims.widthCm / 100f + 0.45f, 1f, dims.depthCm / 100f + 0.45f),
-        )
-        ContactShadow(
-            size = Size(1f, 0f, 1f),
-            context = ContactShadowContext.Floor,
-            intensity = 0.7f * look.opacity,
-            position = Position(y = 0.005f),
-            scale = Scale(dims.widthCm / 100f + 0.06f, 1f, dims.depthCm / 100f + 0.06f),
-        )
-    }
     val file = modelFile(shape, dims.presetId)
     val context = LocalContext.current
     val bundled = remember(file) { file != null && context.hasAsset(file) }
     if (file != null && bundled) {
-        // A new file gets its own load; nothing is drawn for the few frames it takes.
-        key(file) { ModelFurniture(file, dims, look) }
+        // A new file gets its own load; nothing is drawn for the few frames it takes, not even
+        // its shadow: on a first launch the pool and the marks stood alone on the floor for
+        // seconds before the sofa came.
+        key(file) { ModelFurniture(file, dims, look, contactShadow, onShown) }
         return
     }
+    if (contactShadow) ContactShadows(dims, look)
+    LaunchedEffect(Unit) { onShown() }
     val base = baseSize(shape, dims)
     Node(
         scale = Scale(
@@ -201,6 +186,28 @@ fun SceneScope.Furniture(
             Shape.BOX -> Parcel(base, look)
         }
     }
+}
+
+/** The soft pool under the object that makes it stand on the floor instead of hovering. */
+@Composable
+private fun SceneScope.ContactShadows(dims: Dimensions, look: FurnitureLook) {
+    // A unit quad scaled to the footprint: resizing never rebuilds it.
+    // Just above the parquet's top face (1 mm up), or the planks hide it and the object floats:
+    // a broad soft pool, and a tight darker one where it meets the floor.
+    ContactShadow(
+        size = Size(1f, 0f, 1f),
+        context = ContactShadowContext.Floor,
+        intensity = 0.5f * look.opacity,
+        position = Position(y = 0.004f),
+        scale = Scale(dims.widthCm / 100f + 0.45f, 1f, dims.depthCm / 100f + 0.45f),
+    )
+    ContactShadow(
+        size = Size(1f, 0f, 1f),
+        context = ContactShadowContext.Floor,
+        intensity = 0.7f * look.opacity,
+        position = Position(y = 0.005f),
+        scale = Scale(dims.widthCm / 100f + 0.06f, 1f, dims.depthCm / 100f + 0.06f),
+    )
 }
 
 /** The modelled object for a shape, as an asset path. */
@@ -226,14 +233,24 @@ private fun Context.hasAsset(path: String): Boolean =
  * once it is more than half there.
  */
 @Composable
-private fun SceneScope.ModelFurniture(file: String, dims: Dimensions, look: FurnitureLook) {
+private fun SceneScope.ModelFurniture(
+    file: String,
+    dims: Dimensions,
+    look: FurnitureLook,
+    contactShadow: Boolean,
+    onShown: () -> Unit,
+) {
     val asked = remember(file) { SystemClock.uptimeMillis() }
     val instance = rememberModelInstance(modelLoader, file)
     LaunchedEffect(instance) {
         // Load time on real phones, read from logcat: the emulator is far slower.
-        if (instance != null) Log.i("WillItFit", "$file ready in ${SystemClock.uptimeMillis() - asked} ms")
+        if (instance != null) {
+            Log.i("WillItFit", "$file ready in ${SystemClock.uptimeMillis() - asked} ms")
+            onShown()
+        }
     }
     if (instance == null) return
+    if (contactShadow) ContactShadows(dims, look)
     val box = remember(instance) { instance.asset.boundingBox }
     val he = box.halfExtent
     val bw = (he[0] * 2f).coerceAtLeast(0.01f)

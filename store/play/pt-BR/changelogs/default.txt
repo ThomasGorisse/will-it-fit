@@ -1,2 +1,5 @@
-Novidades da versão 3.0
-Refeito do zero: escolha um objeto com medidas comuns ou digite as suas em cm ou polegadas. Ambiente 3D, prévia em RA em tamanho real com escala travada e fotos com medidas para compartilhar. Confira a passagem pela porta com resultado, folga e posição de transporte animada. Tudo grátis, sem anúncios nem conta. Funciona offline; o ambiente 3D e a verificação da porta também funcionam sem RA.
+Novidades
+• Compartilhe a resposta da porta como imagem: o objeto no vão, o resultado, a folga e como carregar.
+• As fotos em RA trazem um cartão com o tamanho real do objeto.
+• O menu de compartilhar mostra a imagem antes de enviar.
+A 3.0, refeita do zero: escolha um objeto comum ou digite as medidas em cm ou polegadas, veja-o em um ambiente 3D ou em tamanho real em RA e confira uma porta. Grátis, sem anúncios nem conta, offline.

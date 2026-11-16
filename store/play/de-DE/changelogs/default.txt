@@ -1,2 +1,5 @@
-Neu in Version 3.0
-Von Grund auf neu entwickelt: Wähle einen Gegenstand mit üblichen Maßen oder gib eigene Maße in cm oder Zoll ein. Interaktiver 3D-Raum, AR-Vorschau in Originalgröße mit festem Maßstab und Fotos mit Maßen zum Teilen. Türcheck mit Ergebnis, verbleibendem Platz und animierter Trageposition. Komplett kostenlos, ohne Werbung und Konto. Funktioniert offline; 3D-Raum und Türcheck gehen auch ohne AR.
+Neu
+• Teile das Ergebnis des Türchecks als Bild: der Gegenstand in der Tür, das Ergebnis, der Spielraum und die Trageposition.
+• AR-Fotos tragen jetzt eine Karte mit der echten Größe.
+• Das Teilen-Menü zeigt das Bild vor dem Senden.
+3.0, komplett neu: Wähle einen Gegenstand oder gib seine Maße in cm oder Zoll ein, sieh ihn im 3D-Raum oder in Originalgröße in AR und prüfe eine Tür. Kostenlos, ohne Werbung und Konto, offline.

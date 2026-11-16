@@ -1,2 +1,5 @@
-Novità della versione 3.0
-Ricostruita da zero: scegli un oggetto con misure tipiche o inserisci le tue in cm o pollici. Stanza in 3D, anteprima in AR a grandezza reale con scala bloccata e foto con le misure da condividere. Verifica il passaggio dalla porta con responso, margine e posizione di trasporto animata. Tutto gratis, senza pubblicità né account. Funziona offline; stanza in 3D e verifica della porta funzionano anche senza AR.
+Novità
+• Condividi la risposta della porta come immagine: l'oggetto nel vano, il responso, il margine e come trasportarlo.
+• Le foto in AR hanno una scheda con la misura reale dell'oggetto.
+• Il menu di condivisione mostra l'immagine prima dell'invio.
+La 3.0, rifatta da zero: scegli un oggetto tipico o inserisci le sue misure in cm o pollici, guardalo in una stanza 3D o a grandezza reale in AR e verifica una porta. Gratis, senza pubblicità né account, offline.

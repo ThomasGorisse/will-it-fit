@@ -1,6 +1,7 @@
 package com.gorisse.thomas.willitfit.capture
 
 import android.app.Activity
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -135,6 +136,10 @@ fun sharePhoto(context: Context, file: File, chooserTitle: String, text: String)
         type = "image/jpeg"
         putExtra(Intent.EXTRA_STREAM, uri)
         putExtra(Intent.EXTRA_TEXT, text)
+        // The share sheet previews only what the clip data carries, and reads it with the grant:
+        // without it, the sheet showed no picture, so the person did not see what they sent.
+        clipData = ClipData.newRawUri(null, uri)
+        putExtra(Intent.EXTRA_TITLE, text.lineSequence().first())
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
     context.startActivity(Intent.createChooser(send, chooserTitle))

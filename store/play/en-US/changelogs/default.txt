@@ -1,2 +1,5 @@
-What's new in 3.0
-Rebuilt from scratch: pick a typical object or enter its dimensions in cm or inches. Explore a live 3D room, preview it at real size in AR with locked scale, and share a photo with its dimensions. Check a doorway with a verdict, clearance and an animated carrying orientation. Completely free, with no ads or account. Works offline; the 3D room and door check also work without AR.
+What's new
+• Share the door answer as a picture: the object in the doorway, the verdict, the clearance and the way to carry it.
+• AR photos now carry a card with the object's real size.
+• The share sheet previews the picture before you send it.
+3.0, rebuilt from scratch: pick a typical object or type its size in cm or inches, see it in a live 3D room or at real size in AR, and check a doorway. Free, no ads, no account, works offline.

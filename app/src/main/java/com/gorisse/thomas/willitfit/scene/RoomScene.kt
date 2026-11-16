@@ -18,6 +18,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
@@ -114,9 +115,14 @@ fun RoomScene(
     val h by animateFloatAsState(dims.heightCm, spec, label = "h")
     val shown = dims.copy(widthCm = w, depthCm = d, heightCm = h)
 
-    // A short pop each time the silhouette changes (sofa -> bed).
+    // The object's marks wait for the object: on a first launch its model takes seconds to load,
+    // and the marks stood alone on an empty floor until then.
+    var objectShown by remember { mutableStateOf(false) }
+
+    // A short pop each time the silhouette changes (sofa -> bed), and when it first appears.
     val pop = remember { Animatable(1f) }
-    LaunchedEffect(dims.shape) {
+    LaunchedEffect(dims.shape, objectShown) {
+        if (!objectShown) return@LaunchedEffect
         pop.snapTo(0.82f)
         pop.animateTo(1f, spring(dampingRatio = 0.5f, stiffness = Spring.StiffnessMediumLow))
     }
@@ -215,9 +221,9 @@ fun RoomScene(
             }
             val look = rememberFurnitureLook(accent, roomLit = true)
             Node(scale = Scale(pop.value)) {
-                Furniture(shown, look)
+                Furniture(shown, look, onShown = { objectShown = true })
             }
-            DimensionMarks(
+            if (objectShown) DimensionMarks(
                 dims = shown, unit = unit,
                 lineColor = Color.White,
                 labelText = labelText, labelBackground = labelBackground,
