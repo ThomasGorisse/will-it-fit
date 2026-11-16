@@ -1,6 +1,6 @@
 {
   "en-US": {
-    "1-sofa": {"headline": "Will it fit?\nSee it first.", "subline": "Try your furniture at real size."},
+    "1-sofa": {"headline": "Will the sofa fit?\nSee it first.", "subline": "Furniture at real size, in 3D and AR."},
     "2-bed": {"headline": "Real sizes.\nReady to go.", "subline": "Typical sizes you can adjust."},
     "3-wardrobe": {"headline": "Your measurements,\nin 3D.", "subline": "Enter width, depth and height."},
     "4-door": {"headline": "Will it go through\nthe door?", "subline": "Check the opening before you move."},
@@ -8,7 +8,7 @@
     "6-free": {"headline": "Free. Offline.\nNo account.", "subline": "No ads. Just room for your ideas."}
   },
   "fr-FR": {
-    "1-sofa": {"headline": "Ça rentre ?\nTestez en 3D.", "subline": "Visualisez vos meubles à taille réelle."},
+    "1-sofa": {"headline": "Le canapé rentre ?\nVoyez avant.", "subline": "Vos meubles à taille réelle, en 3D et en AR."},
     "2-bed": {"headline": "Vos meubles,\nà taille réelle.", "subline": "Des dimensions courantes, modifiables."},
     "3-wardrobe": {"headline": "Vos mesures,\nen 3D.", "subline": "Saisissez largeur, profondeur, hauteur."},
     "4-door": {"headline": "Ça passe\nla porte ?", "subline": "Vérifiez avant de tout déplacer."},
@@ -16,7 +16,7 @@
     "6-free": {"headline": "Gratuit.\nHors ligne.", "subline": "Sans compte. Sans publicité."}
   },
   "de-DE": {
-    "1-sofa": {"headline": "Passt es?\nSieh’s dir an.", "subline": "Möbel in Originalgröße ausprobieren."},
+    "1-sofa": {"headline": "Passt das Sofa?\nSieh’s dir an.", "subline": "Möbel in Originalgröße, in 3D und AR."},
     "2-bed": {"headline": "Maße drin.\nDirekt loslegen.", "subline": "Übliche Größen, die du anpassen kannst."},
     "3-wardrobe": {"headline": "Deine Maße.\nDein 3D-Modell.", "subline": "Breite, Tiefe und Höhe selbst eingeben."},
     "4-door": {"headline": "Passt es durch\ndie Tür?", "subline": "Prüfe den Durchgang vor dem Umzug."},
@@ -24,7 +24,7 @@
     "6-free": {"headline": "Kostenlos.\nAuch offline.", "subline": "Ohne Konto. Ohne Werbung."}
   },
   "es-ES": {
-    "1-sofa": {"headline": "¿Cabe?\nMíralo antes.", "subline": "Prueba tus muebles a tamaño real."},
+    "1-sofa": {"headline": "¿Cabe el sofá?\nMíralo antes.", "subline": "Muebles a tamaño real, en 3D y RA."},
     "2-bed": {"headline": "Medidas listas\npara empezar.", "subline": "Tamaños habituales que puedes ajustar."},
     "3-wardrobe": {"headline": "Tus medidas,\nen 3D.", "subline": "Introduce ancho, fondo y alto."},
     "4-door": {"headline": "¿Pasa por\nla puerta?", "subline": "Comprueba el paso antes de moverlo."},
@@ -32,7 +32,7 @@
     "6-free": {"headline": "Gratis.\nSin conexión.", "subline": "Sin cuenta ni anuncios."}
   },
   "it-IT": {
-    "1-sofa": {"headline": "Ci sta?\nGuardalo prima.", "subline": "Prova i mobili a grandezza reale."},
+    "1-sofa": {"headline": "Ci sta il divano?\nVedilo prima.", "subline": "Mobili a grandezza reale, in 3D e AR."},
     "2-bed": {"headline": "Misure già pronte.\nSi parte.", "subline": "Dimensioni tipiche da personalizzare."},
     "3-wardrobe": {"headline": "Le tue misure,\nin 3D.", "subline": "Inserisci larghezza, profondità e altezza."},
     "4-door": {"headline": "Passa dalla\nporta?", "subline": "Verifica il passaggio prima del trasloco."},
@@ -40,7 +40,7 @@
     "6-free": {"headline": "Gratis.\nAnche offline.", "subline": "Senza account. Senza pubblicità."}
   },
   "pt-BR": {
-    "1-sofa": {"headline": "Será que cabe?\nVeja antes.", "subline": "Experimente os móveis em tamanho real."},
+    "1-sofa": {"headline": "O sofá cabe?\nVeja antes.", "subline": "Móveis em tamanho real, em 3D e RA."},
     "2-bed": {"headline": "Medidas prontas.\nVamos lá.", "subline": "Tamanhos comuns que você pode ajustar."},
     "3-wardrobe": {"headline": "Suas medidas,\nem 3D.", "subline": "Digite largura, profundidade e altura."},
     "4-door": {"headline": "Passa pela\nporta?", "subline": "Confira a passagem antes de mudar."},

@@ -27,7 +27,10 @@ ROOT = Path(__file__).resolve().parent
 CAPTURES = ROOT.parent / "screenshots" / "phone"
 OUT = ROOT / "out"
 LOCALES = ("en-US", "fr-FR", "de-DE", "es-ES", "it-IT", "pt-BR")
-SLIDES = ("1-sofa", "2-bed", "3-wardrobe", "4-door", "5-dark", "6-free")
+# Listing order: Play search shows the first two or three, so the door check, the one thing other
+# furniture apps do not do, comes second. Slide 6 is artwork, not the app, and is not uploaded.
+SLIDES = ("1-sofa", "4-door", "3-wardrobe", "2-bed", "5-dark", "6-free")
+UPLOADED = 5
 SIZE = WIDTH, HEIGHT = 1242, 2208
 MARGIN = 104
 TEXT_WIDTH = WIDTH - 2 * MARGIN
@@ -76,7 +79,7 @@ def validate_captions(captions):
         raise ValueError("captions.json must contain the six locales in listing order")
     glyphs = set("çãßñéœüêÀÇ¿¡’")
     for locale, slides in captions.items():
-        if tuple(slides) != SLIDES:
+        if set(slides) != set(SLIDES) or len(slides) != len(SLIDES):
             raise ValueError(f"{locale}: expected exactly {', '.join(SLIDES)}")
         for slide, copy in slides.items():
             headline = copy["headline"]
@@ -183,8 +186,9 @@ def add_copy(canvas, copy, index):
     secondary = "#D9E8E6" if light else "#40585A"
     draw = ImageDraw.Draw(canvas)
     draw.text((MARGIN, 77), "Will It Fit", font=font("bold", 32), fill=foreground, anchor="lt")
-    draw.text((WIDTH - MARGIN, 80), f"{index:02d} / 06", font=font("regular", 26),
-              fill=secondary, anchor="rt")
+    if index <= UPLOADED:
+        draw.text((WIDTH - MARGIN, 80), f"{index:02d} / {UPLOADED:02d}", font=font("regular", 26),
+                  fill=secondary, anchor="rt")
     draw.rounded_rectangle((MARGIN, 130, MARGIN + 56, 135), 2, fill=foreground)
     lines = copy["headline"].splitlines()
     title_font = fitted_font(lines, "bold", 100, 86)
