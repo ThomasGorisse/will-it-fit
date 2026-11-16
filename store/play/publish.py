@@ -1,5 +1,5 @@
-"""Send a Will It Fit build to Play: production (staged) + internal, release notes and framed
-phone screenshots (frames/out/<locale>/1..5.jpg) from this folder, in one edit.
+"""Send a Will It Fit build to Play: production (staged) + internal, release notes, the listing
+text (title, short and full description) and framed phone screenshots (frames/out/<locale>/1..5.jpg) from this folder, in one edit.
 
 Uses the PlayApi client of ~/Projects/ar-model-viewer/store/scripts/sync-play.py (its own
 `upload` refuses an AAB without Firebase, and reads ARMV's notes).
@@ -40,6 +40,12 @@ try:
     # Phone screenshots: the framed, captioned slides 1-5 of each locale replace the raw captures.
     frames = root / "frames/out"
     for l in ([] if internal_only else ["en-US", "fr-FR", "de-DE", "es-ES", "it-IT", "pt-BR"]):
+        # The listing text: title, short and full description, as in <locale>/*.txt.
+        text = {k: (root / l / f).read_text().strip() for k, f in
+                (("title", "title.txt"), ("shortDescription", "short_description.txt"),
+                 ("fullDescription", "full_description.txt"))}
+        api.call("PUT", f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}/listings/{l}",
+                 body={"language": l, **text})
         base = f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}/listings/{l}/phoneScreenshots"
         api.call("DELETE", base)
         for i in range(1, 6):
@@ -48,7 +54,7 @@ try:
             r.add_header("Authorization", f"Bearer {api.token}"); r.add_header("Content-Type", "image/jpeg")
             with urllib.request.urlopen(r) as resp: resp.read()
         got = api.call("GET", base).get("images", [])
-        print(f"{l}: {len(got)} phone screenshots in the edit")
+        print(f"{l}: {text['title']!r}, {len(got)} phone screenshots in the edit")
     if commit:
         api.call("POST", f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}:commit"); ok = True
         print(f"COMMITTED vc{vc}: " + ("internal only" if internal_only else f"production {fraction:.0%}, internal 100%, screenshots"))
