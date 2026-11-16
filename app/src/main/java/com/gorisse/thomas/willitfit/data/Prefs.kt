@@ -37,6 +37,16 @@ class Prefs(context: Context) {
             .takeIf { it.isValid } ?: Door.TYPICAL
         set(d) = p.edit().putFloat("door_w", d.widthCm).putFloat("door_h", d.heightCm).apply()
 
+    /** Answers the person got: a door checked, an AR photo taken. Counted on the way back home. */
+    var answers: Int
+        get() = p.getInt("answers", 0)
+        set(value) = p.edit().putInt("answers", value).apply()
+
+    /** Play's rating sheet was asked for once already: never again, Play decides from there. */
+    var reviewAsked: Boolean
+        get() = p.getBoolean("review_asked", false)
+        set(value) = p.edit().putBoolean("review_asked", value).apply()
+
     private companion object {
         const val KEY_UNIT = "unit"
     }

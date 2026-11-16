@@ -17,7 +17,7 @@ android {
         // Epoch minutes, like the 2.x deploy workflow: 29 908 470 = 2026-11-12, above every
         // 2.x upload (last one 2026-10-28). A release build passes -PversionCode=<minutes now>.
         versionCode = (findProperty("versionCode") as String?)?.toInt() ?: 29_908_470
-        versionName = "3.0.1"
+        versionName = "3.0.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.extended)
+    implementation(libs.play.review)
     debugImplementation(libs.compose.ui.tooling)
 
     testImplementation(libs.junit)

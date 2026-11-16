@@ -1,6 +1,8 @@
 package com.gorisse.thomas.willitfit
 
+import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -14,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.ar.core.ArCoreApk
 import com.gorisse.thomas.willitfit.data.Prefs
 import com.gorisse.thomas.willitfit.ui.ArScreen
@@ -43,6 +46,20 @@ class MainActivity : ComponentActivity() {
                     val context = LocalContext.current
                     val arAvailable = remember {
                         runCatching { !ArCoreApk.getInstance().checkAvailability(context).isUnsupported }.getOrDefault(false)
+                    }
+                    // An answer is an AR photo taken or a door checked. Back home after the second
+                    // one is a pause after something that worked: Play's rating sheet is asked for
+                    // then, once in the app's life.
+                    var lastRoute by remember { mutableStateOf(route) }
+                    LaunchedEffect(route) {
+                        if (route == Route.RESULT || (route == Route.HOME && lastRoute == Route.DOOR)) prefs.answers += 1
+                        if (route == Route.HOME && lastRoute != Route.HOME) {
+                            if (prefs.answers >= 2 && !prefs.reviewAsked) {
+                                prefs.reviewAsked = true
+                                askForRating(this@MainActivity)
+                            }
+                        }
+                        lastRoute = route
                     }
                     BackHandler(enabled = route != Route.HOME) {
                         route = if (route == Route.RESULT) Route.AR else Route.HOME
@@ -79,6 +96,24 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+}
+
+/**
+ * Play's own rating sheet. Play decides whether it shows (a quota per person, nothing on a build
+ * not installed from Play) and never says whether the person rated: the flow just ends.
+ */
+private fun askForRating(activity: Activity) {
+    val manager = ReviewManagerFactory.create(activity)
+    manager.requestReviewFlow().addOnCompleteListener { request ->
+        if (!request.isSuccessful) {
+            Log.i("WillItFit", "rating sheet not available: ${request.exception?.message}")
+            return@addOnCompleteListener
+        }
+        if (activity.isFinishing || activity.isDestroyed) return@addOnCompleteListener
+        manager.launchReviewFlow(activity, request.result).addOnCompleteListener {
+            Log.i("WillItFit", "rating flow done")
         }
     }
 }
