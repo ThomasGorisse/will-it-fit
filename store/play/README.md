@@ -1,4 +1,6 @@
-Google Play listing assets for Will It Fit 3.0, prepared for upload; nothing uploaded.
+Google Play listing assets for Will It Fit 3.x. On Play since 2026-11-15 (3.0.0); 3.0.1 and the framed
+slides 1-5 of each locale sent on 2026-11-16 with `publish.py` (see its docstring; `get_apk.py` fetches
+the Play-signed APK to test before production).
 Locales: en-US, fr-FR, de-DE, es-ES, it-IT and pt-BR; see locales.json.
 Each locale contains a title, short description, plain-text full description and changelogs/default.txt.
 Run python3 store/play/check.py: character limits checked at 30 / 80 / 4000 / 500, including line breaks.
@@ -12,7 +14,7 @@ its burst frame closest to the en-US pick, so the six series share one compositi
 image ships with animations off: the door shot needs `animator_duration_scale` 1, or the object
 never leaves its start. Still missing: an AR shot on a real phone.
 
-### Framed screenshots (local only; do not upload)
+### Framed screenshots (slides 1-5 are the Play phone screenshots; slide 6 is artwork, not sent)
 
 After replacing the phone captures, run `python3 store/play/frames/make_frames.py`.
 If Pillow is missing: `python3 -m venv store/play/frames/.venv`, then
