@@ -6,6 +6,7 @@ import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.Preset
+import com.gorisse.thomas.willitfit.fit.dimensionsIn
 import com.gorisse.thomas.willitfit.fit.withMatchingPreset
 import java.util.Locale
 
@@ -20,21 +21,30 @@ class Prefs(context: Context) {
 
     var dimensions: Dimensions
         get() {
-            if (!p.contains("w")) return Preset.DEFAULT.dimensions
+            val u = unit
+            if (!p.contains("w")) return Preset.DEFAULT.dimensionsIn(u)
             val d = Dimensions(
                 widthCm = p.getFloat("w", 0f), depthCm = p.getFloat("d", 0f), heightCm = p.getFloat("h", 0f),
                 source = p.getString("src", null)?.let { runCatching { DimensionSource.valueOf(it) }.getOrNull() }
                     ?: DimensionSource.TYPED,
                 presetId = p.getString("preset", null),
             )
-            return if (d.isValid) d.withMatchingPreset() else Preset.DEFAULT.dimensions
+            if (!d.isValid) return Preset.DEFAULT.dimensionsIn(u)
+            // A typical size untouched since it was picked reads in the unit of the day: 3.0.x
+            // kept the centimetre size for everyone, so inches showed 86.6 × 37.4 × 33.5.
+            val matched = d.withMatchingPreset()
+            val preset = Preset.byId(matched.presetId)
+            return if (matched.source == DimensionSource.PRESET && preset != null) preset.dimensionsIn(u) else matched
         }
         set(d) = p.edit().putFloat("w", d.widthCm).putFloat("d", d.depthCm).putFloat("h", d.heightCm)
             .putString("src", d.source.name).putString("preset", d.presetId).apply()
 
     var door: Door
-        get() = Door(p.getFloat("door_w", Door.TYPICAL.widthCm), p.getFloat("door_h", Door.TYPICAL.heightCm))
-            .takeIf { it.isValid } ?: Door.TYPICAL
+        get() {
+            val typical = Door.typicalFor(unit)
+            return Door(p.getFloat("door_w", typical.widthCm), p.getFloat("door_h", typical.heightCm))
+                .takeIf { it.isValid } ?: typical
+        }
         set(d) = p.edit().putFloat("door_w", d.widthCm).putFloat("door_h", d.heightCm).apply()
 
     /** Answers the person got: a door checked, an AR photo taken. Counted on the way back home. */

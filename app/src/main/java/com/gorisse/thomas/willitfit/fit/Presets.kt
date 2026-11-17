@@ -1,5 +1,7 @@
 package com.gorisse.thomas.willitfit.fit
 
+import kotlin.math.roundToInt
+
 /** The silhouette drawn in 3D and AR. Built in code from boxes, cylinders and rings. */
 enum class Shape { SOFA, BED, WARDROBE, FRIDGE, WASHER, TV, BIKE, STROLLER, BOX }
 
@@ -44,16 +46,34 @@ private fun preset(id: String, w: Float, d: Float, h: Float) =
     Dimensions(w, d, h, DimensionSource.PRESET, id)
 
 /**
+ * The preset as people who measure in [unit] would read it on a label: in inches, every side
+ * to the whole inch (a three-seat sofa is 87 × 37 × 33 in, not 86.6 × 37.4 × 33.5). Centimetres
+ * are the source and stay as they are.
+ */
+fun Preset.dimensionsIn(unit: LengthUnit): Dimensions = when (unit) {
+    LengthUnit.CM -> dimensions
+    LengthUnit.INCH -> dimensions.copy(
+        widthCm = dimensions.widthCm.toWholeInchCm(),
+        depthCm = dimensions.depthCm.toWholeInchCm(),
+        heightCm = dimensions.heightCm.toWholeInchCm(),
+    )
+}
+
+/** This length, rounded to the whole inch, back in centimetres. */
+fun Float.toWholeInchCm(): Float = (this / LengthUnit.CM_PER_INCH).roundToInt() * LengthUnit.CM_PER_INCH
+
+/**
  * A size with no preset that is exactly a preset's (2.x saved sizes without naming the object)
  * becomes that preset again: the stroller comes back as a stroller, not as "your size" in a box.
  */
 fun Dimensions.withMatchingPreset(): Dimensions {
     if (presetId != null) return this
     fun same(a: Float, b: Float) = kotlin.math.abs(a - b) < 0.05f
-    return Preset.entries.firstOrNull {
-        val p = it.dimensions
-        same(p.widthCm, widthCm) && same(p.depthCm, depthCm) && same(p.heightCm, heightCm)
-    }?.dimensions ?: this
+    return Preset.entries.firstNotNullOfOrNull { preset ->
+        LengthUnit.entries.map { preset.dimensionsIn(it) }.firstOrNull { p ->
+            same(p.widthCm, widthCm) && same(p.depthCm, depthCm) && same(p.heightCm, heightCm)
+        }
+    } ?: this
 }
 
 /** The silhouette for any dimensions: the preset's own, or a plain box for typed sizes. */

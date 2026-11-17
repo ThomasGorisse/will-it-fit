@@ -8,6 +8,15 @@ data class Door(val widthCm: Float, val heightCm: Float) {
     companion object {
         /** A common interior door in Europe: 83 cm leaf, about 78 × 200 cm of clear opening. */
         val TYPICAL = Door(widthCm = 78f, heightCm = 200f)
+
+        /**
+         * A common interior door in the US: 32 in leaf, about 30 × 80 in of clear opening. Typed
+         * in whole inches, as people there measure it.
+         */
+        val TYPICAL_INCH = Door(widthCm = 30 * LengthUnit.CM_PER_INCH, heightCm = 80 * LengthUnit.CM_PER_INCH)
+
+        /** The typical door where people measure in [unit]. */
+        fun typicalFor(unit: LengthUnit): Door = if (unit == LengthUnit.INCH) TYPICAL_INCH else TYPICAL
     }
 }
 
