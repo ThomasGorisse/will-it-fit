@@ -100,7 +100,8 @@ class MainActivity : ComponentActivity() {
                                     if (dims.source == DimensionSource.PRESET && preset != null) {
                                         dims = preset.dimensionsIn(new); prefs.dimensions = dims
                                     }
-                                    if (door == Door.typicalFor(unit)) { door = Door.typicalFor(new); prefs.door = door }
+                                    // A door never typed in is the default, not a measure: it follows too.
+                                    if (!prefs.doorTyped) door = Door.typicalFor(new)
                                     unit = new; prefs.unit = new
                                 },
                                 onBack = { route = Route.HOME },

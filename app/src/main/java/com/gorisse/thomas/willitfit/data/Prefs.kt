@@ -47,6 +47,9 @@ class Prefs(context: Context) {
         }
         set(d) = p.edit().putFloat("door_w", d.widthCm).putFloat("door_h", d.heightCm).apply()
 
+    /** The person typed a door in. Until then the door is the typical one for the unit. */
+    val doorTyped: Boolean get() = p.contains("door_w")
+
     /** Answers the person got: a door checked, an AR photo taken. Counted on the way back home. */
     var answers: Int
         get() = p.getInt("answers", 0)
