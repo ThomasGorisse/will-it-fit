@@ -83,8 +83,9 @@ private const val BACK_WALL_Z = -1.5f
 private const val LEFT_WALL_X = -2.3f
 private const val ROOM_WIDTH = 6.5f
 private const val ROOM_DEPTH = 6f
-// 3 m, not 2.6: framing a 2 m wardrobe, the camera looked over a 2.6 m wall into the black.
-private const val WALL_HEIGHT = 3f
+// 3.8 m, not 3: framing a 2 m wardrobe on a tall phone (20:9, the Pixel 9), the camera rises
+// and looked over a 3 m wall into the black, a dark band under the status bar.
+private const val WALL_HEIGHT = 3.8f
 private const val WALL_T = 0.1f
 
 /**

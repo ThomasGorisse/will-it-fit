@@ -85,4 +85,35 @@ class DimensionsTest {
         val edited = Dimensions(60f, 90f, 105f, DimensionSource.TYPED, "sofa3")
         assertEquals("sofa3", edited.withMatchingPreset().presetId)
     }
+
+    @Test
+    fun `typical sizes read in whole inches where people measure in inches`() {
+        val sofa = Preset.SOFA_3.dimensionsIn(LengthUnit.INCH)
+        assertEquals("87 × 37 × 33 in", formatDimensions(sofa, LengthUnit.INCH))
+        assertEquals(DimensionSource.PRESET, sofa.source)
+        assertEquals("sofa3", sofa.presetId)
+        Preset.entries.forEach { preset ->
+            val d = preset.dimensionsIn(LengthUnit.INCH)
+            listOf(d.widthCm, d.depthCm, d.heightCm).forEach {
+                assertFalse("${preset.id}: $it cm is not whole inches", formatNumber(it, LengthUnit.INCH).contains('.'))
+            }
+        }
+        // Centimetres are the source and stay as they are.
+        assertEquals(Preset.SOFA_3.dimensions, Preset.SOFA_3.dimensionsIn(LengthUnit.CM))
+    }
+
+    @Test
+    fun `a saved size equal to a preset in whole inches becomes that preset again`() {
+        val saved = Preset.STROLLER.dimensionsIn(LengthUnit.INCH).copy(source = DimensionSource.TYPED, presetId = null)
+        assertEquals("stroller", saved.withMatchingPreset().presetId)
+    }
+
+    @Test
+    fun `the typical door follows the unit`() {
+        assertEquals(Door.TYPICAL, Door.typicalFor(LengthUnit.CM))
+        val us = Door.typicalFor(LengthUnit.INCH)
+        assertEquals("30", formatNumber(us.widthCm, LengthUnit.INCH))
+        assertEquals("80", formatNumber(us.heightCm, LengthUnit.INCH))
+        assertTrue(us.isValid)
+    }
 }

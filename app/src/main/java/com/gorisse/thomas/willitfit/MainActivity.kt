@@ -19,6 +19,10 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.ar.core.ArCoreApk
 import com.gorisse.thomas.willitfit.data.Prefs
+import com.gorisse.thomas.willitfit.fit.DimensionSource
+import com.gorisse.thomas.willitfit.fit.Door
+import com.gorisse.thomas.willitfit.fit.Preset
+import com.gorisse.thomas.willitfit.fit.dimensionsIn
 import com.gorisse.thomas.willitfit.ui.ArScreen
 import com.gorisse.thomas.willitfit.ui.DoorScreen
 import com.gorisse.thomas.willitfit.ui.HomeScreen
@@ -89,7 +93,17 @@ class MainActivity : ComponentActivity() {
                             )
                             Route.SETTINGS -> SettingsScreen(
                                 unit = unit,
-                                onUnit = { unit = it; prefs.unit = it },
+                                onUnit = { new ->
+                                    // A typical size and the typical door follow the unit, to the
+                                    // whole inch or centimetre; what the person typed stays theirs.
+                                    val preset = Preset.byId(dims.presetId)
+                                    if (dims.source == DimensionSource.PRESET && preset != null) {
+                                        dims = preset.dimensionsIn(new); prefs.dimensions = dims
+                                    }
+                                    // A door never typed in is the default, not a measure: it follows too.
+                                    if (!prefs.doorTyped) door = Door.typicalFor(new)
+                                    unit = new; prefs.unit = new
+                                },
                                 onBack = { route = Route.HOME },
                             )
                         }

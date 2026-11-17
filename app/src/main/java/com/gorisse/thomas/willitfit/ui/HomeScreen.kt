@@ -66,6 +66,7 @@ import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.Preset
+import com.gorisse.thomas.willitfit.fit.dimensionsIn
 import com.gorisse.thomas.willitfit.fit.formatDimensions
 import com.gorisse.thomas.willitfit.scene.RoomPalette
 import com.gorisse.thomas.willitfit.scene.RoomScene
@@ -158,7 +159,7 @@ fun HomeScreen(
                     onValidChange = { fieldsValid = it },
                 )
                 Spacer(Modifier.height(if (compact) 8.dp else 12.dp))
-                PresetRow(dims, compact, onPick = { onDims(it) })
+                PresetRow(dims, unit, compact, onPick = { onDims(it) })
                 Spacer(Modifier.height(if (compact) 10.dp else 14.dp))
                 // The two answers, stacked at the bottom where the thumb rests.
                 Column(
@@ -207,7 +208,7 @@ fun HomeScreen(
 }
 
 @Composable
-private fun PresetRow(dims: Dimensions, compact: Boolean, onPick: (Dimensions) -> Unit) {
+private fun PresetRow(dims: Dimensions, unit: LengthUnit, compact: Boolean, onPick: (Dimensions) -> Unit) {
     val thumb = if (compact) 48.dp else 60.dp
     val state = rememberLazyListState()
     val selected = Preset.byId(dims.presetId)
@@ -226,7 +227,7 @@ private fun PresetRow(dims: Dimensions, compact: Boolean, onPick: (Dimensions) -
                 compact = compact,
                 selected = preset == selected,
                 label = stringResource(preset.label()),
-                onClick = { onPick(preset.dimensions) },
+                onClick = { onPick(preset.dimensionsIn(unit)) },
             ) {
                 Image(
                     painter = painterResource(preset.thumbnail()),
