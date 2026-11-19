@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -70,7 +71,11 @@ fun SettingsScreen(unit: LengthUnit, onUnit: (LengthUnit) -> Unit, onBack: () ->
             ListItem(
                 leadingContent = { Icon(Icons.Outlined.ViewInAr, null) },
                 headlineContent = { Text(stringResource(R.string.settings_arcore_title)) },
-                supportingContent = { Text(arCoreNoticeText(MaterialTheme.colorScheme.primary)) },
+                supportingContent = {
+                    val uriHandler = LocalUriHandler.current
+                    // A phone without a browser: the tap does nothing rather than crash the app.
+                    Text(arCoreNoticeText(MaterialTheme.colorScheme.primary) { url -> runCatching { uriHandler.openUri(url) } })
+                },
             )
             ListItem(
                 leadingContent = { Icon(Icons.Outlined.Code, null) },
@@ -88,9 +93,11 @@ fun SettingsScreen(unit: LengthUnit, onUnit: (LengthUnit) -> Unit, onBack: () ->
     }
 }
 
-/** [ArCoreNotice.TEXT] with its links, underlined in the theme's primary colour. Tapping opens the browser. */
-private fun arCoreNoticeText(linkColor: Color): AnnotatedString = buildAnnotatedString {
+/** [ArCoreNotice.TEXT] with its links, underlined in the theme's primary colour; a tap calls [open]. */
+private fun arCoreNoticeText(linkColor: Color, open: (String) -> Unit): AnnotatedString = buildAnnotatedString {
     append(ArCoreNotice.TEXT)
     val styles = TextLinkStyles(SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline))
-    ArCoreNotice.links.forEach { addLink(LinkAnnotation.Url(it.url, styles), it.start, it.end) }
+    ArCoreNotice.links.forEach { link ->
+        addLink(LinkAnnotation.Url(link.url, styles) { open(link.url) }, link.start, link.end)
+    }
 }
