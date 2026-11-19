@@ -2,6 +2,10 @@ package com.gorisse.thomas.willitfit.ui
 
 import android.app.Activity
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,10 +47,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
+import com.gorisse.thomas.willitfit.capture.PhotoFailure
+import com.gorisse.thomas.willitfit.capture.PhotoResult
 import com.gorisse.thomas.willitfit.capture.STORE_LINK
 import com.gorisse.thomas.willitfit.capture.captureScene
 import com.gorisse.thomas.willitfit.capture.savePhoto
 import com.gorisse.thomas.willitfit.capture.sharePhoto
+import com.gorisse.thomas.willitfit.capture.takePhoto
 import com.gorisse.thomas.willitfit.scene.FurnitureTeal
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
@@ -59,6 +66,7 @@ import com.gorisse.thomas.willitfit.fit.formatNumber
 import com.gorisse.thomas.willitfit.fit.shape
 import com.gorisse.thomas.willitfit.scene.DoorScene
 import com.gorisse.thomas.willitfit.scene.RoomPalette
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -83,6 +91,9 @@ fun DoorScreen(
     var sheetPx by remember { mutableIntStateOf(0) }
     var fieldsValid by remember { mutableStateOf(true) }
     var holding by remember { mutableStateOf(false) }
+    // The last share whose picture did not come out, and why: a card with Try again.
+    var photoFailure by remember { mutableStateOf<PhotoFailure?>(null) }
+    var shot by remember { mutableStateOf<Job?>(null) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -117,29 +128,56 @@ fun DoorScreen(
             onClick = onBack,
             modifier = Modifier.statusBarsPadding().padding(12.dp).size(48.dp),
         ) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, stringResource(R.string.action_back)) }
-        if (fieldsValid) FilledTonalIconButton(
-            onClick = {
-                val activity = context as? Activity ?: return@FilledTonalIconButton
-                if (holding) return@FilledTonalIconButton
-                scope.launch {
-                    // Hold the object on the answer and let the scene draw it before reading it back.
-                    holding = true
-                    delay(250)
-                    val bitmap = captureScene(activity)
-                    holding = false
-                    if (bitmap != null) {
+        val share: () -> Unit = share@{
+            val activity = context as? Activity ?: return@share
+            if (shot?.isActive == true) return@share // one picture at a time, saving included
+            photoFailure = null
+            shot = scope.launch {
+                val result = takePhoto(
+                    setBusy = { holding = it },
+                    capture = {
+                        // Hold the object on the answer and let the scene draw it before reading it back.
+                        delay(250)
+                        captureScene(activity)
+                    },
+                    save = { bitmap ->
                         val color = when {
                             !verdict.fits -> 0xFFFFB4AB // the dark scheme's error
                             verdict.isTight -> 0xFFF2C46D
                             else -> 0xFF8DD99A // FitColors.success, dark
                         }.toInt()
-                        val file = savePhoto(context, bitmap, answer, listOf(objectLine, doorLine, margin), signature, color)
-                        sharePhoto(context, file, chooser, "$answer · $margin\n$objectLine · $doorLine\n$STORE_LINK")
-                    }
+                        savePhoto(context, bitmap, answer, listOf(objectLine, doorLine, margin), signature, color)
+                    },
+                )
+                when (result) {
+                    is PhotoResult.Success -> sharePhoto(
+                        context, result.value, chooser, "$answer · $margin\n$objectLine · $doorLine\n$STORE_LINK",
+                    )
+                    is PhotoResult.Failure -> photoFailure = result.reason
                 }
-            },
+            }
+        }
+        if (fieldsValid) FilledTonalIconButton(
+            onClick = share,
             modifier = Modifier.align(Alignment.TopEnd).statusBarsPadding().padding(12.dp).size(48.dp),
         ) { Icon(Icons.Outlined.Share, stringResource(R.string.door_share)) }
+
+        var shownFailure by remember { mutableStateOf(PhotoFailure.COPY_FAILED) }
+        photoFailure?.let { shownFailure = it }
+        AnimatedVisibility(
+            photoFailure != null,
+            enter = fadeIn() + slideInVertically { it / 3 },
+            exit = fadeOut(),
+            // Just above the sheet, over the scene.
+            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = with(density) { sheetPx.toDp() }),
+        ) {
+            PhotoFailedCard(
+                reason = shownFailure,
+                onRetry = share,
+                onDismiss = { photoFailure = null },
+                retryEnabled = fieldsValid,
+            )
+        }
 
         Surface(
             modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().onSizeChanged { sheetPx = it.height },

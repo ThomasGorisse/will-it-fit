@@ -40,6 +40,12 @@
     <string name="result_share">Teilen</string>
     <string name="result_retake">Neu aufnehmen</string>
     <string name="share_chooser">Foto teilen</string>
+    <string name="photo_failed_title">Diesmal kein Foto</string>
+    <string name="photo_failed_not_ready">Die Ansicht war noch nicht bereit. Warte kurz und versuch es noch einmal.</string>
+    <string name="photo_failed_copy">Das Bild ließ sich nicht vom Bildschirm lesen. Versuch es noch einmal.</string>
+    <string name="photo_failed_save">Das Bild ließ sich nicht speichern. Vielleicht ist dein Speicher fast voll.</string>
+    <string name="action_try_again">Noch einmal</string>
+    <string name="action_dismiss">Schließen</string>
     <string name="door_enter">Gib die Türmaße ein</string>
     <string name="door_width">Türbreite</string>
     <string name="door_height">Türhöhe</string>
