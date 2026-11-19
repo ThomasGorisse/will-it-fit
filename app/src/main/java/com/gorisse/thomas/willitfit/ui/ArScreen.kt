@@ -53,8 +53,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.scene.FurnitureTeal
+import com.gorisse.thomas.willitfit.capture.PhotoFailure
+import com.gorisse.thomas.willitfit.capture.PhotoResult
 import com.gorisse.thomas.willitfit.capture.captureScene
 import com.gorisse.thomas.willitfit.capture.savePhoto
+import com.gorisse.thomas.willitfit.capture.takePhoto
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.formatDimensions
@@ -69,6 +72,7 @@ import io.github.sceneview.ar.PlacementPhase
 import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -101,6 +105,9 @@ fun ArScreen(
     @Suppress("UNUSED_VARIABLE") val tool = ArTool.OBJECT
 
     var capturing by remember { mutableStateOf(false) }
+    // The last photo that did not come out, and why: a card with Try again until it is dealt with.
+    var photoFailure by remember { mutableStateOf<PhotoFailure?>(null) }
+    var shot by remember { mutableStateOf<Job?>(null) }
     // SceneView draws its own card while ARCore cannot run ("Couldn't start AR" and its Try
     // again, install, update): ours stays away then, so the screen says one thing at a time.
     var arCoreCard by remember { mutableStateOf(false) }
@@ -114,6 +121,22 @@ fun ArScreen(
     val summary = formatDimensions(dims, unit)
     val realSize = stringResource(R.string.ar_real_size, summary)
     val signature = stringResource(R.string.photo_signature)
+    val shoot: () -> Unit = shoot@{
+        val activity = context as? Activity ?: return@shoot
+        if (shot?.isActive == true) return@shoot // one photo at a time, saving included
+        photoFailure = null
+        shot = scope.launch {
+            val result = takePhoto(
+                setBusy = { capturing = it },
+                capture = { captureScene(activity) },
+                save = { savePhoto(context, it, name, listOf(realSize), signature) },
+            )
+            when (result) {
+                is PhotoResult.Success -> onPhoto(result.value)
+                is PhotoResult.Failure -> photoFailure = result.reason
+            }
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         AutoPlacementScene(
@@ -172,6 +195,22 @@ fun ArScreen(
                     PlacementPhase.CAMERA_ERROR -> ArCard.CAMERA
                     else -> null
                 }
+                // A failed photo speaks only when the scene has nothing more urgent to say.
+                val failure = photoFailure.takeIf { card == null && !arCoreCard }
+                var shownFailure by remember { mutableStateOf(PhotoFailure.COPY_FAILED) }
+                if (failure != null) shownFailure = failure
+                AnimatedVisibility(
+                    failure != null,
+                    enter = fadeIn() + slideInVertically { it / 3 },
+                    exit = fadeOut(),
+                ) {
+                    PhotoFailedCard(
+                        reason = shownFailure,
+                        onRetry = shoot,
+                        onDismiss = { photoFailure = null },
+                        retryEnabled = placed,
+                    )
+                }
                 // Kept through the exit fade, so the card does not go blank while it leaves.
                 var shownCard by remember { mutableStateOf(ArCard.NO_FLOOR) }
                 if (card != null) shownCard = card
@@ -211,15 +250,7 @@ fun ArScreen(
                     Shutter(
                         enabled = placed,
                         label = stringResource(R.string.ar_photo),
-                        onClick = {
-                            val activity = context as? Activity ?: return@Shutter
-                            scope.launch {
-                                capturing = true
-                                val bitmap = captureScene(activity)
-                                capturing = false
-                                if (bitmap != null) onPhoto(savePhoto(context, bitmap, name, listOf(realSize), signature))
-                            }
-                        },
+                        onClick = shoot,
                     )
                     FilledTonalIconButton(
                         onClick = { state.resetPlacement(SystemClock.uptimeMillis()) },

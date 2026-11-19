@@ -16,6 +16,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.TextPaint
 import android.text.TextUtils
+import android.util.Log
 import android.view.PixelCopy
 import android.view.SurfaceView
 import android.view.View
@@ -31,17 +32,25 @@ import kotlin.coroutines.resume
 /**
  * What the scene renders — the camera image and the object, composited by Filament in the
  * scene's SurfaceView — read back with PixelCopy. The Compose controls are not in it, by design:
- * the caption is drawn on the photo afterwards. Needs no permission.
+ * the caption is drawn on the photo afterwards. Needs no permission. Never null: a failure says why.
  */
-suspend fun captureScene(activity: Activity): Bitmap? {
-    val surface = findSurfaceView(activity.window.decorView) ?: return null
-    if (surface.width == 0 || surface.height == 0) return null
+suspend fun captureScene(activity: Activity): PhotoResult<Bitmap> {
+    val surface = findSurfaceView(activity.window.decorView)
+        ?: return PhotoResult.Failure(PhotoFailure.NOT_READY, "no scene on screen")
+    if (surface.width == 0 || surface.height == 0 || !surface.holder.surface.isValid) {
+        return PhotoResult.Failure(PhotoFailure.NOT_READY, "scene not laid out")
+    }
     val bitmap = Bitmap.createBitmap(surface.width, surface.height, Bitmap.Config.ARGB_8888)
-    return suspendCancellableCoroutine { cont ->
-        PixelCopy.request(surface, bitmap, { result ->
-            cont.resume(if (result == PixelCopy.SUCCESS) bitmap else null)
+    val result = suspendCancellableCoroutine { cont ->
+        PixelCopy.request(surface, bitmap, { code ->
+            if (cont.isActive) cont.resume(pixelCopyResult(code, bitmap))
         }, Handler(Looper.getMainLooper()))
     }
+    if (result is PhotoResult.Failure) {
+        bitmap.recycle()
+        Log.w("WillItFit", "photo not taken: ${result.reason} (${result.cause})")
+    }
+    return result
 }
 
 private fun findSurfaceView(view: View): SurfaceView? {

@@ -40,6 +40,12 @@
     <string name="result_share">Compartilhar</string>
     <string name="result_retake">Tirar outra</string>
     <string name="share_chooser">Compartilhar a foto</string>
+    <string name="photo_failed_title">Sem foto desta vez</string>
+    <string name="photo_failed_not_ready">A visualização ainda não estava pronta. Espere um segundo e tente de novo.</string>
+    <string name="photo_failed_copy">Não foi possível ler a imagem da tela. Tente de novo.</string>
+    <string name="photo_failed_save">Não foi possível salvar a imagem. Talvez o celular esteja sem espaço.</string>
+    <string name="action_try_again">Tentar de novo</string>
+    <string name="action_dismiss">Fechar</string>
     <string name="door_enter">Digite as medidas da porta</string>
     <string name="door_width">Largura da porta</string>
     <string name="door_height">Altura da porta</string>
