@@ -37,4 +37,9 @@ class ArCoreNoticeTest {
         sorted.forEach { assertTrue(it.start >= 0 && it.end <= ArCoreNotice.TEXT.length && it.start < it.end) }
         sorted.zipWithNext().forEach { (a, b) -> assertTrue("$a overlaps $b", a.end <= b.start) }
     }
+
+    @Test
+    fun `the privacy policy link is the one on the Play listing`() {
+        assertEquals("https://thomasgorisse.github.io/willitfit/privacy/", PRIVACY_POLICY_URL)
+    }
 }

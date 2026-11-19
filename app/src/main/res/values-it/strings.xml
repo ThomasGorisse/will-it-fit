@@ -70,6 +70,7 @@
     <string name="unit_in">Pollici</string>
     <string name="settings_privacy_title">Privacy</string>
     <string name="settings_privacy">Funziona offline. Nessun account, nessuna pubblicità, nessun tracciamento. Niente di ciò che scrivi o riprendi lascia il telefono, a meno che tu non lo condivida.</string>
+    <string name="settings_privacy_policy">Informativa sulla privacy</string>
     <string name="settings_licenses">Licenze open source</string>
     <string name="settings_licenses_body">Realizzato con SceneView, Google Filament, Jetpack Compose e Material 3 (Apache 2.0) e ARCore (Termini di servizio delle API di Google).</string>
     <string name="settings_about">Informazioni</string>

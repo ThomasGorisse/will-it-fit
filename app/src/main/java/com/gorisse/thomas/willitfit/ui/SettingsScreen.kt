@@ -65,7 +65,18 @@ fun SettingsScreen(unit: LengthUnit, onUnit: (LengthUnit) -> Unit, onBack: () ->
             ListItem(
                 leadingContent = { Icon(Icons.Outlined.Lock, null) },
                 headlineContent = { Text(stringResource(R.string.settings_privacy_title)) },
-                supportingContent = { Text(stringResource(R.string.settings_privacy)) },
+                supportingContent = {
+                    val uriHandler = LocalUriHandler.current
+                    Column {
+                        Text(stringResource(R.string.settings_privacy))
+                        Text(
+                            linkText(stringResource(R.string.settings_privacy_policy), PRIVACY_POLICY_URL, MaterialTheme.colorScheme.primary) { url ->
+                                runCatching { uriHandler.openUri(url) }
+                            },
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+                    }
+                },
             )
             // Required by Google next to the privacy line: the AR camera runs on ARCore.
             ListItem(
@@ -93,10 +104,22 @@ fun SettingsScreen(unit: LengthUnit, onUnit: (LengthUnit) -> Unit, onBack: () ->
     }
 }
 
+/** The app's privacy policy, the one the Play listing points to. */
+const val PRIVACY_POLICY_URL = "https://thomasgorisse.github.io/willitfit/privacy/"
+
+private fun linkStyles(color: Color) = TextLinkStyles(SpanStyle(color = color, textDecoration = TextDecoration.Underline))
+
+/** [text] as one link to [url]; a tap calls [open]. */
+private fun linkText(text: String, url: String, linkColor: Color, open: (String) -> Unit): AnnotatedString =
+    buildAnnotatedString {
+        append(text)
+        addLink(LinkAnnotation.Url(url, linkStyles(linkColor)) { open(url) }, 0, text.length)
+    }
+
 /** [ArCoreNotice.TEXT] with its links, underlined in the theme's primary colour; a tap calls [open]. */
 private fun arCoreNoticeText(linkColor: Color, open: (String) -> Unit): AnnotatedString = buildAnnotatedString {
     append(ArCoreNotice.TEXT)
-    val styles = TextLinkStyles(SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline))
+    val styles = linkStyles(linkColor)
     ArCoreNotice.links.forEach { link ->
         addLink(LinkAnnotation.Url(link.url, styles) { open(link.url) }, link.start, link.end)
     }

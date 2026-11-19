@@ -78,6 +78,7 @@
     <string name="unit_in">Inches</string>
     <string name="settings_privacy_title">Privacy</string>
     <string name="settings_privacy">Works offline. No account, no ads, no tracking. Nothing you type or film leaves your phone unless you share it.</string>
+    <string name="settings_privacy_policy">Privacy policy</string>
     <string name="settings_arcore_title" translatable="false">Google Play Services for AR</string>
     <string name="settings_licenses">Open-source licences</string>
     <string name="settings_licenses_body">Built with SceneView, Google Filament, Jetpack Compose and Material 3 (Apache 2.0), and ARCore (Google APIs Terms of Service).</string>

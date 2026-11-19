@@ -70,6 +70,7 @@
     <string name="unit_in">Zoll</string>
     <string name="settings_privacy_title">Datenschutz</string>
     <string name="settings_privacy">Funktioniert offline. Kein Konto, keine Werbung, kein Tracking. Nichts, was du eingibst oder filmst, verlässt dein Handy, außer du teilst es.</string>
+    <string name="settings_privacy_policy">Datenschutzerklärung</string>
     <string name="settings_licenses">Open-Source-Lizenzen</string>
     <string name="settings_licenses_body">Erstellt mit SceneView, Google Filament, Jetpack Compose und Material 3 (Apache 2.0) sowie ARCore (Nutzungsbedingungen der Google APIs).</string>
     <string name="settings_about">Info</string>
