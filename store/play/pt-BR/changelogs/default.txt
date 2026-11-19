@@ -1,5 +1,6 @@
 Novidades
-• Compartilhe a resposta da porta como imagem: o objeto no vão, o resultado, a folga e como carregar.
-• As fotos em RA trazem um cartão com o tamanho real do objeto.
-• O menu de compartilhar mostra a imagem antes de enviar.
+• Teste da porta: o objeto aparece inteiro e as polegadas são números inteiros.
+• O ambiente 3D tem paredes mais altas.
+• Se uma foto em RA falhar, o app diz por quê e oferece tentar de novo.
+• Configurações: o aviso do ARCore do Google e um link para a política de privacidade.
 A 3.0, refeita do zero: escolha um objeto comum ou digite as medidas em cm ou polegadas, veja-o em um ambiente 3D ou em tamanho real em RA e confira uma porta. Grátis, sem anúncios nem conta, offline.

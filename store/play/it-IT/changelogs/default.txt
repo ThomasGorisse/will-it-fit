@@ -1,5 +1,6 @@
 Novità
-• Condividi la risposta della porta come immagine: l'oggetto nel vano, il responso, il margine e come trasportarlo.
-• Le foto in AR hanno una scheda con la misura reale dell'oggetto.
-• Il menu di condivisione mostra l'immagine prima dell'invio.
+• Porta: l'oggetto resta tutto inquadrato e i pollici sono interi.
+• La stanza 3D ha pareti più alte.
+• Se una foto in AR non riesce, l'app spiega perché e propone di riprovare.
+• Impostazioni: l'avviso ARCore di Google e un link all'informativa sulla privacy.
 La 3.0, rifatta da zero: scegli un oggetto tipico o inserisci le sue misure in cm o pollici, guardalo in una stanza 3D o a grandezza reale in AR e verifica una porta. Gratis, senza pubblicità né account, offline.

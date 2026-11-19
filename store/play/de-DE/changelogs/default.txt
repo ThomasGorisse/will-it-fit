@@ -1,5 +1,6 @@
 Neu
-• Teile das Ergebnis des Türchecks als Bild: der Gegenstand in der Tür, das Ergebnis, der Spielraum und die Trageposition.
-• AR-Fotos tragen jetzt eine Karte mit der echten Größe.
-• Das Teilen-Menü zeigt das Bild vor dem Senden.
+• Türcheck: Der Gegenstand bleibt ganz im Bild, Zoll werden als ganze Zahlen angezeigt.
+• Der 3D-Raum hat höhere Wände.
+• Wenn ein AR-Foto fehlschlägt, sagt die App warum und bietet einen neuen Versuch an.
+• Einstellungen: Googles ARCore-Hinweis und ein Link zur Datenschutzerklärung.
 3.0, komplett neu: Wähle einen Gegenstand oder gib seine Maße in cm oder Zoll ein, sieh ihn im 3D-Raum oder in Originalgröße in AR und prüfe eine Tür. Kostenlos, ohne Werbung und Konto, offline.

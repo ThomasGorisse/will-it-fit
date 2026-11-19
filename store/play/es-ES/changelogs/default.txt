@@ -1,5 +1,6 @@
 Novedades
-• Comparte la respuesta de la puerta como imagen: el objeto en el marco, el resultado, el margen y cómo llevarlo.
-• Las fotos en RA llevan una tarjeta con el tamaño real del objeto.
-• El menú de compartir muestra la imagen antes de enviarla.
+• Puerta: el objeto se ve entero y las pulgadas son números enteros.
+• La habitación 3D tiene paredes más altas.
+• Si una foto en RA falla, la app dice por qué y ofrece reintentar.
+• Ajustes: el aviso de ARCore de Google y un enlace a la política de privacidad.
 La 3.0, rehecha desde cero: elige un objeto habitual o escribe sus medidas en cm o pulgadas, míralo en una habitación 3D o a tamaño real en RA y comprueba una puerta. Gratis, sin anuncios ni cuenta, sin conexión.

@@ -1,5 +1,6 @@
 What's new
-• Share the door answer as a picture: the object in the doorway, the verdict, the clearance and the way to carry it.
-• AR photos now carry a card with the object's real size.
-• The share sheet previews the picture before you send it.
+• Door check: the whole object stays in view, and inches read as whole numbers.
+• The 3D room has taller walls.
+• If an AR photo fails, the app says why and offers Try again.
+• Settings: Google's ARCore notice and a link to the privacy policy.
 3.0, rebuilt from scratch: pick a typical object or type its size in cm or inches, see it in a live 3D room or at real size in AR, and check a doorway. Free, no ads, no account, works offline.

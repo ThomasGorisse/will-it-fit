@@ -1,5 +1,6 @@
 Nouveautés
-• Partagez la réponse de la porte en image : l'objet dans l'embrasure, le verdict, la marge et le sens de portage.
-• Les photos AR portent une carte avec la taille réelle de l'objet.
-• La feuille de partage montre l'image avant l'envoi.
+• Porte : l'objet reste entier dans le cadre, pouces en nombres entiers.
+• La pièce 3D a des murs plus hauts.
+• Photo AR ratée : l'app dit pourquoi et propose de réessayer.
+• Réglages : la notice ARCore de Google et un lien vers la politique de confidentialité.
 La 3.0, reconstruite de zéro : choisissez un objet courant ou saisissez sa taille en cm ou en pouces, voyez-le dans une pièce 3D ou à taille réelle en AR, testez une porte. Gratuit, sans pub ni compte, hors ligne.
