@@ -70,6 +70,7 @@
     <string name="unit_in">Pouces</string>
     <string name="settings_privacy_title">Confidentialité</string>
     <string name="settings_privacy">Fonctionne hors ligne. Ni compte, ni pub, ni suivi. Rien de ce que vous tapez ou filmez ne quitte le téléphone, sauf si vous le partagez.</string>
+    <string name="settings_privacy_policy">Politique de confidentialité</string>
     <string name="settings_licenses">Licences open source</string>
     <string name="settings_licenses_body">Construit avec SceneView, Google Filament, Jetpack Compose et Material 3 (Apache 2.0), et ARCore (conditions d\'utilisation des API Google).</string>
     <string name="settings_about">À propos</string>
