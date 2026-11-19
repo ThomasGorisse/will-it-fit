@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.ar.core.ArCoreApk
 import com.gorisse.thomas.willitfit.data.Prefs
+import com.gorisse.thomas.willitfit.data.ReviewPolicy
 import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Door
 import com.gorisse.thomas.willitfit.fit.Preset
@@ -35,6 +36,9 @@ import java.io.File
 private enum class Route { HOME, AR, RESULT, DOOR, SETTINGS }
 
 class MainActivity : ComponentActivity() {
+    /** A rating flow is running: going home again meanwhile does not start a second one. */
+    private var reviewInFlight = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -51,16 +55,23 @@ class MainActivity : ComponentActivity() {
                     val arAvailable = remember {
                         runCatching { !ArCoreApk.getInstance().checkAvailability(context).isUnsupported }.getOrDefault(false)
                     }
-                    // An answer is an AR photo taken or a door checked. Back home after the second
-                    // one is a pause after something that worked: Play's rating sheet is asked for
-                    // then, once in the app's life.
-                    var lastRoute by remember { mutableStateOf(route) }
+                    // An answer is an AR photo taken or a door verdict seen. Back home after the
+                    // second one is a pause after something that worked: Play's rating sheet is
+                    // asked for then, and once more much later (ReviewPolicy).
+                    var lastRoute by rememberSaveable { mutableStateOf(route) }
+                    var doorVerdictSeen by rememberSaveable { mutableStateOf(false) }
                     LaunchedEffect(route) {
-                        if (route == Route.RESULT || (route == Route.HOME && lastRoute == Route.DOOR)) prefs.answers += 1
-                        if (route == Route.HOME && lastRoute != Route.HOME) {
-                            if (prefs.answers >= 2 && !prefs.reviewAsked) {
-                                prefs.reviewAsked = true
-                                askForRating(this@MainActivity)
+                        // Same route again: the activity was recreated (rotation), nothing happened.
+                        if (route == lastRoute) return@LaunchedEffect
+                        if (route == Route.RESULT || (route == Route.HOME && lastRoute == Route.DOOR && doorVerdictSeen)) {
+                            prefs.answers += 1
+                        }
+                        if (route == Route.HOME && !reviewInFlight && ReviewPolicy.shouldAsk(prefs.review, System.currentTimeMillis())) {
+                            reviewInFlight = true
+                            askForRating(this@MainActivity) { ran ->
+                                reviewInFlight = false
+                                // Counted only once Play's flow ran to its end, not when asked.
+                                if (ran) prefs.review = ReviewPolicy.requested(prefs.review, System.currentTimeMillis())
                             }
                         }
                         lastRoute = route
@@ -75,7 +86,7 @@ class MainActivity : ComponentActivity() {
                                 dims = dims, unit = unit, arAvailable = arAvailable,
                                 onDims = { dims = it; if (it.isValid) prefs.dimensions = it },
                                 onAr = { route = Route.AR },
-                                onDoor = { route = Route.DOOR },
+                                onDoor = { doorVerdictSeen = false; route = Route.DOOR },
                                 onSettings = { route = Route.SETTINGS },
                             )
                             Route.AR -> ArScreen(
@@ -89,6 +100,7 @@ class MainActivity : ComponentActivity() {
                             Route.DOOR -> DoorScreen(
                                 dims = dims, door = door, unit = unit,
                                 onDoor = { door = it; if (it.isValid) prefs.door = it },
+                                onVerdictShown = { doorVerdictSeen = true },
                                 onBack = { route = Route.HOME },
                             )
                             Route.SETTINGS -> SettingsScreen(
@@ -116,18 +128,25 @@ class MainActivity : ComponentActivity() {
 
 /**
  * Play's own rating sheet. Play decides whether it shows (a quota per person, nothing on a build
- * not installed from Play) and never says whether the person rated: the flow just ends.
+ * not installed from Play) and never says whether the person rated: the flow just ends. [onDone]
+ * gets true once Play ran the flow to its end, false when it could not start (not from Play,
+ * offline, the screen gone): then nothing is counted and the next pause tries again.
  */
-private fun askForRating(activity: Activity) {
+private fun askForRating(activity: Activity, onDone: (ran: Boolean) -> Unit) {
     val manager = ReviewManagerFactory.create(activity)
     manager.requestReviewFlow().addOnCompleteListener { request ->
         if (!request.isSuccessful) {
             Log.i("WillItFit", "rating sheet not available: ${request.exception?.message}")
+            onDone(false)
             return@addOnCompleteListener
         }
-        if (activity.isFinishing || activity.isDestroyed) return@addOnCompleteListener
+        if (activity.isFinishing || activity.isDestroyed) {
+            onDone(false)
+            return@addOnCompleteListener
+        }
         manager.launchReviewFlow(activity, request.result).addOnCompleteListener {
             Log.i("WillItFit", "rating flow done")
+            onDone(it.isSuccessful)
         }
     }
 }

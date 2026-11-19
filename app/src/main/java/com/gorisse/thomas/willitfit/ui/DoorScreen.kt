@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -83,6 +84,7 @@ fun DoorScreen(
     unit: LengthUnit,
     onDoor: (Door) -> Unit,
     onBack: () -> Unit,
+    onVerdictShown: () -> Unit = {},
 ) {
     val verdict = checkDoor(dims, door)
     val scheme = MaterialTheme.colorScheme
@@ -90,6 +92,10 @@ fun DoorScreen(
     val density = LocalDensity.current
     var sheetPx by remember { mutableIntStateOf(0) }
     var fieldsValid by remember { mutableStateOf(true) }
+    // A verdict on screen for a second counts as seen: an answer, for Play's rating sheet.
+    LaunchedEffect(fieldsValid) {
+        if (fieldsValid) { delay(1_000); onVerdictShown() }
+    }
     var holding by remember { mutableStateOf(false) }
     // The last share whose picture did not come out, and why: a card with Try again.
     var photoFailure by remember { mutableStateOf<PhotoFailure?>(null) }

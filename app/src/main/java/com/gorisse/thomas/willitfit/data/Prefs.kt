@@ -50,17 +50,39 @@ class Prefs(context: Context) {
     /** The person typed a door in. Until then the door is the typical one for the unit. */
     val doorTyped: Boolean get() = p.contains("door_w")
 
-    /** Answers the person got: a door checked, an AR photo taken. Counted on the way back home. */
+    /** Answers the person got: a door verdict seen, an AR photo taken. Counted on the way back home. */
     var answers: Int
         get() = p.getInt("answers", 0)
         set(value) = p.edit().putInt("answers", value).apply()
 
-    /** Play's rating sheet was asked for once already: never again, Play decides from there. */
-    var reviewAsked: Boolean
-        get() = p.getBoolean("review_asked", false)
-        set(value) = p.edit().putBoolean("review_asked", value).apply()
+    /** Where the app stands with Play's rating sheet: see [ReviewPolicy]. */
+    var review: ReviewState
+        get() {
+            if (!p.contains(KEY_REVIEW_REQUESTS)) {
+                // First read since 3.0.2: carry its one-shot flag over, once.
+                val migrated = ReviewPolicy.migrated(answers, p.getBoolean(KEY_LEGACY_REVIEW_ASKED, false), System.currentTimeMillis())
+                review = migrated
+                return migrated
+            }
+            return ReviewState(
+                answers = answers,
+                requests = p.getInt(KEY_REVIEW_REQUESTS, 0),
+                lastRequestAt = p.getLong(KEY_REVIEW_LAST_AT, 0L),
+                answersAtLastRequest = p.getInt(KEY_REVIEW_ANSWERS_AT_LAST, 0),
+            )
+        }
+        set(value) = p.edit()
+            .putInt(KEY_REVIEW_REQUESTS, value.requests)
+            .putLong(KEY_REVIEW_LAST_AT, value.lastRequestAt)
+            .putInt(KEY_REVIEW_ANSWERS_AT_LAST, value.answersAtLastRequest)
+            .remove(KEY_LEGACY_REVIEW_ASKED)
+            .apply()
 
     private companion object {
         const val KEY_UNIT = "unit"
+        const val KEY_LEGACY_REVIEW_ASKED = "review_asked"
+        const val KEY_REVIEW_REQUESTS = "review_requests"
+        const val KEY_REVIEW_LAST_AT = "review_last_at"
+        const val KEY_REVIEW_ANSWERS_AT_LAST = "review_answers_at_last"
     }
 }
