@@ -69,7 +69,7 @@
     <string name="unit_cm">Centimetri</string>
     <string name="unit_in">Pollici</string>
     <string name="settings_privacy_title">Privacy</string>
-    <string name="settings_privacy">Funziona offline. Nessun account, nessuna pubblicità, nessun tracciamento. Niente di ciò che scrivi o riprendi lascia il telefono, a meno che tu non lo condivida.</string>
+    <string name="settings_privacy">Funziona offline. Nessun account, nessuna pubblicità. L\'app non invia nulla: ciò che scrivi resta sul telefono e l\'immagine della fotocamera non viene mai registrata né inviata. Escono solo le foto che scegli di condividere. In AR, Google Play Services for AR raccoglie per conto suo alcuni dati tecnici, descritti qui sotto.</string>
     <string name="settings_privacy_policy">Informativa sulla privacy</string>
     <string name="settings_licenses">Licenze open source</string>
     <string name="settings_licenses_body">Realizzato con SceneView, Google Filament, Jetpack Compose e Material 3 (Apache 2.0) e ARCore (Termini di servizio delle API di Google).</string>

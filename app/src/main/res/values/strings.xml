@@ -77,7 +77,7 @@
     <string name="unit_cm">Centimetres</string>
     <string name="unit_in">Inches</string>
     <string name="settings_privacy_title">Privacy</string>
-    <string name="settings_privacy">Works offline. No account, no ads, no tracking. Nothing you type or film leaves your phone unless you share it.</string>
+    <string name="settings_privacy">Works offline. No account, no ads. The app itself sends nothing: what you type stays on your phone, and the camera view is never recorded or sent. Only the photos you choose to share leave it. In AR, Google Play Services for AR collects some technical data of its own, described below.</string>
     <string name="settings_privacy_policy">Privacy policy</string>
     <string name="settings_arcore_title" translatable="false">Google Play Services for AR</string>
     <string name="settings_licenses">Open-source licences</string>

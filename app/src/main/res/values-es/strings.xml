@@ -69,7 +69,7 @@
     <string name="unit_cm">Centímetros</string>
     <string name="unit_in">Pulgadas</string>
     <string name="settings_privacy_title">Privacidad</string>
-    <string name="settings_privacy">Funciona sin conexión. Sin cuenta, sin anuncios, sin seguimiento. Nada de lo que escribes o grabas sale del móvil, salvo que lo compartas.</string>
+    <string name="settings_privacy">Funciona sin conexión. Sin cuenta ni anuncios. La app no envía nada: lo que escribes se queda en el móvil y la imagen de la cámara nunca se graba ni se envía. Solo salen las fotos que decides compartir. En RA, Google Play Services for AR recoge por su cuenta algunos datos técnicos, descritos abajo.</string>
     <string name="settings_privacy_policy">Política de privacidad</string>
     <string name="settings_licenses">Licencias de código abierto</string>
     <string name="settings_licenses_body">Hecho con SceneView, Google Filament, Jetpack Compose y Material 3 (Apache 2.0), y ARCore (Condiciones de las API de Google).</string>
