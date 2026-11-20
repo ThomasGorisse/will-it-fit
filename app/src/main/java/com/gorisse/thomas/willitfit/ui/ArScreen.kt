@@ -132,6 +132,10 @@ fun ArScreen(
     // in front of the object slid under the buttons when the phone came close.
     var screenHeight by remember { mutableIntStateOf(0) }
     var controlsTop by remember { mutableFloatStateOf(Float.NaN) }
+    // And where the back button and the title end: up close to a washer, its height tag grew
+    // past them at the top of the screen.
+    var backBottom by remember { mutableFloatStateOf(Float.NaN) }
+    var titleBottom by remember { mutableFloatStateOf(Float.NaN) }
     val clearance = remember(camera) {
         TagClearance(
             screenY = camera::screenY,
@@ -139,6 +143,11 @@ fun ArScreen(
                 val h = screenHeight
                 // A photo has no buttons over it: every tag stays in it.
                 if (capturing || h <= 0 || controlsTop.isNaN()) -1f else 1f - 2f * controlsTop / h
+            },
+            topLimit = {
+                val h = screenHeight
+                val bar = maxOf(backBottom, titleBottom)
+                if (capturing || h <= 0 || bar.isNaN()) 1f else 1f - 2f * bar / h
             },
         )
     }
@@ -227,12 +236,14 @@ fun ArScreen(
         if (!capturing) {
             FilledTonalIconButton(
                 onClick = onBack,
-                modifier = Modifier.statusBarsPadding().padding(12.dp).size(48.dp),
+                modifier = Modifier.statusBarsPadding().padding(12.dp).size(48.dp)
+                    .onGloballyPositioned { backBottom = it.positionInParent().y + it.size.height },
             ) {
                 Icon(Icons.AutoMirrored.Outlined.ArrowBack, stringResource(R.string.action_back))
             }
             Surface(
-                modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(top = 18.dp),
+                modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(top = 18.dp)
+                    .onGloballyPositioned { titleBottom = it.positionInParent().y + it.size.height },
                 color = Color(0xCC141218),
                 contentColor = Color.White,
                 shape = RoundedCornerShape(12.dp),
