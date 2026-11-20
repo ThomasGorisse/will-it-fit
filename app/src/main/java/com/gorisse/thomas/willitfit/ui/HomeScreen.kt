@@ -12,16 +12,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ViewInAr
@@ -107,11 +111,12 @@ fun HomeScreen(
             contentPadding = PaddingValues(bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp)),
         )
         Surface(
-            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().onSizeChanged { sheetPx = it.height },
+            // With very large text the sheet stops under the status bar and scrolls.
+            modifier = Modifier.align(Alignment.BottomCenter).statusBarsPadding().fillMaxWidth().onSizeChanged { sheetPx = it.height },
             color = scheme.surfaceContainerLow,
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         ) {
-            Column(Modifier.navigationBarsPadding().padding(top = if (compact) 12.dp else 16.dp, bottom = 12.dp)) {
+            Column(Modifier.verticalScroll(rememberScrollState()).navigationBarsPadding().padding(top = if (compact) 12.dp else 16.dp, bottom = 12.dp)) {
                 Row(
                     Modifier.padding(start = 24.dp, end = 12.dp).fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -169,7 +174,8 @@ fun HomeScreen(
                     Button(
                         onClick = onAr,
                         enabled = arAvailable && dims.isValid && fieldsValid,
-                        modifier = Modifier.fillMaxWidth().height(buttonHeight),
+                        // A minimum, not a height: a label on two lines (large text) still fits.
+                        modifier = Modifier.fillMaxWidth().heightIn(min = buttonHeight),
                     ) {
                         Icon(Icons.Outlined.ViewInAr, null, Modifier.size(ButtonDefaults.IconSize))
                         Spacer(Modifier.width(ButtonDefaults.IconSpacing))
@@ -178,7 +184,7 @@ fun HomeScreen(
                     FilledTonalButton(
                         onClick = onDoor,
                         enabled = dims.isValid && fieldsValid,
-                        modifier = Modifier.fillMaxWidth().height(buttonHeight),
+                        modifier = Modifier.fillMaxWidth().heightIn(min = buttonHeight),
                         // In the evening a solid deep teal, as in the target, not a grey-teal tone.
                         colors = if (dark) {
                             ButtonDefaults.filledTonalButtonColors(

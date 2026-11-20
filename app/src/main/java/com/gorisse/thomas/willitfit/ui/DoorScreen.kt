@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -62,7 +64,7 @@ import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.Shape
 import com.gorisse.thomas.willitfit.fit.checkDoor
 import com.gorisse.thomas.willitfit.fit.formatDimensions
-import com.gorisse.thomas.willitfit.fit.formatLength
+import com.gorisse.thomas.willitfit.fit.formatMargin
 import com.gorisse.thomas.willitfit.fit.formatNumber
 import com.gorisse.thomas.willitfit.fit.shape
 import com.gorisse.thomas.willitfit.scene.DoorScene
@@ -70,7 +72,6 @@ import com.gorisse.thomas.willitfit.scene.RoomPalette
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 
 /**
  * Screen 4, "Through the door?". No camera: the door's opening, and the answer — yes or no, by
@@ -112,7 +113,7 @@ fun DoorScreen(
     )
     val margin = stringResource(
         if (verdict.fits) R.string.door_margin_spare else R.string.door_margin_over,
-        formatLength(abs(verdict.marginCm), unit),
+        formatMargin(verdict.marginCm, unit),
     ) + " · " + stringResource(verdict.carry.label())
     val objectLine = stringResource(R.string.door_object, objectName(dims), formatDimensions(dims, unit))
     val doorLine = stringResource(
@@ -186,11 +187,14 @@ fun DoorScreen(
         }
 
         Surface(
-            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().onSizeChanged { sheetPx = it.height },
+            // Never over the back and share buttons: with very large text the sheet stops below
+            // them and scrolls.
+            modifier = Modifier.align(Alignment.BottomCenter).statusBarsPadding().padding(top = 72.dp)
+                .fillMaxWidth().onSizeChanged { sheetPx = it.height },
             color = scheme.surfaceContainerLow,
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         ) {
-            Column(Modifier.navigationBarsPadding().padding(top = 20.dp, bottom = 16.dp)) {
+            Column(Modifier.verticalScroll(rememberScrollState()).navigationBarsPadding().padding(top = 20.dp, bottom = 16.dp)) {
                 Column(Modifier.padding(horizontal = 24.dp)) {
                     Text(
                         stringResource(R.string.door_object, objectName(dims), formatDimensions(dims, unit)),
@@ -225,7 +229,7 @@ fun DoorScreen(
                     if (fieldsValid) Text(
                         text = stringResource(
                             if (verdict.fits) R.string.door_margin_spare else R.string.door_margin_over,
-                            formatLength(abs(verdict.marginCm), unit),
+                            formatMargin(verdict.marginCm, unit),
                         ) + " · " + stringResource(verdict.carry.label()),
                         style = MaterialTheme.typography.bodyLarge,
                     )

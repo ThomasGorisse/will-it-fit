@@ -86,8 +86,24 @@ fun formatNumber(cm: Float, unit: LengthUnit): String = when (unit) {
     }
 }
 
+/**
+ * A length a field can take: [parseLength], within [Dimensions.MIN_CM]..[Dimensions.MAX_CM].
+ * "0.1" or "5000" parse, but no object or door has that size: the field shows them as errors.
+ */
+fun parseUsableLength(text: String, unit: LengthUnit): Float? =
+    parseLength(text, unit)?.takeIf { it in Dimensions.MIN_CM..Dimensions.MAX_CM }
+
 /** "220 cm", "86.6 in". */
 fun formatLength(cm: Float, unit: LengthUnit): String = "${formatNumber(cm, unit)} ${unit.symbol}"
+
+/**
+ * A door margin, without its sign: like [formatLength], except that a gap under one centimetre
+ * keeps its tenth. A 78.4 cm object and a 78 cm door read "too big by 0.4 cm", not "by 0 cm".
+ */
+fun formatMargin(cm: Float, unit: LengthUnit): String {
+    val tenths = (abs(cm) * 10f).roundToInt()
+    return if (unit == LengthUnit.CM && tenths in 1..9) "0.$tenths ${unit.symbol}" else formatLength(abs(cm), unit)
+}
 
 /** "220 × 95 × 85 cm" — width × depth × height. */
 fun formatDimensions(d: Dimensions, unit: LengthUnit): String =
