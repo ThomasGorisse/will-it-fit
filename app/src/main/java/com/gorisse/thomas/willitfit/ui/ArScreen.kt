@@ -36,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +52,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.google.ar.core.Frame
+import com.google.ar.core.Session
+import com.google.ar.core.TrackingState
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.scene.FurnitureTeal
 import com.gorisse.thomas.willitfit.capture.PhotoFailure
@@ -69,6 +73,10 @@ import io.github.sceneview.ar.AutoPlacementNode
 import io.github.sceneview.ar.AutoPlacementScene
 import io.github.sceneview.ar.AutoPlacementState
 import io.github.sceneview.ar.PlacementPhase
+import io.github.sceneview.ar.replay.ARSessionProbe
+import io.github.sceneview.ar.replay.LocalARSessionProbe
+import io.github.sceneview.math.Position
+import io.github.sceneview.node.Node
 import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
@@ -103,6 +111,7 @@ fun ArScreen(
     val state = remember { AutoPlacementState().apply { allowsScaling = false } }
     ARHapticFeedback(state)
     @Suppress("UNUSED_VARIABLE") val tool = ArTool.OBJECT
+    val camera = remember { CameraWatch() }
 
     var capturing by remember { mutableStateOf(false) }
     // The last photo that did not come out, and why: a card with Try again until it is dealt with.
@@ -139,28 +148,33 @@ fun ArScreen(
     }
 
     Box(Modifier.fillMaxSize()) {
-        AutoPlacementScene(
-            assetReady = true,
-            modifier = Modifier.fillMaxSize(),
-            state = state,
-            engine = engine,
-            modelLoader = modelLoader,
-            materialLoader = materialLoader,
-            coachingContentPadding = PaddingValues(bottom = 132.dp),
-            onARCoreAvailability = { arCoreCard = it != null },
-        ) { placement ->
-            AutoPlacementNode(placement, state) { opacity ->
-                val look = rememberFurnitureLook(
-                    FurnitureTeal, opacity = opacity, transparent = true, selectable = true,
-                )
-                Furniture(dims, look)
-                DimensionMarks(
-                    dims = dims, unit = unit,
-                    lineColor = Color.White,
-                    labelText = Color.White,
-                    labelBackground = Color(0xE0141218),
-                    selectable = true,
-                )
+        CompositionLocalProvider(LocalARSessionProbe provides camera) {
+            AutoPlacementScene(
+                assetReady = true,
+                modifier = Modifier.fillMaxSize(),
+                state = state,
+                engine = engine,
+                modelLoader = modelLoader,
+                materialLoader = materialLoader,
+                coachingContentPadding = PaddingValues(bottom = 132.dp),
+                onARCoreAvailability = { arCoreCard = it != null },
+            ) { placement ->
+                AutoPlacementNode(placement, state) { opacity ->
+                    val look = rememberFurnitureLook(
+                        FurnitureTeal, opacity = opacity, transparent = true, selectable = true,
+                    )
+                    Furniture(dims, look)
+                    DimensionMarks(
+                        dims = dims, unit = unit,
+                        lineColor = Color.White,
+                        labelText = Color.White,
+                        labelBackground = Color(0xE0141218),
+                        selectable = true,
+                        // Seen from behind or from the side, the tags read backwards ("mo 501"):
+                        // they turn to the camera, as in the 3D room.
+                        facing = camera::position,
+                    )
+                }
             }
         }
 
@@ -260,6 +274,23 @@ fun ArScreen(
                 }
             }
         }
+    }
+}
+
+/**
+ * Where the AR camera stands, in the scene's world, for the tags to face it. AutoPlacementScene
+ * keeps its camera node to itself; [ARSessionProbe] is SceneView's public per-frame hook, called on
+ * the main thread after the scene is updated. Until the camera tracks, the tags look at eye height
+ * in front of the origin; they only appear once an object is placed, which needs tracking.
+ */
+private class CameraWatch : ARSessionProbe {
+    private var last = Position(0f, 1.5f, 1f)
+    fun position(): Position = last
+    override fun onSessionFrame(session: Session, frame: Frame, nodes: List<Node>) {
+        val camera = frame.camera
+        if (camera.trackingState != TrackingState.TRACKING) return
+        val pose = camera.pose
+        last = Position(pose.tx(), pose.ty(), pose.tz())
     }
 }
 
