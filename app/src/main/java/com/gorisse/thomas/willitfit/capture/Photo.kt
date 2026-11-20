@@ -66,6 +66,9 @@ private fun findSurfaceView(view: View): SurfaceView? {
  */
 const val STORE_LINK = "https://play.google.com/store/apps/details?id=com.gorisse.thomas.willitfit&referrer=utm_source%3Dshare"
 
+/** Earlier photos kept next to the new one, for apps that read a shared photo late. */
+private const val KEPT_PHOTOS = 4
+
 /**
  * Writes the caption card on the picture (so it survives sharing) and saves it as a JPEG: the app
  * icon, a title ("Sofa, 3 seats", or the door's answer in its colour), a line or three under it,
@@ -83,7 +86,8 @@ suspend fun savePhoto(
         val out = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         drawCaptionCard(context, Canvas(out), out.width.toFloat(), out.height.toFloat(), title, titleColor, lines, signature)
         val dir = File(context.cacheDir, "photos").apply { mkdirs() }
-        dir.listFiles()?.forEach { it.delete() } // keep only the latest photo
+        // The last few stay: an app the photo was shared to may read it a while later.
+        dir.listFiles()?.sortedByDescending { it.lastModified() }?.drop(KEPT_PHOTOS)?.forEach { it.delete() }
         val file = File(dir, "will-it-fit-${System.currentTimeMillis()}.jpg")
         file.outputStream().use { out.compress(Bitmap.CompressFormat.JPEG, 92, it) }
         file
