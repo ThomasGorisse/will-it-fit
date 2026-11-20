@@ -1,6 +1,6 @@
 Novità
-• Porta: l'oggetto resta tutto inquadrato, pollici interi, margine sotto 1 cm al millimetro.
-• Pareti più alte nella stanza 3D. Il testo grande entra in ogni schermata.
-• Se una foto in AR non riesce, l'app spiega perché e propone di riprovare.
-• Impostazioni: privacy più chiara, avviso ARCore e informativa sulla privacy.
+• AR: le etichette delle misure si girano verso di te ed evitano i pulsanti; l'oggetto sfuma quando ci entri dentro.
+• AR: un'ombra di contatto morbida, senza bordi netti.
+• Porta: il telaio e l'oggetto restano visibili sopra la tastiera, con materiali veri.
+• Stanza 3D: le etichette mostrano subito la misura finale.
 Scegli un oggetto o inserisci le misure, guardalo in una stanza 3D o a grandezza reale in AR e verifica una porta. Gratis, senza pubblicità né account, offline.
