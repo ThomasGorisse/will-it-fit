@@ -106,11 +106,14 @@ fun DoorScene(
     val z = if (verdict.fits) startZ + (endZ - startZ) * at
     else startZ + (contactZ - startZ) * (at / stopAt)
 
-    // Framed on the part of the view the sheet leaves, and on what it leaves once the keyboard
-    // pushes the sheet up: the door and the whole object, never cut at an edge. Read once the
-    // keyboard has settled, not on every frame of its slide: a new framing glides the camera.
+    // Framed on the part of the view the sheet below and the buttons above leave, and on what it
+    // leaves once the keyboard pushes the sheet up: the door and the whole object, never cut at an
+    // edge. Read once the keyboard has settled, not on every frame of its slide: a new framing
+    // glides the camera.
     var viewSize by remember { mutableStateOf(IntSize.Zero) }
-    val coveredPx = with(LocalDensity.current) { contentPadding.calculateBottomPadding().toPx() }
+    val coveredPx = with(LocalDensity.current) {
+        contentPadding.calculateTopPadding().toPx() + contentPadding.calculateBottomPadding().toPx()
+    }
     val visibleAspect = if (viewSize.width > 0 && viewSize.height > 0) {
         viewSize.width / (viewSize.height - coveredPx).coerceAtLeast(viewSize.height * 0.1f)
     } else 0.6f
