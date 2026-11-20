@@ -21,7 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.formatNumber
-import com.gorisse.thomas.willitfit.fit.parseLength
+import com.gorisse.thomas.willitfit.fit.parseUsableLength
 
 /** One length field per side. [values] in centimetres; [onChange] gets a parsed value or nothing. */
 @Composable
@@ -43,17 +43,18 @@ fun LengthFields(
             var text by remember { mutableStateOf(formatNumber(external, unit)) }
             // A preset or a unit change rewrites the field, unless it already says the same.
             LaunchedEffect(external, unit) {
-                if (parseLength(text, unit)?.let { formatNumber(it, unit) } != formatNumber(external, unit)) {
+                if (parseUsableLength(text, unit)?.let { formatNumber(it, unit) } != formatNumber(external, unit)) {
                     text = formatNumber(external, unit)
                 }
             }
-            val error = parseLength(text, unit) == null
+            // Out of range ("0.1", "5000") is an error too: the answer would be about no real object.
+            val error = parseUsableLength(text, unit) == null
             LaunchedEffect(error) { valid[i] = !error }
             OutlinedTextField(
                 value = text,
                 onValueChange = { t ->
                     text = t
-                    parseLength(t, unit)?.let { onChange(i, it) }
+                    parseUsableLength(t, unit)?.let { onChange(i, it) }
                 },
                 label = { Text(label, maxLines = 1) },
                 suffix = { Text(unit.symbol) },

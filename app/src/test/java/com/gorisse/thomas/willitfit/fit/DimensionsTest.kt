@@ -47,6 +47,31 @@ class DimensionsTest {
     }
 
     @Test
+    fun `a field takes only a length some object or door can have`() {
+        assertEquals(220f, parseUsableLength("220", LengthUnit.CM))
+        assertEquals(1f, parseUsableLength("1", LengthUnit.CM))
+        assertEquals(1000f, parseUsableLength("1000", LengthUnit.CM))
+        listOf("0.1", "0,5", "1001", "5000").forEach {
+            assertNull("\"$it\" cm is out of range", parseUsableLength(it, LengthUnit.CM))
+        }
+        assertNull(parseUsableLength("400", LengthUnit.INCH)) // 1016 cm
+    }
+
+    @Test
+    fun `a door margin under a centimetre keeps its tenth`() {
+        assertEquals("0.4 cm", formatMargin(-0.4f, LengthUnit.CM))
+        assertEquals("0.4 cm", formatMargin(0.4f, LengthUnit.CM))
+        assertEquals("0 cm", formatMargin(0.04f, LengthUnit.CM))
+        assertEquals("1 cm", formatMargin(0.96f, LengthUnit.CM))
+        assertEquals("12 cm", formatMargin(-12.3f, LengthUnit.CM))
+        assertEquals("0.2 in", formatMargin(0.4f, LengthUnit.INCH))
+        // The 78.4 cm object at a 78 cm door: the margin no longer reads "0 cm".
+        val verdict = checkDoor(Dimensions(78.4f, 80f, 210f), Door(78f, 200f))
+        assertFalse(verdict.fits)
+        assertEquals("0.4 cm", formatMargin(verdict.marginCm, LengthUnit.CM))
+    }
+
+    @Test
     fun `validity bounds`() {
         assertTrue(Dimensions(60f, 60f, 85f).isValid)
         assertFalse(Dimensions(0f, 60f, 85f).isValid)

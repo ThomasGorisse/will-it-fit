@@ -25,10 +25,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +44,8 @@ import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.formatDimensions
 import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Screen 3, "Result": the photo with its dimensions written on it, ready to send. The message
@@ -49,13 +54,17 @@ import java.io.File
 @Composable
 fun ResultScreen(file: File, dims: Dimensions, unit: LengthUnit, onBack: () -> Unit, onRetake: () -> Unit) {
     val context = LocalContext.current
-    val bitmap = remember(file) { BitmapFactory.decodeFile(file.path)?.asImageBitmap() }
+    // Decoded off the main thread: a full-screen JPEG takes a moment, the screen does not freeze.
+    val loaded by produceState<Loaded?>(null, file) {
+        value = Loaded(withContext(Dispatchers.IO) { BitmapFactory.decodeFile(file.path)?.asImageBitmap() })
+    }
+    val bitmap = loaded?.bitmap
     val chooser = stringResource(R.string.share_chooser)
     val message = objectName(dims) + " · " + stringResource(R.string.ar_real_size, formatDimensions(dims, unit)) + "\n" + STORE_LINK
     AppScaffold(title = stringResource(R.string.result_title), onBack = onBack) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).navigationBarsPadding()) {
             Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
-                if (bitmap == null) Text(stringResource(R.string.result_missing), style = MaterialTheme.typography.bodyLarge)
+                if (loaded != null && bitmap == null) Text(stringResource(R.string.result_missing), style = MaterialTheme.typography.bodyLarge)
                 bitmap?.let {
                     Image(
                         it, contentDescription = stringResource(R.string.result_title),
@@ -83,3 +92,6 @@ fun ResultScreen(file: File, dims: Dimensions, unit: LengthUnit, onBack: () -> U
         }
     }
 }
+
+/** The photo once read: [bitmap] is null when the file could not be decoded. */
+private class Loaded(val bitmap: ImageBitmap?)
