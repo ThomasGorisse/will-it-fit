@@ -1,6 +1,6 @@
 Novità
 • AR: le etichette delle misure si girano verso di te ed evitano i pulsanti; l'oggetto sfuma quando ci entri dentro.
-• AR: un'ombra di contatto morbida, senza bordi netti.
-• Porta: il telaio e l'oggetto restano visibili sopra la tastiera, con materiali veri.
+• AR: un'ombra di contatto morbida appoggia l'oggetto sul pavimento.
+• Porta: il telaio e l'oggetto restano interi sullo schermo, con materiali veri.
 • Stanza 3D: le etichette mostrano subito la misura finale.
 Scegli un oggetto o inserisci le misure, guardalo in una stanza 3D o a grandezza reale in AR e verifica una porta. Gratis, senza pubblicità né account, offline.
