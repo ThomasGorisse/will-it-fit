@@ -69,7 +69,7 @@
     <string name="unit_cm">Zentimeter</string>
     <string name="unit_in">Zoll</string>
     <string name="settings_privacy_title">Datenschutz</string>
-    <string name="settings_privacy">Funktioniert offline. Kein Konto, keine Werbung. Die App selbst sendet nichts: Was du eingibst, bleibt auf deinem Handy, und das Kamerabild wird nie aufgezeichnet oder gesendet. Nur Fotos, die du teilst, verlassen es. In AR erhebt Google Play Services for AR selbst einige technische Daten, siehe unten.</string>
+    <string name="settings_privacy">Funktioniert offline. Kein Konto, keine Werbung. Die App selbst sendet nichts: Sie speichert nur deine letzten Maße und die Einheit auf dem Handy und macht ein Foto nur, wenn du es willst, zum Teilen. In AR erhebt Google Play Services for AR eine Kennung, Leistungs- und Diagnosedaten sowie die genutzten AR-Funktionen; siehe Googles Hinweis unten.</string>
     <string name="settings_privacy_policy">Datenschutzerklärung</string>
     <string name="settings_licenses">Open-Source-Lizenzen</string>
     <string name="settings_licenses_body">Erstellt mit SceneView, Google Filament, Jetpack Compose und Material 3 (Apache 2.0) sowie ARCore (Nutzungsbedingungen der Google APIs).</string>
