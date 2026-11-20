@@ -1,6 +1,6 @@
 Nouveautés
-• Porte : l'objet reste entier dans le cadre, pouces en nombres entiers, marge sous 1 cm au millimètre.
-• Murs plus hauts dans la pièce 3D. Les grandes polices tiennent partout.
-• Photo AR ratée : l'app dit pourquoi et propose de réessayer.
-• Réglages : confidentialité plus claire, notice ARCore et politique de confidentialité.
+• AR : les étiquettes se tournent vers vous et évitent les boutons ; l'objet s'efface quand on entre dedans.
+• AR : une ombre douce au contact, sans arêtes dures.
+• Porte : l'encadrement et l'objet restent visibles au-dessus du clavier, avec de vrais matériaux.
+• Pièce 3D : les étiquettes affichent tout de suite la taille finale.
 Choisissez un objet ou saisissez sa taille, voyez-le dans une pièce 3D ou à taille réelle en AR, testez une porte. Gratuit, sans pub ni compte, hors ligne.
