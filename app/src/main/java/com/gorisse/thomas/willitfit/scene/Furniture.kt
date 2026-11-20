@@ -90,7 +90,7 @@ private val Oak = Color(0xFFB98B5E)
 // 234, 189, 137 on screen), so there it starts cooler and a step darker, like the parquet.
 private val SourceOak = Color(0xFFD3AE80)
 private val SourceWood = Color(0xFFC49A6C)
-private val RoomOak = Color(0xFFC4A783)
+internal val RoomOak = Color(0xFFC4A783)
 private val RoomWood = Color(0xFFB59470)
 private val Charcoal = Color(0xFF2A2B2F)
 private val Steel = Color(0xFFB9BEC5)

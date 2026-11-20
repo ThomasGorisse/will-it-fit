@@ -28,12 +28,17 @@ import com.gorisse.thomas.willitfit.fit.side
 import io.github.sceneview.Aabb
 import io.github.sceneview.SceneView
 import io.github.sceneview.fitCameraToBounds
+import io.github.sceneview.DEFAULT_FILL_LIGHT_INTENSITY
 import io.github.sceneview.material.setColor
+import io.github.sceneview.math.Direction
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Size
 import io.github.sceneview.rememberCameraManipulator
 import io.github.sceneview.rememberEngine
+import io.github.sceneview.rememberEnvironment
+import io.github.sceneview.rememberEnvironmentLoader
+import io.github.sceneview.rememberFillLightNode
 import io.github.sceneview.rememberMainLightNode
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
@@ -113,6 +118,20 @@ fun DoorScene(
     LaunchedEffect(visibleAspect) { delay(180); aspect = visibleAspect }
     val view = doorView(dw = dw, dh = dh, across = across, up = up, along = along, aspect = aspect)
     val manipulator = rememberCameraManipulator(orbitHomePosition = view.eye, targetPosition = view.target)
+    // The 3D room's light: the sky's ambient, a low sun from the front right that throws the
+    // object's shadow onto the floor, warm in the evening. With one flat white light the wall read
+    // as a plain brown board and the bed as a beige box.
+    val environmentLoader = rememberEnvironmentLoader(engine)
+    val environment = rememberEnvironment(environmentLoader)
+    val dayIbl = remember(environment) { environment.indirectLight?.intensity ?: 30_000f }
+    SideEffect { environment.indirectLight?.intensity = if (palette.isNight) dayIbl * 0.6f else dayIbl }
+    val sun = rememberMainLightNode(engine) {
+        intensity = if (palette.isNight) 30_000f else 100_000f
+        if (palette.isNight) color = io.github.sceneview.math.Color(1f, 0.86f, 0.7f, 1f)
+        lightDirection = Direction(-0.55f, -0.7f, -0.45f)
+    }
+    // As in the room, through SceneView (google/filament#10565), and a finer map.
+    LaunchedEffect(sun) { sun.updateShadowOptions { mapSize = 2048; shadowFar = 12f; normalBias = 3f } }
     SceneView(
         modifier = modifier.onSizeChanged { viewSize = it },
         engine = engine,
@@ -121,15 +140,25 @@ fun DoorScene(
         autoCenterContent = false,
         contentPadding = contentPadding,
         cameraManipulator = manipulator,
-        mainLightNode = rememberMainLightNode(engine) {
-            intensity = if (palette.isNight) 30_000f else 110_000f
+        environmentLoader = environmentLoader,
+        environment = environment,
+        mainLightNode = sun,
+        fillLightNode = rememberFillLightNode(engine) {
+            intensity = if (palette.isNight) 900f else DEFAULT_FILL_LIGHT_INTENSITY
         },
     ) {
         val wall = remember(materialLoader) { materialLoader.createColorInstance(palette.wall, roughness = 0.95f) }
         val floor = remember(materialLoader) { materialLoader.createColorInstance(palette.floor, roughness = 0.5f) }
-        val frame = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFF4F1EC), roughness = 0.5f) }
-        SideEffect { wall.setColor(palette.wall); floor.setColor(palette.floor) }
-        CubeNode(size = Size(12f, 0.04f, 12f), position = Position(0f, -0.02f, 0f), materialInstance = floor)
+        val frame = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFF4F1EC), roughness = 0.45f) }
+        val skirting = remember(materialLoader) { materialLoader.createColorInstance(palette.skirting, roughness = 0.6f) }
+        val leaf = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFEDE8E0), roughness = 0.5f) }
+        val brass = remember(materialLoader) { materialLoader.createColorInstance(Color(0xFFB89A62), metallic = 0.8f, roughness = 0.35f) }
+        val oak = remember(materialLoader) { materialLoader.createColorInstance(RoomOak, roughness = 0.55f) }
+        SideEffect { wall.setColor(palette.wall); floor.setColor(palette.floor); skirting.setColor(palette.skirting) }
+        CubeNode(
+            size = Size(12f, 0.04f, 12f), position = Position(0f, -0.02f, 0f), materialInstance = floor,
+            apply = { isShadowReceiver = true },
+        )
         Parquet(palette.isNight, Position(0f, 0.001f, 1.2f))
         // Tall and wide enough that the camera never sees past it, and a far wall in the next
         // room, so neither the top of the frame nor the doorway opens onto the void.
@@ -139,12 +168,40 @@ fun DoorScene(
         CubeNode(size = Size(wallW / 2f - half, wallH, WALL_THICKNESS), position = Position(-(half + (wallW / 2f - half) / 2f), wallH / 2f, 0f), materialInstance = wall)
         CubeNode(size = Size(wallW / 2f - half, wallH, WALL_THICKNESS), position = Position(half + (wallW / 2f - half) / 2f, wallH / 2f, 0f), materialInstance = wall)
         CubeNode(size = Size(dw, wallH - dh, WALL_THICKNESS), position = Position(0f, dh + (wallH - dh) / 2f, 0f), materialInstance = wall)
-        // Casing around the opening.
-        CubeNode(size = Size(0.06f, dh, WALL_THICKNESS + 0.03f), position = Position(-half - 0.03f, dh / 2f, 0f), materialInstance = frame)
-        CubeNode(size = Size(0.06f, dh, WALL_THICKNESS + 0.03f), position = Position(half + 0.03f, dh / 2f, 0f), materialInstance = frame)
-        CubeNode(size = Size(dw + 0.12f, 0.06f, WALL_THICKNESS + 0.03f), position = Position(0f, dh + 0.03f, 0f), materialInstance = frame)
+        // A doorway, not a white frame on a board: casing standing proud of the wall on both
+        // faces, the jambs lining the opening, an oak threshold, skirting along the wall, and the
+        // door itself, open into the next room, with its handle.
+        val t = WALL_THICKNESS
+        val cw = 0.07f // casing width
+        for (face in listOf(1f, -1f)) {
+            val z = face * (t / 2f + 0.009f)
+            CubeNode(size = Size(cw, dh + cw, 0.018f), position = Position(-half - cw / 2f, (dh + cw) / 2f, z), materialInstance = frame)
+            CubeNode(size = Size(cw, dh + cw, 0.018f), position = Position(half + cw / 2f, (dh + cw) / 2f, z), materialInstance = frame)
+            CubeNode(size = Size(dw + 2f * cw, cw, 0.018f), position = Position(0f, dh + cw / 2f, z), materialInstance = frame)
+            // Skirting, stopping at the casing.
+            val run = wallW / 2f - half - cw
+            CubeNode(size = Size(run, 0.08f, 0.014f), position = Position(-(half + cw + run / 2f), 0.04f, face * (t / 2f + 0.007f)), materialInstance = skirting)
+            CubeNode(size = Size(run, 0.08f, 0.014f), position = Position(half + cw + run / 2f, 0.04f, face * (t / 2f + 0.007f)), materialInstance = skirting)
+        }
+        // Jamb liners 2 mm thin, so the opening stays the width typed.
+        CubeNode(size = Size(0.002f, dh, t), position = Position(-half + 0.001f, dh / 2f, 0f), materialInstance = frame)
+        CubeNode(size = Size(0.002f, dh, t), position = Position(half - 0.001f, dh / 2f, 0f), materialInstance = frame)
+        CubeNode(size = Size(dw, 0.002f, t), position = Position(0f, dh - 0.001f, 0f), materialInstance = frame)
+        CubeNode(size = Size(dw, 0.003f, t + 0.02f), position = Position(0f, 0.0015f, 0f), materialInstance = oak)
+        // The door, hinged on the left jamb at the far face and swung open past square, along the
+        // next room's side of the wall: seen through the opening, never in the object's way.
+        Node(position = Position(-half - 0.005f, 0f, -t / 2f), rotation = Rotation(y = 105f)) {
+            val leafW = dw - 0.02f
+            CubeNode(size = Size(leafW, dh - 0.01f, 0.04f), position = Position(leafW / 2f, (dh - 0.01f) / 2f, -0.02f), materialInstance = leaf)
+            CylinderNode(radius = 0.009f, height = 0.13f, position = Position(leafW - 0.07f, 1.02f, 0.012f), rotation = Rotation(z = 90f), materialInstance = brass)
+            CylinderNode(radius = 0.009f, height = 0.13f, position = Position(leafW - 0.07f, 1.02f, -0.052f), rotation = Rotation(z = 90f), materialInstance = brass)
+        }
+        // A light switch beside the frame, at hand height: the scale of a real wall.
+        CubeNode(size = Size(0.08f, 0.08f, 0.01f), position = Position(half + cw + 0.16f, 1.1f, t / 2f + 0.005f), materialInstance = frame)
 
-        val look = rememberFurnitureLook(if (verdict.fits) accent else MissBrick, roomLit = true)
+        // The object in the room's own cloth and wood, whatever the answer: in brick, a bed on its
+        // side looked like a red-sided prototype box. The answer is the sheet's, and the stop.
+        val look = rememberFurnitureLook(accent, roomLit = true)
         // Carried: lifted by half its "up" side, turned about its own centre.
         Node(position = Position(0f, up / 2f, z)) {
             Node(rotation = outerRotation(verdict.carry)) {
@@ -159,12 +216,6 @@ fun DoorScene(
 }
 
 private const val WALL_THICKNESS = 0.12f
-
-/**
- * The object that does not go through: a warm brick that still says "no" at a glance, in the
- * room's own palette, instead of the alarm red of an error banner. The velvet sheen lifts it.
- */
-private val MissBrick = Color(0xFF8C3A2E)
 
 /** Where the camera stands and what it looks at. */
 internal data class DoorView(val eye: Position, val target: Position)
