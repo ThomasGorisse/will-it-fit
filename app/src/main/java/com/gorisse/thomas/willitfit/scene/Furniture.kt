@@ -493,6 +493,8 @@ private fun SceneScope.Parcel(s: Size, look: FurnitureLook) {
  * object's real size, outside its stretched node, so the text never deforms.
  *
  * @param labelScale 1 in AR (a 30 cm tag); the 3D room passes more for large objects.
+ * @param values the sizes the tags write. The 3D room morphs [dims] with a spring that overshoots,
+ *   and its tags read 91 and 84 cm on their way to a 90 × 85 cm sofa: they write the target.
  */
 @Composable
 fun SceneScope.DimensionMarks(
@@ -510,6 +512,7 @@ fun SceneScope.DimensionMarks(
     // The screen's right, flat on the floor: given, the height tag starts at its line and runs
     // right, off the object behind it; AR leaves it null and keeps it centred on top.
     heightTagSide: Direction? = null,
+    values: Dimensions = dims,
 ) {
     val w = dims.widthCm / 100f; val h = dims.heightCm / 100f; val d = dims.depthCm / 100f
     val off = 0.07f
@@ -541,14 +544,14 @@ fun SceneScope.DimensionMarks(
     val fg = labelText.toArgb(); val bg = labelBackground.toArgb()
     val s = Scale(labelScale)
     TextNode(
-        text = formatLength(dims.widthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
+        text = formatLength(values.widthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
         widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing,
         position = Position(0f, lh * labelScale / 2f + 0.03f, front + 0.02f), apply = tag,
     )
     // Outside the depth line by half a tag, so the object never hides it.
     Node(position = Position(right + 0.03f + lw * labelScale / 2f, lh * labelScale / 2f + 0.03f, 0f), rotation = Rotation(y = 90f)) {
         TextNode(
-            text = formatLength(dims.depthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
+            text = formatLength(values.depthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
             widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
         )
     }
@@ -558,7 +561,7 @@ fun SceneScope.DimensionMarks(
         val side = lw * labelScale / 2f - 0.07f
         val y = h + lh * labelScale / 2f + 0.04f
         TextNode(
-            text = formatLength(dims.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
+            text = formatLength(values.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
             widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing,
             position = Position(hx + heightTagSide.x * side, y, front + heightTagSide.z * side), apply = tag,
         )
@@ -566,7 +569,7 @@ fun SceneScope.DimensionMarks(
         // Above the top of the height line, clear of the depth tag on the floor below it.
         Node(position = Position(hx + 0.02f, h + lh * labelScale / 2f + 0.04f, front + 0.02f), rotation = Rotation(y = 45f)) {
             TextNode(
-                text = formatLength(dims.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
+                text = formatLength(values.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
                 widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
             )
         }

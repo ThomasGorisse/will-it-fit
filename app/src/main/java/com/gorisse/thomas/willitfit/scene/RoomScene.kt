@@ -225,7 +225,7 @@ fun RoomScene(
                 Furniture(shown, look, onShown = { objectShown = true })
             }
             if (objectShown) DimensionMarks(
-                dims = shown, unit = unit,
+                dims = shown, values = dims, unit = unit,
                 lineColor = Color.White,
                 labelText = labelText, labelBackground = labelBackground,
                 labelScale = (size / 1.4f).coerceIn(1f, 1.8f),
