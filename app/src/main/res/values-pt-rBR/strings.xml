@@ -69,7 +69,7 @@
     <string name="unit_cm">Centímetros</string>
     <string name="unit_in">Polegadas</string>
     <string name="settings_privacy_title">Privacidade</string>
-    <string name="settings_privacy">Funciona off-line. Sem conta, sem anúncios, sem rastreamento. Nada do que você digita ou filma sai do celular, a menos que você compartilhe.</string>
+    <string name="settings_privacy">Funciona off-line. Sem conta, sem anúncios. O app não envia nada: guarda no celular só as últimas medidas e a unidade, e só tira uma foto quando você pede, para você compartilhar. Em RA, o Google Play Services for AR coleta um identificador, dados de desempenho e diagnóstico e quais recursos de RA são usados; veja o aviso do Google abaixo.</string>
     <string name="settings_privacy_policy">Política de privacidade</string>
     <string name="settings_licenses">Licenças de código aberto</string>
     <string name="settings_licenses_body">Feito com SceneView, Google Filament, Jetpack Compose e Material 3 (Apache 2.0) e ARCore (Termos de Serviço das APIs do Google).</string>
