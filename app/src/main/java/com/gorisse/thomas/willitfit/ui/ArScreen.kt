@@ -111,7 +111,9 @@ fun ArScreen(
     val state = remember { AutoPlacementState().apply { allowsScaling = false } }
     ARHapticFeedback(state)
     @Suppress("UNUSED_VARIABLE") val tool = ArTool.OBJECT
-    val camera = remember { CameraWatch() }
+    // Below a QA replay probe, if a harness provides one: ours passes everything on to it.
+    val outerProbe = LocalARSessionProbe.current
+    val camera = remember(outerProbe) { CameraWatch(outerProbe) }
 
     var capturing by remember { mutableStateOf(false) }
     // The last photo that did not come out, and why: a card with Try again until it is dealt with.
@@ -282,11 +284,14 @@ fun ArScreen(
  * keeps its camera node to itself; [ARSessionProbe] is SceneView's public per-frame hook, called on
  * the main thread after the scene is updated. Until the camera tracks, the tags look at eye height
  * in front of the origin; they only appear once an object is placed, which needs tracking.
+ * A probe provided further up (a QA replay) still gets its dataset and every frame.
  */
-private class CameraWatch : ARSessionProbe {
+private class CameraWatch(private val outer: ARSessionProbe?) : ARSessionProbe {
     private var last = Position(0f, 1.5f, 1f)
     fun position(): Position = last
+    override val playbackDataset: File? get() = outer?.playbackDataset
     override fun onSessionFrame(session: Session, frame: Frame, nodes: List<Node>) {
+        outer?.onSessionFrame(session, frame, nodes)
         val camera = frame.camera
         if (camera.trackingState != TrackingState.TRACKING) return
         val pose = camera.pose
