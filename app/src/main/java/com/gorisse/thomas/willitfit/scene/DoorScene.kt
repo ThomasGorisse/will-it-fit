@@ -8,9 +8,16 @@ import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.gorisse.thomas.willitfit.fit.Carry
@@ -18,7 +25,9 @@ import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
 import com.gorisse.thomas.willitfit.fit.DoorVerdict
 import com.gorisse.thomas.willitfit.fit.side
+import io.github.sceneview.Aabb
 import io.github.sceneview.SceneView
+import io.github.sceneview.fitCameraToBounds
 import io.github.sceneview.material.setColor
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
@@ -28,6 +37,8 @@ import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberMainLightNode
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
+import io.github.sceneview.verticalFovDegreesForFocalLength
+import kotlinx.coroutines.delay
 import kotlin.math.max
 
 /**
@@ -82,7 +93,7 @@ fun DoorScene(
         ),
         label = "progress",
     )
-    val startZ = along / 2f + 0.55f
+    val startZ = along / 2f + START_GAP
     val endZ = -(along / 2f + 0.5f)
     val contactZ = WALL_THICKNESS / 2f + along / 2f + 0.005f
     // Held for a picture: the object in the doorway, or against the frame.
@@ -90,10 +101,20 @@ fun DoorScene(
     val z = if (verdict.fits) startZ + (endZ - startZ) * at
     else startZ + (contactZ - startZ) * (at / stopAt)
 
-    val view = doorView(dw = dw, dh = dh, along = along, fits = verdict.fits)
+    // Framed on the part of the view the sheet leaves, and on what it leaves once the keyboard
+    // pushes the sheet up: the door and the whole object, never cut at an edge. Read once the
+    // keyboard has settled, not on every frame of its slide: a new framing glides the camera.
+    var viewSize by remember { mutableStateOf(IntSize.Zero) }
+    val coveredPx = with(LocalDensity.current) { contentPadding.calculateBottomPadding().toPx() }
+    val visibleAspect = if (viewSize.width > 0 && viewSize.height > 0) {
+        viewSize.width / (viewSize.height - coveredPx).coerceAtLeast(viewSize.height * 0.1f)
+    } else 0.6f
+    var aspect by remember { mutableFloatStateOf(visibleAspect) }
+    LaunchedEffect(visibleAspect) { delay(180); aspect = visibleAspect }
+    val view = doorView(dw = dw, dh = dh, across = across, up = up, along = along, aspect = aspect)
     val manipulator = rememberCameraManipulator(orbitHomePosition = view.eye, targetPosition = view.target)
     SceneView(
-        modifier = modifier,
+        modifier = modifier.onSizeChanged { viewSize = it },
         engine = engine,
         modelLoader = modelLoader,
         materialLoader = materialLoader,
@@ -149,20 +170,44 @@ private val MissBrick = Color(0xFF8C3A2E)
 internal data class DoorView(val eye: Position, val target: Position)
 
 /**
- * From the front-right and above, looking over the object into the doorway. The object comes
- * at the door along its own length, towards the camera: the camera stands back by that length
- * so the whole object and the opening are both in view, all the way through the carry (before,
- * a three-seat sofa filled the screen and the camera stood inside its path). A miss rests
- * against the frame, so the view leans a little more towards the object.
+ * From the front-right and above, looking over the object into the doorway: where the camera
+ * stands for the doorway and the object's whole path up to it to fill the visible area, [aspect]
+ * wide for 1 high. Before, a fixed distance from the object's length left a bed carried on its
+ * side cut at the left edge, and the keyboard cut the top of the door.
+ *
+ * The object starts [START_GAP] in front of the wall, so its near end is [along] further, and it
+ * is [across] wide and [up] high; the frame stands just outside the opening. Room is kept at the
+ * top for the back and share buttons.
  */
-internal fun doorView(dw: Float, dh: Float, along: Float, fits: Boolean): DoorView {
-    val targetZ = along * (if (fits) 0.25f else 0.4f)
-    val dist = max(max(dw, dh) + 1.4f, 1.4f * along + 1.6f)
-    return DoorView(
-        eye = Position(dist * 0.42f, dh * 0.45f + dist * 0.42f, targetZ + dist * 0.8f),
-        target = Position(0f, dh * 0.42f, targetZ),
+internal fun doorView(dw: Float, dh: Float, across: Float, up: Float, along: Float, aspect: Float): DoorView {
+    val halfW = max(dw / 2f + 0.06f, across / 2f)
+    val top = max(dh + 0.06f, up)
+    val back = -(WALL_THICKNESS / 2f + 0.015f)
+    val front = along + START_GAP
+    val bounds = Aabb(
+        center = Position(0f, top / 2f, (front + back) / 2f),
+        halfExtent = Position(halfW, top / 2f, (front - back) / 2f),
     )
+    val fit = fitCameraToBounds(
+        bounds,
+        direction = VIEW_DIRECTION,
+        verticalFovDegrees = verticalFovDegreesForFocalLength(DEFAULT_FOCAL_LENGTH_MM),
+        aspect = aspect.toDouble(),
+        widthFill = 0.88f,
+        heightFill = 0.78f,
+    )
+    return if (fit != null) DoorView(eye = fit.eye, target = fit.target)
+    else DoorView(eye = Position(2f, 2.5f, along + 4f), target = Position(0f, dh * 0.42f, along * 0.3f))
 }
+
+/** Front-right and above, a three-quarter view down into the doorway. */
+internal val VIEW_DIRECTION = Position(-0.42f, -0.42f, -0.8f)
+
+/** SceneView's default lens, which this scene keeps. */
+internal const val DEFAULT_FOCAL_LENGTH_MM = 28.0
+
+/** The gap between the wall and the object's far end where it starts, metres. */
+internal const val START_GAP = 0.55f
 
 // Object axes: x = width, y = height, z = depth. Inner rotation first, then the outer yaw.
 // See Carry: each maps (across, up, along) onto world (x, y, z).
