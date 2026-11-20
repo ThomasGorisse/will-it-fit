@@ -1,6 +1,6 @@
 Neu
-• Türcheck: Der Gegenstand bleibt ganz im Bild, Zoll werden als ganze Zahlen angezeigt.
-• Der 3D-Raum hat höhere Wände.
-• Wenn ein AR-Foto fehlschlägt, sagt die App warum und bietet einen neuen Versuch an.
-• Einstellungen: Googles ARCore-Hinweis und ein Link zur Datenschutzerklärung.
-3.0, komplett neu: Wähle einen Gegenstand oder gib seine Maße in cm oder Zoll ein, sieh ihn im 3D-Raum oder in Originalgröße in AR und prüfe eine Tür. Kostenlos, ohne Werbung und Konto, offline.
+• Türcheck: Der Gegenstand bleibt ganz im Bild, Zoll als ganze Zahlen, Spielraum unter 1 cm auf den Millimeter.
+• Höhere Wände im 3D-Raum. Große Schrift passt überall.
+• Schlägt ein AR-Foto fehl, sagt die App warum und bietet einen Neuversuch an.
+• Einstellungen: klarerer Datenschutzhinweis, ARCore-Hinweis und die Datenschutzerklärung.
+Wähle einen Gegenstand oder gib seine Maße ein, sieh ihn im 3D-Raum oder in Originalgröße in AR, prüfe eine Tür. Kostenlos, ohne Werbung und Konto, offline.

@@ -1,6 +1,6 @@
 What's new
-• Door check: the whole object stays in view, and inches read as whole numbers.
-• The 3D room has taller walls.
+• Door check: the whole object stays in view, inches read as whole numbers, and a gap under 1 cm shows its tenth.
+• Taller walls in the 3D room. Large text fits on every screen.
 • If an AR photo fails, the app says why and offers Try again.
-• Settings: Google's ARCore notice and a link to the privacy policy.
-3.0, rebuilt from scratch: pick a typical object or type its size in cm or inches, see it in a live 3D room or at real size in AR, and check a doorway. Free, no ads, no account, works offline.
+• Settings: a clearer privacy note, Google's ARCore notice and the privacy policy.
+Pick a typical object or type its size in cm or inches, see it in a 3D room or at real size in AR, and check a doorway. Free, no ads, no account, offline.

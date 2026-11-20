@@ -1,6 +1,6 @@
 Novità
-• Porta: l'oggetto resta tutto inquadrato e i pollici sono interi.
-• La stanza 3D ha pareti più alte.
+• Porta: l'oggetto resta tutto inquadrato, pollici interi, margine sotto 1 cm al millimetro.
+• Pareti più alte nella stanza 3D. Il testo grande entra in ogni schermata.
 • Se una foto in AR non riesce, l'app spiega perché e propone di riprovare.
-• Impostazioni: l'avviso ARCore di Google e un link all'informativa sulla privacy.
-La 3.0, rifatta da zero: scegli un oggetto tipico o inserisci le sue misure in cm o pollici, guardalo in una stanza 3D o a grandezza reale in AR e verifica una porta. Gratis, senza pubblicità né account, offline.
+• Impostazioni: privacy più chiara, avviso ARCore e informativa sulla privacy.
+Scegli un oggetto o inserisci le misure, guardalo in una stanza 3D o a grandezza reale in AR e verifica una porta. Gratis, senza pubblicità né account, offline.

@@ -1,6 +1,6 @@
 Novedades
-• Puerta: el objeto se ve entero y las pulgadas son números enteros.
-• La habitación 3D tiene paredes más altas.
+• Puerta: el objeto se ve entero, pulgadas en números enteros y un margen bajo 1 cm al milímetro.
+• Paredes más altas en la habitación 3D. El texto grande cabe en todas las pantallas.
 • Si una foto en RA falla, la app dice por qué y ofrece reintentar.
-• Ajustes: el aviso de ARCore de Google y un enlace a la política de privacidad.
-La 3.0, rehecha desde cero: elige un objeto habitual o escribe sus medidas en cm o pulgadas, míralo en una habitación 3D o a tamaño real en RA y comprueba una puerta. Gratis, sin anuncios ni cuenta, sin conexión.
+• Ajustes: privacidad más clara, aviso de ARCore y política de privacidad.
+Elige un objeto o escribe sus medidas, míralo en una habitación 3D o a tamaño real en RA y comprueba una puerta. Gratis, sin anuncios ni cuenta, sin conexión.

@@ -1,6 +1,6 @@
 Nouveautés
-• Porte : l'objet reste entier dans le cadre, pouces en nombres entiers.
-• La pièce 3D a des murs plus hauts.
+• Porte : l'objet reste entier dans le cadre, pouces en nombres entiers, marge sous 1 cm au millimètre.
+• Murs plus hauts dans la pièce 3D. Les grandes polices tiennent partout.
 • Photo AR ratée : l'app dit pourquoi et propose de réessayer.
-• Réglages : la notice ARCore de Google et un lien vers la politique de confidentialité.
-La 3.0, reconstruite de zéro : choisissez un objet courant ou saisissez sa taille en cm ou en pouces, voyez-le dans une pièce 3D ou à taille réelle en AR, testez une porte. Gratuit, sans pub ni compte, hors ligne.
+• Réglages : confidentialité plus claire, notice ARCore et politique de confidentialité.
+Choisissez un objet ou saisissez sa taille, voyez-le dans une pièce 3D ou à taille réelle en AR, testez une porte. Gratuit, sans pub ni compte, hors ligne.
