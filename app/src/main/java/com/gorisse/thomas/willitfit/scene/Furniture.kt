@@ -191,22 +191,31 @@ fun SceneScope.Furniture(
 /** The soft pool under the object that makes it stand on the floor instead of hovering. */
 @Composable
 private fun SceneScope.ContactShadows(dims: Dimensions, look: FurnitureLook) {
+    val w = dims.widthCm / 100f; val d = dims.depthCm / 100f
     // A unit quad scaled to the footprint: resizing never rebuilds it.
-    // Just above the parquet's top face (1 mm up), or the planks hide it and the object floats:
-    // a broad soft pool, and a tight darker one where it meets the floor.
+    // Just above the parquet's top face (1 mm up), or the planks hide it and the object floats.
+    if (dims.shape == Shape.BIKE) {
+        // A bike stands on two tyres, not on its whole footprint: pooled under 178 × 60 cm, the
+        // shadow read in AR as a big black smear on the floor. A faint streak along the wheelbase,
+        // and a small pool under each tyre, where the wheels sit (0.3 of the length off centre).
+        Pool(look, 0.22f, Position(y = 0.004f), Scale(w * 0.85f, 1f, 0.22f))
+        Pool(look, 0.45f, Position(-0.3f * w, 0.005f, 0f), Scale(0.3f, 1f, 0.1f))
+        Pool(look, 0.45f, Position(0.3f * w, 0.005f, 0f), Scale(0.3f, 1f, 0.1f))
+        return
+    }
+    // A broad soft pool, and a tight darker one where it meets the floor.
+    Pool(look, 0.5f, Position(y = 0.004f), Scale(w + 0.45f, 1f, d + 0.45f))
+    Pool(look, 0.7f, Position(y = 0.005f), Scale(w + 0.06f, 1f, d + 0.06f))
+}
+
+@Composable
+private fun SceneScope.Pool(look: FurnitureLook, intensity: Float, position: Position, scale: Scale) {
     ContactShadow(
         size = Size(1f, 0f, 1f),
         context = ContactShadowContext.Floor,
-        intensity = 0.5f * look.opacity,
-        position = Position(y = 0.004f),
-        scale = Scale(dims.widthCm / 100f + 0.45f, 1f, dims.depthCm / 100f + 0.45f),
-    )
-    ContactShadow(
-        size = Size(1f, 0f, 1f),
-        context = ContactShadowContext.Floor,
-        intensity = 0.7f * look.opacity,
-        position = Position(y = 0.005f),
-        scale = Scale(dims.widthCm / 100f + 0.06f, 1f, dims.depthCm / 100f + 0.06f),
+        intensity = intensity * look.opacity,
+        position = position,
+        scale = scale,
     )
 }
 
