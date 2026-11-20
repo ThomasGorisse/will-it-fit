@@ -3,6 +3,8 @@ package com.gorisse.thomas.willitfit.ui
 import android.app.Activity
 import android.os.SystemClock
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -41,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
@@ -76,11 +79,13 @@ import io.github.sceneview.ar.PlacementPhase
 import io.github.sceneview.ar.replay.ARSessionProbe
 import io.github.sceneview.ar.replay.LocalARSessionProbe
 import io.github.sceneview.math.Position
-import io.github.sceneview.node.Node
 import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
 import kotlinx.coroutines.Job
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.sqrt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -162,8 +167,21 @@ fun ArScreen(
                 onARCoreAvailability = { arCoreCard = it != null },
             ) { placement ->
                 AutoPlacementNode(placement, state) { opacity ->
+                    // Walk into the washer and its white top filled the whole screen: the object
+                    // gives way when the phone comes within 15 cm of it and returns past 30 cm,
+                    // leaving its lines and sizes to show where it stands.
+                    var near by remember { mutableStateOf(false) }
+                    val box by rememberUpdatedState(dims)
+                    Node(apply = {
+                        onFrame = {
+                            val gap = gapToBox(getLocalPosition(camera.position()), box)
+                            if (!near && gap < NEAR_HIDE_M) near = true
+                            else if (near && gap > NEAR_SHOW_M) near = false
+                        }
+                    })
+                    val presence by animateFloatAsState(if (near) 0f else 1f, tween(150), label = "near")
                     val look = rememberFurnitureLook(
-                        FurnitureTeal, opacity = opacity, transparent = true, selectable = true,
+                        FurnitureTeal, opacity = opacity * presence, transparent = true, selectable = true,
                     )
                     Furniture(dims, look)
                     DimensionMarks(
@@ -290,13 +308,27 @@ private class CameraWatch(private val outer: ARSessionProbe?) : ARSessionProbe {
     private var last = Position(0f, 1.5f, 1f)
     fun position(): Position = last
     override val playbackDataset: File? get() = outer?.playbackDataset
-    override fun onSessionFrame(session: Session, frame: Frame, nodes: List<Node>) {
+    override fun onSessionFrame(session: Session, frame: Frame, nodes: List<io.github.sceneview.node.Node>) {
         outer?.onSessionFrame(session, frame, nodes)
         val camera = frame.camera
         if (camera.trackingState != TrackingState.TRACKING) return
         val pose = camera.pose
         last = Position(pose.tx(), pose.ty(), pose.tz())
     }
+}
+
+private const val NEAR_HIDE_M = 0.15f
+private const val NEAR_SHOW_M = 0.30f
+
+/**
+ * How far [p] (metres, in the object's frame: bottom-centre at the origin, +Y up) is from the
+ * object's box, 0 inside it.
+ */
+internal fun gapToBox(p: Position, dims: Dimensions): Float {
+    val dx = max(abs(p.x) - dims.widthCm / 200f, 0f)
+    val dy = max(max(-p.y, p.y - dims.heightCm / 100f), 0f)
+    val dz = max(abs(p.z) - dims.depthCm / 200f, 0f)
+    return sqrt(dx * dx + dy * dy + dz * dz)
 }
 
 private enum class ArCard { NO_FLOOR, LOST, CAMERA }
