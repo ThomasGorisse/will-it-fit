@@ -185,6 +185,10 @@ fun ArScreen(
                 modelLoader = modelLoader,
                 materialLoader = materialLoader,
                 coachingContentPadding = PaddingValues(bottom = 132.dp),
+                // The light-estimated shadow fell on ARCore's plane polygons, which cut it with
+                // hard straight edges and swung it away under a lamp: the object keeps only its
+                // soft contact shadow, as Scene Viewer and AR Quick Look draw.
+                groundShadows = false,
                 onARCoreAvailability = { arCoreCard = it != null },
             ) { placement ->
                 AutoPlacementNode(placement, state) { opacity ->
