@@ -106,11 +106,14 @@ fun DoorScene(
     val z = if (verdict.fits) startZ + (endZ - startZ) * at
     else startZ + (contactZ - startZ) * (at / stopAt)
 
-    // Framed on the part of the view the sheet leaves, and on what it leaves once the keyboard
-    // pushes the sheet up: the door and the whole object, never cut at an edge. Read once the
-    // keyboard has settled, not on every frame of its slide: a new framing glides the camera.
+    // Framed on the part of the view the sheet below and the buttons above leave, and on what it
+    // leaves once the keyboard pushes the sheet up: the door and the whole object, never cut at an
+    // edge. Read once the keyboard has settled, not on every frame of its slide: a new framing
+    // glides the camera.
     var viewSize by remember { mutableStateOf(IntSize.Zero) }
-    val coveredPx = with(LocalDensity.current) { contentPadding.calculateBottomPadding().toPx() }
+    val coveredPx = with(LocalDensity.current) {
+        contentPadding.calculateTopPadding().toPx() + contentPadding.calculateBottomPadding().toPx()
+    }
     val visibleAspect = if (viewSize.width > 0 && viewSize.height > 0) {
         viewSize.width / (viewSize.height - coveredPx).coerceAtLeast(viewSize.height * 0.1f)
     } else 0.6f
@@ -156,13 +159,15 @@ fun DoorScene(
         val oak = remember(materialLoader) { materialLoader.createColorInstance(RoomOak, roughness = 0.55f) }
         SideEffect { wall.setColor(palette.wall); floor.setColor(palette.floor); skirting.setColor(palette.skirting) }
         CubeNode(
-            size = Size(12f, 0.04f, 12f), position = Position(0f, -0.02f, 0f), materialInstance = floor,
+            size = Size(20f, 0.04f, 20f), position = Position(0f, -0.02f, 0f), materialInstance = floor,
             apply = { isShadowReceiver = true },
         )
         Parquet(palette.isNight, Position(0f, 0.001f, 1.2f))
         // Tall and wide enough that the camera never sees past it, and a far wall in the next
-        // room, so neither the top of the frame nor the doorway opens onto the void.
-        val wallW = 10f; val wallH = max(4.5f, dh + 0.4f)
+        // room, so neither the top of the frame nor the doorway opens onto the void. Framed
+        // between the buttons and the keyboard, the camera stands further back: at 10 m wide the
+        // wall ended at the left edge.
+        val wallW = 16f; val wallH = max(4.5f, dh + 0.4f)
         CubeNode(size = Size(wallW, wallH, WALL_THICKNESS), position = Position(0f, wallH / 2f, -3.6f), materialInstance = wall)
         val half = dw / 2f
         CubeNode(size = Size(wallW / 2f - half, wallH, WALL_THICKNESS), position = Position(-(half + (wallW / 2f - half) / 2f), wallH / 2f, 0f), materialInstance = wall)

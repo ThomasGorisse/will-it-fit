@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -128,7 +131,12 @@ fun DoorScreen(
             accent = FurnitureTeal,
             palette = if (dark) RoomPalette.Night else RoomPalette.Day,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp)),
+            // The top keeps out the back and share buttons (12 dp in, 48 dp high) and a little air:
+            // framed on the whole height, the top of the frame ran under the share button.
+            contentPadding = PaddingValues(
+                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 68.dp,
+                bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp),
+            ),
             hold = holding,
         )
         FilledTonalIconButton(
