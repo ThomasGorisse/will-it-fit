@@ -493,6 +493,7 @@ private fun SceneScope.Parcel(s: Size, look: FurnitureLook) {
  * object's real size, outside its stretched node, so the text never deforms.
  *
  * @param labelScale 1 in AR (a 30 cm tag); the 3D room passes more for large objects.
+ * @param clearance in AR, where the controls begin on screen: a tag that would sit under them hides.
  * @param values the sizes the tags write. The 3D room morphs [dims] with a spring that overshoots,
  *   and its tags read 91 and 84 cm on their way to a 90 × 85 cm sofa: they write the target.
  */
@@ -513,6 +514,7 @@ fun SceneScope.DimensionMarks(
     // right, off the object behind it; AR leaves it null and keeps it centred on top.
     heightTagSide: Direction? = null,
     values: Dimensions = dims,
+    clearance: TagClearance? = null,
 ) {
     val w = dims.widthCm / 100f; val h = dims.heightCm / 100f; val d = dims.depthCm / 100f
     val off = 0.07f
@@ -543,13 +545,14 @@ fun SceneScope.DimensionMarks(
     val lw = 0.34f; val lh = 0.085f; val font = 82f
     val fg = labelText.toArgb(); val bg = labelBackground.toArgb()
     val s = Scale(labelScale)
-    TextNode(
-        text = formatLength(values.widthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
-        widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing,
-        position = Position(0f, lh * labelScale / 2f + 0.03f, front + 0.02f), apply = tag,
-    )
+    TagSlot(clearance, Position(0f, lh * labelScale / 2f + 0.03f, front + 0.02f)) {
+        TextNode(
+            text = formatLength(values.widthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
+            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
+        )
+    }
     // Outside the depth line by half a tag, so the object never hides it.
-    Node(position = Position(right + 0.03f + lw * labelScale / 2f, lh * labelScale / 2f + 0.03f, 0f), rotation = Rotation(y = 90f)) {
+    TagSlot(clearance, Position(right + 0.03f + lw * labelScale / 2f, lh * labelScale / 2f + 0.03f, 0f), Rotation(y = 90f)) {
         TextNode(
             text = formatLength(values.depthCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
             widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
@@ -560,18 +563,52 @@ fun SceneScope.DimensionMarks(
         // tag ran across the back of a sofa; fully beside it, it left the frame on the right.
         val side = lw * labelScale / 2f - 0.07f
         val y = h + lh * labelScale / 2f + 0.04f
-        TextNode(
-            text = formatLength(values.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
-            widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing,
-            position = Position(hx + heightTagSide.x * side, y, front + heightTagSide.z * side), apply = tag,
-        )
+        TagSlot(clearance, Position(hx + heightTagSide.x * side, y, front + heightTagSide.z * side)) {
+            TextNode(
+                text = formatLength(values.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
+                widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
+            )
+        }
     } else {
         // Above the top of the height line, clear of the depth tag on the floor below it.
-        Node(position = Position(hx + 0.02f, h + lh * labelScale / 2f + 0.04f, front + 0.02f), rotation = Rotation(y = 45f)) {
+        TagSlot(clearance, Position(hx + 0.02f, h + lh * labelScale / 2f + 0.04f, front + 0.02f), Rotation(y = 45f)) {
             TextNode(
                 text = formatLength(values.heightCm, unit), fontSize = font, textColor = fg, backgroundColor = bg,
                 widthMeters = lw, heightMeters = lh, scale = s, cameraPositionProvider = facing, apply = tag,
             )
         }
     }
+}
+
+/**
+ * Where the AR controls begin on screen, for the tags to keep out from under them.
+ * [screenY] is how high a world point appears, -1 at the bottom edge and 1 at the top (null when
+ * unknown); [bottomLimit] is the top of the controls on that same scale.
+ */
+class TagClearance(val screenY: (Position) -> Float?, val bottomLimit: () -> Float)
+
+/**
+ * One tag's place. With a [clearance], the tag hides while its centre is below the controls'
+ * top, and comes back a little above it, so it does not flicker on the edge.
+ */
+@Composable
+private fun SceneScope.TagSlot(
+    clearance: TagClearance?,
+    position: Position,
+    rotation: Rotation = Rotation(),
+    content: @Composable io.github.sceneview.NodeScope.() -> Unit,
+) {
+    Node(
+        position = position,
+        rotation = rotation,
+        apply = {
+            if (clearance != null) onFrame = {
+                val y = clearance.screenY(worldPosition)
+                val limit = clearance.bottomLimit()
+                val show = y == null || if (isVisible) y >= limit else y > limit + 0.06f
+                if (show != isVisible) isVisible = show
+            }
+        },
+        content = content,
+    )
 }
