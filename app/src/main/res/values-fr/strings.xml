@@ -69,7 +69,7 @@
     <string name="unit_cm">Centimètres</string>
     <string name="unit_in">Pouces</string>
     <string name="settings_privacy_title">Confidentialité</string>
-    <string name="settings_privacy">Fonctionne hors ligne. Ni compte, ni pub, ni suivi. Rien de ce que vous tapez ou filmez ne quitte le téléphone, sauf si vous le partagez.</string>
+    <string name="settings_privacy">Fonctionne hors ligne. Ni compte, ni pub. L\'app elle-même n\'envoie rien : elle garde seulement vos dernières dimensions et l\'unité sur le téléphone, et ne prend une photo que si vous le demandez, pour que vous la partagiez. En AR, Google Play Services for AR collecte un identifiant, des données de performance et de diagnostic, et les fonctions AR utilisées ; voir la notice de Google ci-dessous.</string>
     <string name="settings_privacy_policy">Politique de confidentialité</string>
     <string name="settings_licenses">Licences open source</string>
     <string name="settings_licenses_body">Construit avec SceneView, Google Filament, Jetpack Compose et Material 3 (Apache 2.0), et ARCore (conditions d\'utilisation des API Google).</string>

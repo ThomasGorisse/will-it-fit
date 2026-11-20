@@ -77,7 +77,7 @@
     <string name="unit_cm">Centimetres</string>
     <string name="unit_in">Inches</string>
     <string name="settings_privacy_title">Privacy</string>
-    <string name="settings_privacy">Works offline. No account, no ads, no tracking. Nothing you type or film leaves your phone unless you share it.</string>
+    <string name="settings_privacy">Works offline. No account, no ads. The app itself sends nothing: it keeps only your last size and unit on your phone, and takes a photo only when you ask, for you to share. In AR, Google Play Services for AR collects an identifier, performance and diagnostic data, and which AR features are used; see Google\'s notice below.</string>
     <string name="settings_privacy_policy">Privacy policy</string>
     <string name="settings_arcore_title" translatable="false">Google Play Services for AR</string>
     <string name="settings_licenses">Open-source licences</string>
