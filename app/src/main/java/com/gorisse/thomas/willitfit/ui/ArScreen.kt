@@ -1,6 +1,7 @@
 package com.gorisse.thomas.willitfit.ui
 
 import android.app.Activity
+import android.opengl.Matrix
 import android.os.SystemClock
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -41,6 +42,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -49,6 +52,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -70,6 +76,7 @@ import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.formatDimensions
 import com.gorisse.thomas.willitfit.scene.DimensionMarks
 import com.gorisse.thomas.willitfit.scene.Furniture
+import com.gorisse.thomas.willitfit.scene.TagClearance
 import com.gorisse.thomas.willitfit.scene.rememberFurnitureLook
 import io.github.sceneview.ar.ARHapticFeedback
 import io.github.sceneview.ar.AutoPlacementNode
@@ -121,6 +128,20 @@ fun ArScreen(
     val camera = remember(outerProbe) { CameraWatch(outerProbe) }
 
     var capturing by remember { mutableStateOf(false) }
+    // Where the shutter row (and its hint) begins, from the top of the screen: a tag on the floor
+    // in front of the object slid under the buttons when the phone came close.
+    var screenHeight by remember { mutableIntStateOf(0) }
+    var controlsTop by remember { mutableFloatStateOf(Float.NaN) }
+    val clearance = remember(camera) {
+        TagClearance(
+            screenY = camera::screenY,
+            bottomLimit = {
+                val h = screenHeight
+                // A photo has no buttons over it: every tag stays in it.
+                if (capturing || h <= 0 || controlsTop.isNaN()) -1f else 1f - 2f * controlsTop / h
+            },
+        )
+    }
     // The last photo that did not come out, and why: a card with Try again until it is dealt with.
     var photoFailure by remember { mutableStateOf<PhotoFailure?>(null) }
     var shot by remember { mutableStateOf<Job?>(null) }
@@ -154,7 +175,7 @@ fun ArScreen(
         }
     }
 
-    Box(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize().onSizeChanged { screenHeight = it.height }) {
         CompositionLocalProvider(LocalARSessionProbe provides camera) {
             AutoPlacementScene(
                 assetReady = true,
@@ -193,6 +214,7 @@ fun ArScreen(
                         // Seen from behind or from the side, the tags read backwards ("mo 501"):
                         // they turn to the camera, as in the 3D room.
                         facing = camera::position,
+                        clearance = clearance,
                     )
                 }
             }
@@ -218,7 +240,8 @@ fun ArScreen(
             }
 
             Column(
-                Modifier.align(Alignment.BottomCenter).fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp),
+                Modifier.align(Alignment.BottomCenter).fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp)
+                    .onGloballyPositioned { controlsTop = it.positionInParent().y },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 // The states SceneView leaves to the app: no coaching runs then, so without a card
@@ -306,14 +329,36 @@ fun ArScreen(
  */
 private class CameraWatch(private val outer: ARSessionProbe?) : ARSessionProbe {
     private var last = Position(0f, 1.5f, 1f)
+    private val view = FloatArray(16)
+    private val projection = FloatArray(16)
+    private val viewProjection = FloatArray(16)
+    private val point = FloatArray(4)
+    private val clip = FloatArray(4)
+    private var projects = false
     fun position(): Position = last
     override val playbackDataset: File? get() = outer?.playbackDataset
+
+    /**
+     * How high [world] appears on the screen, -1 at the bottom edge and 1 at the top, or null
+     * behind the camera or before it tracks.
+     */
+    fun screenY(world: Position): Float? {
+        if (!projects) return null
+        point[0] = world.x; point[1] = world.y; point[2] = world.z; point[3] = 1f
+        Matrix.multiplyMV(clip, 0, viewProjection, 0, point, 0)
+        return if (clip[3] > 0f) clip[1] / clip[3] else null
+    }
+
     override fun onSessionFrame(session: Session, frame: Frame, nodes: List<io.github.sceneview.node.Node>) {
         outer?.onSessionFrame(session, frame, nodes)
         val camera = frame.camera
         if (camera.trackingState != TrackingState.TRACKING) return
         val pose = camera.pose
         last = Position(pose.tx(), pose.ty(), pose.tz())
+        camera.getViewMatrix(view, 0)
+        camera.getProjectionMatrix(projection, 0, 0.05f, 100f)
+        Matrix.multiplyMM(viewProjection, 0, projection, 0, view, 0)
+        projects = true
     }
 }
 
