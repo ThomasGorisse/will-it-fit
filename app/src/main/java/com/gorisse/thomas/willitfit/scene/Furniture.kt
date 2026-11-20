@@ -210,9 +210,9 @@ private fun SceneScope.ContactShadows(dims: Dimensions, look: FurnitureLook) {
 
 @Composable
 private fun SceneScope.Pool(look: FurnitureLook, intensity: Float, position: Position, scale: Scale) {
-    // Shown with the object, as the modelled object is (a cut at half faded), and at its own
-    // strength from its first frame. Born at 0 while the AR object faded in and raised after,
-    // the pool never darkened the camera image under the washer on the Pixel 9.
+    // Shown with the object, as the modelled object is (a cut at half faded), and created at its
+    // own strength. In AR it was created at 0 while the object faded in, then raised: on the
+    // Pixel 9 no pool showed under the washer at all.
     if (look.opacity <= 0.5f) return
     ContactShadow(
         size = Size(1f, 0f, 1f),
