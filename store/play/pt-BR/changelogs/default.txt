@@ -1,6 +1,6 @@
 Novidades
 • RA: as etiquetas de medida se viram para você e não cobrem os botões; o objeto some quando você entra nele.
-• RA: uma sombra de contato suave, sem bordas duras.
-• Porta: o batente e o objeto ficam visíveis acima do teclado, com materiais reais.
+• RA: uma sombra de contato suave apoia o objeto no chão.
+• Porta: o batente e o objeto aparecem inteiros na tela, com materiais reais.
 • Ambiente 3D: as etiquetas mostram na hora a medida final.
 Escolha um objeto ou digite as medidas, veja-o em um ambiente 3D ou em tamanho real em RA e confira uma porta. Grátis, sem anúncios nem conta, offline.

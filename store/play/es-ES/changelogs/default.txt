@@ -1,6 +1,6 @@
 Novedades
 • RA: las etiquetas de medida se giran hacia ti y no tapan los botones; el objeto se desvanece si entras en él.
-• RA: una sombra de contacto suave, sin bordes duros.
-• Puerta: el marco y el objeto se ven sobre el teclado, con materiales reales.
+• RA: una sombra de contacto suave asienta el objeto en el suelo.
+• Puerta: el marco y el objeto se ven enteros, con materiales reales.
 • Habitación 3D: las etiquetas muestran enseguida la medida final.
 Elige un objeto o escribe sus medidas, míralo en una habitación 3D o a tamaño real en RA y comprueba una puerta. Gratis, sin anuncios ni cuenta, sin conexión.

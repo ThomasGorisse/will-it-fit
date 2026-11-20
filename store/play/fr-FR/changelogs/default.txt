@@ -1,6 +1,6 @@
 Nouveautés
 • AR : les étiquettes se tournent vers vous et évitent les boutons ; l'objet s'efface quand on entre dedans.
-• AR : une ombre douce au contact, sans arêtes dures.
-• Porte : l'encadrement et l'objet restent visibles au-dessus du clavier, avec de vrais matériaux.
+• AR : une ombre douce au contact pose l'objet au sol.
+• Porte : l'encadrement et l'objet restent entiers à l'écran, avec de vrais matériaux.
 • Pièce 3D : les étiquettes affichent tout de suite la taille finale.
 Choisissez un objet ou saisissez sa taille, voyez-le dans une pièce 3D ou à taille réelle en AR, testez une porte. Gratuit, sans pub ni compte, hors ligne.
