@@ -28,6 +28,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Cancel
@@ -89,6 +92,8 @@ fun DoorScreen(
     onDoor: (Door) -> Unit,
     onBack: () -> Unit,
     onVerdictShown: () -> Unit = {},
+    arAvailable: Boolean = false,
+    onMeasure: () -> Unit = {},
 ) {
     val verdict = checkDoor(dims, door)
     val scheme = MaterialTheme.colorScheme
@@ -265,6 +270,14 @@ fun DoorScreen(
                     color = scheme.onSurfaceVariant,
                     modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp),
                 )
+                if (arAvailable) TextButton(
+                    onClick = onMeasure,
+                    modifier = Modifier.padding(start = 12.dp, top = 4.dp),
+                ) {
+                    Icon(Icons.Outlined.Straighten, null, Modifier.size(ButtonDefaults.IconSize))
+                    Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                    Text(stringResource(R.string.door_measure))
+                }
             }
         }
     }

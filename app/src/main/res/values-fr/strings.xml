@@ -75,4 +75,24 @@
     <string name="settings_licenses_body">Construit avec SceneView, Google Filament, Jetpack Compose et Material 3 (Apache 2.0), et ARCore (conditions d\'utilisation des API Google).</string>
     <string name="settings_about">À propos</string>
     <string name="settings_version">Version %1$s · gratuit, sans achat</string>
+
+    <string name="action_measure">Mesurer en AR</string>
+    <string name="door_measure">Mesurer la porte en AR</string>
+    <string name="tape_title">Mètre AR</string>
+    <string name="tape_searching">Bougez le téléphone lentement pour qu\'il trouve les surfaces</string>
+    <string name="tape_aim_first">Visez un bout avec le point, puis touchez +</string>
+    <string name="tape_aim_second">Visez maintenant l\'autre bout, puis touchez +</string>
+    <string name="tape_pick_side">Où va cette longueur ?</string>
+    <string name="tape_add">Ajouter un point</string>
+    <string name="tape_undo">Annuler</string>
+    <string name="tape_done">Terminé</string>
+    <string name="tape_again">Mesurer à nouveau</string>
+    <string name="tape_use_as">Comme %1$s</string>
+    <string name="tape_set">Pris comme %1$s : %2$s</string>
+    <string name="tape_accuracy">L\'AR peut se tromper de quelques centimètres. Si c\'est juste, vérifiez au mètre ruban.</string>
+    <string name="tape_side_width">largeur</string>
+    <string name="tape_side_depth">profondeur</string>
+    <string name="tape_side_height">hauteur</string>
+    <string name="tape_side_door_width">largeur de porte</string>
+    <string name="tape_side_door_height">hauteur de porte</string>
 </resources>

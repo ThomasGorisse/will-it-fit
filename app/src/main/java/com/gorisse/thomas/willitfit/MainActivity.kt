@@ -23,17 +23,20 @@ import com.gorisse.thomas.willitfit.data.ReviewPolicy
 import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Door
 import com.gorisse.thomas.willitfit.fit.Preset
+import com.gorisse.thomas.willitfit.fit.TapeTarget
+import com.gorisse.thomas.willitfit.fit.withTape
 import com.gorisse.thomas.willitfit.fit.dimensionsIn
 import com.gorisse.thomas.willitfit.ui.ArScreen
 import com.gorisse.thomas.willitfit.ui.DoorScreen
 import com.gorisse.thomas.willitfit.ui.HomeScreen
+import com.gorisse.thomas.willitfit.ui.MeasureScreen
 import com.gorisse.thomas.willitfit.ui.ResultScreen
 import com.gorisse.thomas.willitfit.ui.SettingsScreen
 import com.gorisse.thomas.willitfit.ui.WillItFitTheme
 import java.io.File
 
-/** The five screens. Home is the root; the others return to where they came from. */
-private enum class Route { HOME, AR, RESULT, DOOR, SETTINGS }
+/** The screens. Home is the root; the others return to where they came from. */
+private enum class Route { HOME, AR, RESULT, DOOR, SETTINGS, MEASURE }
 
 class MainActivity : ComponentActivity() {
     /** A rating flow is running: going home again meanwhile does not start a second one. */
@@ -76,8 +79,14 @@ class MainActivity : ComponentActivity() {
                         }
                         lastRoute = route
                     }
+                    // The AR tape opens from home (the object) or from the door, and goes back there.
+                    var measureDoor by rememberSaveable { mutableStateOf(false) }
                     BackHandler(enabled = route != Route.HOME) {
-                        route = if (route == Route.RESULT) Route.AR else Route.HOME
+                        route = when {
+                            route == Route.RESULT -> Route.AR
+                            route == Route.MEASURE && measureDoor -> Route.DOOR
+                            else -> Route.HOME
+                        }
                     }
                     // No cross-fade: two scenes (or a scene and the AR camera) never run at once.
                     run {
@@ -88,6 +97,7 @@ class MainActivity : ComponentActivity() {
                                 onAr = { route = Route.AR },
                                 onDoor = { doorVerdictSeen = false; route = Route.DOOR },
                                 onSettings = { route = Route.SETTINGS },
+                                onMeasure = { measureDoor = false; route = Route.MEASURE },
                             )
                             Route.AR -> ArScreen(
                                 dims = dims, unit = unit,
@@ -102,6 +112,20 @@ class MainActivity : ComponentActivity() {
                                 onDoor = { door = it; if (it.isValid) prefs.door = it },
                                 onVerdictShown = { doorVerdictSeen = true },
                                 onBack = { route = Route.HOME },
+                                arAvailable = arAvailable,
+                                onMeasure = { measureDoor = true; route = Route.MEASURE },
+                            )
+                            Route.MEASURE -> MeasureScreen(
+                                unit = unit,
+                                targets = if (measureDoor) TapeTarget.DOOR else TapeTarget.OBJECT,
+                                onUse = { target, cm ->
+                                    if (measureDoor) {
+                                        door = door.withTape(target, cm); prefs.door = door
+                                    } else {
+                                        dims = dims.withTape(target, cm); if (dims.isValid) prefs.dimensions = dims
+                                    }
+                                },
+                                onBack = { route = if (measureDoor) Route.DOOR else Route.HOME },
                             )
                             Route.SETTINGS -> SettingsScreen(
                                 unit = unit,

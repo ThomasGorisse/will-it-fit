@@ -75,4 +75,24 @@
     <string name="settings_licenses_body">Feito com SceneView, Google Filament, Jetpack Compose e Material 3 (Apache 2.0) e ARCore (Termos de Serviço das APIs do Google).</string>
     <string name="settings_about">Sobre</string>
     <string name="settings_version">Versão %1$s · grátis, sem compras</string>
+
+    <string name="action_measure">Medir com RA</string>
+    <string name="door_measure">Medir a porta com RA</string>
+    <string name="tape_title">Trena RA</string>
+    <string name="tape_searching">Mova o celular devagar para ele encontrar as superfícies</string>
+    <string name="tape_aim_first">Mire o ponto em uma ponta e toque em +</string>
+    <string name="tape_aim_second">Agora mire na outra ponta e toque em +</string>
+    <string name="tape_pick_side">Para que é essa medida?</string>
+    <string name="tape_add">Adicionar um ponto</string>
+    <string name="tape_undo">Desfazer</string>
+    <string name="tape_done">Pronto</string>
+    <string name="tape_again">Medir de novo</string>
+    <string name="tape_use_as">Como %1$s</string>
+    <string name="tape_set">Usado como %1$s: %2$s</string>
+    <string name="tape_accuracy">A RA pode errar por alguns centímetros. Se estiver justo, confira com uma trena.</string>
+    <string name="tape_side_width">largura</string>
+    <string name="tape_side_depth">profundidade</string>
+    <string name="tape_side_height">altura</string>
+    <string name="tape_side_door_width">largura da porta</string>
+    <string name="tape_side_door_height">altura da porta</string>
 </resources>
