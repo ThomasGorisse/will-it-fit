@@ -231,6 +231,8 @@ fun RoomScene(
                 labelScale = (size / 1.4f).coerceIn(1f, 1.8f),
                 facing = { cameraNode.worldPosition },
                 heightOffset = 0.2f,
+                // Over the rug (1.4 cm at its top), which hid the width line where it crossed it.
+                floorLift = 0.016f,
                 // The camera's right, flat: its view direction turned a quarter.
                 heightTagSide = sqrt(dir.first * dir.first + dir.third * dir.third).let { Direction(dir.third / it, 0f, -dir.first / it) },
             )
