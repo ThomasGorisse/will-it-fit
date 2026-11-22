@@ -74,9 +74,11 @@ import com.gorisse.thomas.willitfit.capture.takePhoto
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.formatDimensions
-import com.gorisse.thomas.willitfit.scene.DimensionMarks
+import com.gorisse.thomas.willitfit.fit.formatLength
+import com.gorisse.thomas.willitfit.fit.toSize
+import io.github.sceneview.DimensionMarks
+import io.github.sceneview.DimensionTagClearance
 import com.gorisse.thomas.willitfit.scene.Furniture
-import com.gorisse.thomas.willitfit.scene.TagClearance
 import com.gorisse.thomas.willitfit.scene.rememberFurnitureLook
 import io.github.sceneview.ar.ARHapticFeedback
 import io.github.sceneview.ar.AutoPlacementNode
@@ -120,7 +122,8 @@ fun ArScreen(
     val modelLoader = rememberModelLoader(engine)
     val materialLoader = rememberMaterialLoader(engine)
     // Furniture never changes size in AR: pinch, double-tap and scaleTo are off.
-    val state = remember { AutoPlacementState().apply { allowsScaling = false } }
+    // The size is the answer here: the marks stay on whenever the object stands (#5209).
+    val state = remember { AutoPlacementState().apply { allowsScaling = false; alwaysShowsDimensions = true } }
     ARHapticFeedback(state)
     @Suppress("UNUSED_VARIABLE") val tool = ArTool.OBJECT
     // Below a QA replay probe, if a harness provides one: ours passes everything on to it.
@@ -137,7 +140,7 @@ fun ArScreen(
     var backBottom by remember { mutableFloatStateOf(Float.NaN) }
     var titleBottom by remember { mutableFloatStateOf(Float.NaN) }
     val clearance = remember(camera) {
-        TagClearance(
+        DimensionTagClearance(
             screenY = camera::screenY,
             bottomLimit = {
                 val h = screenHeight
@@ -200,7 +203,8 @@ fun ArScreen(
                 groundShadows = false,
                 onARCoreAvailability = { arCoreCard = it != null },
             ) { placement ->
-                AutoPlacementNode(placement, state) { opacity ->
+                // SceneView draws the contact shadow and the footprint ring for a sized node.
+                AutoPlacementNode(placement, state, size = dims.toSize()) { opacity ->
                     // Walk into the washer and its white top filled the whole screen: the object
                     // gives way when the phone comes within 15 cm of it and returns past 30 cm,
                     // leaving its lines and sizes to show where it stands.
@@ -217,9 +221,10 @@ fun ArScreen(
                     val look = rememberFurnitureLook(
                         FurnitureTeal, opacity = opacity * presence, transparent = true, selectable = true,
                     )
-                    Furniture(dims, look)
-                    DimensionMarks(
-                        dims = dims, unit = unit,
+                    Furniture(dims, look, contactShadow = false)
+                    if (state.guide.dimensions) DimensionMarks(
+                        size = dims.toSize(),
+                        format = { formatLength(it * 100f, unit) },
                         lineColor = Color.White,
                         labelText = Color.White,
                         labelBackground = Color(0xE0141218),
