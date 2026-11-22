@@ -104,4 +104,7 @@
     <string name="tape_side_height">height</string>
     <string name="tape_side_door_width">door width</string>
     <string name="tape_side_door_height">door height</string>
+    <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
+    <string name="text_sizes_found">Sizes from the text: %1$s</string>
+    <string name="text_sizes_none">No size found in this text. Type them in, or select just the line with the sizes.</string>
 </resources>

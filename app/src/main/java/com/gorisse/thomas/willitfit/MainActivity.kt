@@ -1,8 +1,10 @@
 package com.gorisse.thomas.willitfit
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -26,6 +28,8 @@ import com.gorisse.thomas.willitfit.fit.Preset
 import com.gorisse.thomas.willitfit.fit.TapeTarget
 import com.gorisse.thomas.willitfit.fit.withTape
 import com.gorisse.thomas.willitfit.fit.dimensionsIn
+import com.gorisse.thomas.willitfit.fit.formatDimensions
+import com.gorisse.thomas.willitfit.fit.sizesFromText
 import com.gorisse.thomas.willitfit.ui.ArScreen
 import com.gorisse.thomas.willitfit.ui.DoorScreen
 import com.gorisse.thomas.willitfit.ui.HomeScreen
@@ -46,6 +50,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val prefs = Prefs(applicationContext)
+        // Text from a listing, shared or selected in another app. Read once: not again when the
+        // activity is recreated.
+        val incoming = if (savedInstanceState == null) intent.sharedText() else null
         setContent {
             WillItFitTheme {
                 Surface(color = MaterialTheme.colorScheme.surface) {
@@ -55,6 +62,18 @@ class MainActivity : ComponentActivity() {
                     var door by remember { mutableStateOf(prefs.door) }
                     var unit by remember { mutableStateOf(prefs.unit) }
                     val context = LocalContext.current
+                    LaunchedEffect(Unit) {
+                        if (incoming == null) return@LaunchedEffect
+                        val found = sizesFromText(incoming, unit)
+                        val message = if (found == null) {
+                            getString(R.string.text_sizes_none)
+                        } else {
+                            dims = found.applyTo(dims)
+                            if (dims.isValid) prefs.dimensions = dims
+                            getString(R.string.text_sizes_found, formatDimensions(dims, unit))
+                        }
+                        Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+                    }
                     val arAvailable = remember {
                         runCatching { !ArCoreApk.getInstance().checkAvailability(context).isUnsupported }.getOrDefault(false)
                     }
@@ -148,6 +167,14 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+/** The text another app sent: a share, or a selection sent from the text menu. */
+private fun Intent.sharedText(): String? = when (action) {
+    Intent.ACTION_SEND -> listOfNotNull(getStringExtra(Intent.EXTRA_SUBJECT), getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString())
+        .joinToString("\n").ifBlank { null }
+    Intent.ACTION_PROCESS_TEXT -> getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString()?.ifBlank { null }
+    else -> null
 }
 
 /**
