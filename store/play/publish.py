@@ -44,8 +44,14 @@ try:
         text = {k: (root / l / f).read_text().strip() for k, f in
                 (("title", "title.txt"), ("shortDescription", "short_description.txt"),
                  ("fullDescription", "full_description.txt"))}
-        api.call("PUT", f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}/listings/{l}",
-                 body={"language": l, **text})
+        # The trailer: video.txt (one URL for every locale), else the one already on Play. A PUT
+        # without it would clear it.
+        listing = f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}/listings/{l}"
+        video_file = root / "video.txt"
+        video = video_file.read_text().strip() if video_file.exists() else api.call("GET", listing).get("video", "")
+        if video:
+            text["video"] = video
+        api.call("PUT", listing, body={"language": l, **text})
         base = f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}/listings/{l}/phoneScreenshots"
         api.call("DELETE", base)
         for i in range(1, 6):
