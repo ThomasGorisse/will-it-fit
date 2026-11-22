@@ -81,4 +81,17 @@ class SizeTextTest {
         val got = sizesFromText("hauteur 95 cm", LengthUnit.CM)!!.applyTo(start)
         assertEquals(Dimensions(start.widthCm, start.depthCm, 95f, DimensionSource.TYPED, null), got)
     }
+
+    @Test
+    fun `listings found in review read right`() {
+        // A fourth named measure is another part of the object, not a free side; it never crashes.
+        assertSides(223f, 98f, 83f, "Width: 223 cm; Depth: 98 cm; Height: 83 cm; Seat depth: 55 cm")
+        assertSides(223f, 98f, 83f, "Maße (HxBxT): 83 x 223 x 98 cm")
+        assertSides(180f, 90f, 75f, "Dimensions : 1m80 x 90cm x 75cm")
+        assertSides(35.5f * 2.54f, 24f * 2.54f, 72f * 2.54f, "35 1/2\"W x 24\"D x 72\"H")
+        assertSides(120f, 60f, 75f, "Dimensions: 1 200 x 600 x 750 mm")
+        assertSides(120f, 60f, 75f, "Dimensions: 1\u00a0200 x 600 x 750 mm")
+        assertSides(120f, 60f, 75f, "Breite: 1.200 mm, Tiefe: 600 mm, Höhe: 750 mm")
+        assertSides(120.5f, null, null, "Largeur : 1.205 m")
+    }
 }

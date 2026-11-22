@@ -116,14 +116,18 @@ private fun tokenize(text: String): List<Token> {
         val c = s[i]
         when {
             c.isDigit() -> {
-                var j = i
-                while (j < s.length && s[j].isDigit()) j++
-                if (j + 1 < s.length && (s[j] == ',' || s[j] == '.') && s[j + 1].isDigit()) {
-                    j++
-                    while (j < s.length && s[j].isDigit()) j++
+                val (value, end) = number(s, i)
+                out += Token.Num(value)
+                // "1m80": metres and centimetres in one, the way French listings write them.
+                val metres = METRES_CM.matchAt(s, end)
+                if (metres != null && !s.startsWith("mm", end)) {
+                    val cmPart = metres.groupValues[1].let { if (it.length == 1) it.toFloat() * 10f else it.toFloat() }
+                    out[out.lastIndex] = Token.Num(value + cmPart / 100f)
+                    out += Token.Per(100f)
+                    i = metres.range.last + 1
+                } else {
+                    i = end
                 }
-                out += Token.Num(s.substring(i, j).replace(',', '.').toFloat())
-                i = j
             }
             c.isLetter() -> {
                 var j = i
@@ -139,6 +143,43 @@ private fun tokenize(text: String): List<Token> {
     return out
 }
 
+private val METRES_CM = Regex("m(\\d{1,2})(?![\\d.,])")
+private val MIXED_FRACTION = Regex("(\\d+) (\\d+)/(\\d+)")
+private val FRACTION = Regex("(\\d+)/(\\d+)")
+private val SPACED_THOUSANDS = Regex("(\\d{1,3}) (\\d{3})(?![\\d.,/])")
+private val MARKED_THOUSANDS_MM = Regex("(\\d{1,3})[.,](\\d{3}) ?mm\\b")
+
+/**
+ * The number at [start] in [s], and where it ends: "83", "2,23", "35 1/2", "1 200" and "1.200"
+ * (thousands, before millimetres) are each one number. A fraction is never read alone: in
+ * "35 1/2\"W" the "2" is not a width.
+ */
+private fun number(s: String, start: Int): Pair<Float, Int> {
+    MIXED_FRACTION.matchAt(s, start)?.let { m ->
+        val (whole, top, bottom) = m.destructured
+        return whole.toFloat() + top.toFloat() / bottom.toFloat().coerceAtLeast(1f) to m.range.last + 1
+    }
+    FRACTION.matchAt(s, start)?.let { m ->
+        val (top, bottom) = m.destructured
+        return top.toFloat() / bottom.toFloat().coerceAtLeast(1f) to m.range.last + 1
+    }
+    // "1 200 x 600 x 750 mm": a space between thousands.
+    SPACED_THOUSANDS.matchAt(s, start)?.let { m ->
+        return (m.groupValues[1] + m.groupValues[2]).toFloat() to m.range.last + 1
+    }
+    // "1.200 mm" or "1,200 mm": a thousands mark, not a decimal one, before millimetres.
+    MARKED_THOUSANDS_MM.matchAt(s, start)?.let { m ->
+        return (m.groupValues[1] + m.groupValues[2]).toFloat() to m.range.first + m.groupValues[1].length + 4
+    }
+    var j = start
+    while (j < s.length && s[j].isDigit()) j++
+    if (j + 1 < s.length && (s[j] == ',' || s[j] == '.') && s[j + 1].isDigit()) {
+        j++
+        while (j < s.length && s[j].isDigit()) j++
+    }
+    return s.substring(start, j).replace(',', '.').toFloat() to j
+}
+
 /** One run of letters. "px" or "cmx" before a digit is a label or unit glued to "x". */
 private fun word(w: String, followedByDigit: Boolean, out: MutableList<Token>) {
     if (followedByDigit && w.length > 1 && w.endsWith('x')) {
@@ -148,6 +189,15 @@ private fun word(w: String, followedByDigit: Boolean, out: MutableList<Token>) {
         }
     }
     if (w in FILLERS) return
+    // "HxBxT", an order written without spaces: one letter per side, joined by x.
+    val letters = w.split('x')
+    if (letters.size >= 2 && letters.all { it.length == 1 && it in LETTERS }) {
+        letters.forEachIndexed { n, l ->
+            if (n > 0) out += Token.Times
+            out += Token.Label(LETTERS.getValue(l), letter = true)
+        }
+        return
+    }
     out += when {
         w in TIMES_WORDS -> Token.Times
         w in UNITS -> Token.Per(UNITS.getValue(w))
@@ -223,24 +273,30 @@ private fun assign(chain: List<Item>, order: List<Role>?): List<Pair<Role, Item>
         order != null && order.size == chain.size -> order
         else -> listOf(Role.WIDTH, Role.DEPTH, Role.HEIGHT).take(chain.size)
     }
-    return resolve(roles).zip(chain)
+    return resolve(roles).zip(chain).mapNotNull { (role, item) -> role?.let { it to item } }
 }
 
 /**
  * LENGTH becomes width, and a WIDTH beside it becomes depth ("L x l x H", "Longueur … Largeur").
- * A side named twice goes to the first side still free.
+ * A number with no name goes to the first side still free. A side named again goes there too in
+ * a run of numbers ("L 223 x l 98 x H 83"); named one by one, it is a different measure
+ * ("Depth: 98 cm … Seat depth: 55 cm"): null when [repeatsDrop], and the first one stands.
  */
-private fun resolve(roles: List<Role?>): List<Role> {
+private fun resolve(roles: List<Role?>, repeatsDrop: Boolean = false): List<Role?> {
     val hasLength = Role.LENGTH in roles
     val taken = mutableSetOf<Role>()
     return roles.map { r ->
-        var role = when {
+        val named = when {
             r == Role.LENGTH -> Role.WIDTH
             r == Role.WIDTH && hasLength -> Role.DEPTH
             else -> r
         }
-        if (role == null || role in taken) role = listOf(Role.WIDTH, Role.DEPTH, Role.HEIGHT).first { it !in taken }
-        taken += role
+        val role = when {
+            named in taken && repeatsDrop -> null
+            named == null || named in taken -> listOf(Role.WIDTH, Role.DEPTH, Role.HEIGHT).firstOrNull { it !in taken }
+            else -> named
+        }
+        if (role != null) taken += role
         role
     }
 }
@@ -272,8 +328,8 @@ private fun named(tokens: List<Token>): List<Pair<Role, Measure>> {
         if (tokens.getOrNull(j + 1) is Token.Num) continue // "… cm hauteur 83": the next one's label
         raw += after.role to Measure(num.value, unit)
     }
-    val roles = resolve(raw.map { it.first })
-    return roles.zip(raw.map { it.second })
+    val roles = resolve(raw.map { it.first }, repeatsDrop = true)
+    return roles.zip(raw.map { it.second }).mapNotNull { (role, m) -> role?.let { it to m } }
 }
 
 private class Measure(val value: Float, val cmPer: Float?) {

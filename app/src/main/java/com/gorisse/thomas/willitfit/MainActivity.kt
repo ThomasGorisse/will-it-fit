@@ -64,7 +64,8 @@ class MainActivity : ComponentActivity() {
                     val context = LocalContext.current
                     LaunchedEffect(Unit) {
                         if (incoming == null) return@LaunchedEffect
-                        val found = sizesFromText(incoming, unit)
+                        // Text from anywhere: a text it cannot read finds nothing, never closes the app.
+                        val found = runCatching { sizesFromText(incoming, unit) }.getOrNull()
                         val message = if (found == null) {
                             getString(R.string.text_sizes_none)
                         } else {
