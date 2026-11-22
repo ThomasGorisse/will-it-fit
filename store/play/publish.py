@@ -32,11 +32,21 @@ try:
         req.add_header("Authorization", f"Bearer {api.token}"); req.add_header("Content-Type", "application/octet-stream")
         with urllib.request.urlopen(req) as r: vc = json.loads(r.read())["versionCode"]
     print("uploaded into edit, versionCode", vc)
+    tracks = f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}/tracks"
     if not internal_only:
-        api.call("PUT", f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}/tracks/production",
-                 body={"releases": [sp._release_body([vc], notes, fraction)]})
-    api.call("PUT", f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}/tracks/internal",
-             body={"releases": [sp._release_body([vc], notes, None)]})
+        # A build already in production keeps the notes it went out with: the changelogs here
+        # speak for the next version, not for one being rolled further.
+        prod = api.call("GET", f"{tracks}/production").get("releases", [])
+        same = next((r for r in prod if str(vc) in r.get("versionCodes", [])), None)
+        prod_notes = same.get("releaseNotes", notes) if same else notes
+        api.call("PUT", f"{tracks}/production", body={"releases": [sp._release_body([vc], prod_notes, fraction)]})
+    # Internal testers already on a newer build cannot go back to this one: Play refuses the edit.
+    internal = api.call("GET", f"{tracks}/internal").get("releases", [])
+    newest = max((int(c) for r in internal for c in r.get("versionCodes", [])), default=0)
+    if newest > vc:
+        print(f"internal stays on vc{newest}, newer than vc{vc}")
+    else:
+        api.call("PUT", f"{tracks}/internal", body={"releases": [sp._release_body([vc], notes, None)]})
     # Phone screenshots: the framed, captioned slides 1-5 of each locale replace the raw captures.
     frames = root / "frames/out"
     for l in ([] if internal_only else ["en-US", "fr-FR", "de-DE", "es-ES", "it-IT", "pt-BR"]):
