@@ -98,8 +98,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 /**
- * What the AR camera does. One tool today: the object at real size. The two-point tape measure
- * goes here next, as a second tool sharing the same camera, bottom bar and photo.
+ * What the AR camera does: the object at real size. The two-point tape is its own screen
+ * ([MeasureScreen]): it needs walls and depth, and no object in the way.
  */
 enum class ArTool { OBJECT /*, MEASURE */ }
 

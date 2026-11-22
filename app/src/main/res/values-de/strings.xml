@@ -75,4 +75,24 @@
     <string name="settings_licenses_body">Erstellt mit SceneView, Google Filament, Jetpack Compose und Material 3 (Apache 2.0) sowie ARCore (Nutzungsbedingungen der Google APIs).</string>
     <string name="settings_about">Info</string>
     <string name="settings_version">Version %1$s · kostenlos, ohne Käufe</string>
+
+    <string name="action_measure">Mit AR messen</string>
+    <string name="door_measure">Tür mit AR messen</string>
+    <string name="tape_title">AR-Maßband</string>
+    <string name="tape_searching">Bewege das Handy langsam, damit es die Flächen findet</string>
+    <string name="tape_aim_first">Ziele mit dem Punkt auf ein Ende und tippe auf +</string>
+    <string name="tape_aim_second">Ziele jetzt auf das andere Ende und tippe auf +</string>
+    <string name="tape_pick_side">Wofür ist diese Länge?</string>
+    <string name="tape_add">Punkt setzen</string>
+    <string name="tape_undo">Rückgängig</string>
+    <string name="tape_done">Fertig</string>
+    <string name="tape_again">Neu messen</string>
+    <string name="tape_use_as">Als %1$s</string>
+    <string name="tape_set">Als %1$s übernommen: %2$s</string>
+    <string name="tape_accuracy">AR kann einige Zentimeter danebenliegen. Wenn es knapp ist, mit dem Maßband nachmessen.</string>
+    <string name="tape_side_width">Breite</string>
+    <string name="tape_side_depth">Tiefe</string>
+    <string name="tape_side_height">Höhe</string>
+    <string name="tape_side_door_width">Türbreite</string>
+    <string name="tape_side_door_height">Türhöhe</string>
 </resources>

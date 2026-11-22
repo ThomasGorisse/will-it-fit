@@ -84,4 +84,24 @@
     <string name="settings_licenses_body">Built with SceneView, Google Filament, Jetpack Compose and Material 3 (Apache 2.0), and ARCore (Google APIs Terms of Service).</string>
     <string name="settings_about">About</string>
     <string name="settings_version">Version %1$s · free, no purchases</string>
+
+    <string name="action_measure">Measure with AR</string>
+    <string name="door_measure">Measure the door with AR</string>
+    <string name="tape_title">AR tape</string>
+    <string name="tape_searching">Move the phone slowly so it finds the surfaces</string>
+    <string name="tape_aim_first">Aim the dot at one end, then tap +</string>
+    <string name="tape_aim_second">Now aim at the other end, then tap +</string>
+    <string name="tape_pick_side">Where does this length go?</string>
+    <string name="tape_add">Add a point</string>
+    <string name="tape_undo">Undo</string>
+    <string name="tape_done">Done</string>
+    <string name="tape_again">Measure again</string>
+    <string name="tape_use_as">Use as %1$s</string>
+    <string name="tape_set">Set as %1$s: %2$s</string>
+    <string name="tape_accuracy">AR can be a few centimetres off. For a tight fit, check with a tape measure.</string>
+    <string name="tape_side_width">width</string>
+    <string name="tape_side_depth">depth</string>
+    <string name="tape_side_height">height</string>
+    <string name="tape_side_door_width">door width</string>
+    <string name="tape_side_door_height">door height</string>
 </resources>

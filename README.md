@@ -5,7 +5,7 @@
 Free Android app, no account, no ads, no purchases, works offline. Play listing:
 `com.gorisse.thomas.willitfit` ("Will It Fit: AR Furniture Size").
 
-## The five screens
+## The screens
 
 1. **Size** (home). A live 3D room from the first frame: the object stands against the wall at
    its size, dimensions written on the floor. Width, depth, height (cm or inches) and typical
@@ -16,13 +16,15 @@ Free Android app, no account, no ads, no purchases, works offline. Play listing:
 4. **Through the door?** No camera. Door opening → yes or no, the margin, and which way to
    carry it, acted out in 3D.
 5. **Settings**. Units, privacy, licences.
+6. **AR tape** (from the ruler on home, or "Measure the door with AR"). Aim the dot at one end,
+   tap +, aim at the other: the length shows on the line, then goes into a side of the object or
+   of the door.
 
 ## Built for what comes next
 
 - `fit/Dimensions.kt` is the one dimensions type, with its `DimensionSource` (typed, preset,
   and later measured).
-- `ui/ArScreen.kt` has an `ArTool` slot: a two-point tape measure goes there as a second tool
-  sharing the camera, the bottom bar and the photo.
+- `ui/MeasureScreen.kt` is the two-point AR tape; its maths (`fit/Tape.kt`) is unit-tested.
 - A room scan will come from SceneView's room engine, into the same AR screen.
 
 ## Build

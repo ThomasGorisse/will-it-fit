@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.outlined.ViewInAr
 import androidx.compose.material.icons.outlined.DoorFront
 import androidx.compose.material.icons.outlined.Edit
@@ -89,6 +90,7 @@ fun HomeScreen(
     onAr: () -> Unit,
     onDoor: () -> Unit,
     onSettings: () -> Unit,
+    onMeasure: () -> Unit = {},
 ) {
     val density = LocalDensity.current
     var sheetPx by remember { mutableIntStateOf(0) }
@@ -137,6 +139,10 @@ fun HomeScreen(
                             color = scheme.onSurfaceVariant,
                             maxLines = 1, overflow = TextOverflow.Ellipsis,
                         )
+                    }
+                    // The AR tape: measure the object (or the space) and its sides fill in.
+                    if (arAvailable) IconButton(onClick = onMeasure) {
+                        Icon(Icons.Outlined.Straighten, contentDescription = stringResource(R.string.action_measure))
                     }
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.settings_title))
