@@ -1,6 +1,6 @@
 Novità
-• AR: le etichette delle misure si girano verso di te ed evitano i pulsanti; l'oggetto sfuma quando ci entri dentro.
-• AR: un'ombra di contatto morbida appoggia l'oggetto sul pavimento.
-• Porta: il telaio e l'oggetto restano interi sullo schermo, con materiali veri.
-• Stanza 3D: le etichette mostrano subito la misura finale.
-Scegli un oggetto o inserisci le misure, guardalo in una stanza 3D o a grandezza reale in AR e verifica una porta. Gratis, senza pubblicità né account, offline.
+• Metro AR: punta due estremi e usa la lunghezza come lato dell'oggetto o della porta.
+• Condividi o seleziona il testo di un annuncio («220 × 95 × 85 cm») e le misure si compilano.
+• AR: le etichette si girano verso di te ed evitano i pulsanti; l'oggetto sfuma quando ci entri dentro.
+• Porta: il telaio e l'oggetto restano interi sullo schermo, con o senza tastiera.
+Gratis, senza pubblicità né account, offline.
