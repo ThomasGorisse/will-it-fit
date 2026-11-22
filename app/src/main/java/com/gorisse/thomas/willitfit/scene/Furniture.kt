@@ -220,6 +220,11 @@ private fun SceneScope.Pool(look: FurnitureLook, intensity: Float, position: Pos
         intensity = intensity,
         position = position,
         scale = scale,
+        // In the camera feed's draw group (7, the last one). The feed is opaque and drawn after
+        // the default group (4), over every pixel no depth was written to: the pool writes none,
+        // so the feed painted over it and no shadow showed under the object in AR. In the same
+        // group, the opaque feed draws first and the see-through pool lands on top of it.
+        apply = { setPriority(7) },
     )
 }
 
