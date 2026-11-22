@@ -34,7 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -98,7 +97,8 @@ fun MeasureScreen(
     val modelLoader = rememberModelLoader(engine)
     val materialLoader = rememberMaterialLoader(engine)
     val tape = remember { TapeSession() }
-    DisposableEffect(Unit) { onDispose { tape.clear() } }
+    // No detach on leaving: the AR scene is already closing its session by then, and ARCore
+    // forbids touching its anchors once it closes. Closing the session releases them.
 
     Box(Modifier.fillMaxSize().onSizeChanged { tape.viewSize = it }) {
         ARScene(
@@ -145,7 +145,9 @@ private fun TapeOverlay(
 
         // What the anchors and the aim are on screen this frame (read, so each frame redraws).
         @Suppress("UNUSED_VARIABLE") val frame = tape.tick
-        val points = anchors.filter { it.trackingState == TrackingState.TRACKING }.map { it.pose.toTapePoint() }
+        // A point ARCore lost for a moment keeps its last place and its slot: dropped, the tape read
+        // as one end short and the next + cleared both. One lost for good leaves on the next frame.
+        val points = anchors.filter { it.trackingState != TrackingState.STOPPED }.map { it.pose.toTapePoint() }
         val aimPoint = aim?.pose?.toTapePoint()
         val w = viewSize.width.toFloat()
         val h = viewSize.height.toFloat()
@@ -332,6 +334,7 @@ private class TapeSession {
     private val projection = FloatArray(16)
 
     fun onFrame(frame: Frame) {
+        anchors.removeAll { it.trackingState == TrackingState.STOPPED }
         val camera = frame.camera
         tracking = camera.trackingState == TrackingState.TRACKING
         val size = viewSize
