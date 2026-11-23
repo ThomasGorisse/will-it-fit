@@ -1,6 +1,8 @@
 What's new
-• AR tape: aim at two ends, then use the length as a side of the object or of the doorway.
+• Will it fit in the car? Enter the boot's opening and inside: the answer names the side that blocks.
+• Your last sizes come back with one tap.
+• Save the photo to your gallery.
+• AR tape: aim at two ends, use the length as a side.
 • Share or select a listing's text, like "220 × 95 × 85 cm", and the sizes fill in.
-• AR: the size tags face you and keep clear of the buttons; the object fades when you walk into it.
-• Door check: the doorway and the object stay in full view, keyboard up or not.
+• Made for tablets and foldables too.
 Free, no ads, no account, offline.
