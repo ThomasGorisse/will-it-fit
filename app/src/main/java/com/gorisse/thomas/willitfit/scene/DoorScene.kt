@@ -159,7 +159,7 @@ fun DoorScene(
         val oak = remember(materialLoader) { materialLoader.createColorInstance(RoomOak, roughness = 0.55f) }
         SideEffect { wall.setColor(palette.wall); floor.setColor(palette.floor); skirting.setColor(palette.skirting) }
         CubeNode(
-            size = Size(20f, 0.04f, 20f), position = Position(0f, -0.02f, 0f), materialInstance = floor,
+            size = Size(OUTER_W, 0.04f, OUTER_W), position = Position(0f, -0.02f, 0f), materialInstance = floor,
             apply = { isShadowReceiver = true },
         )
         Parquet(palette.isNight, Position(0f, 0.001f, 1.2f))
@@ -173,6 +173,22 @@ fun DoorScene(
         CubeNode(size = Size(wallW / 2f - half, wallH, WALL_THICKNESS), position = Position(-(half + (wallW / 2f - half) / 2f), wallH / 2f, 0f), materialInstance = wall)
         CubeNode(size = Size(wallW / 2f - half, wallH, WALL_THICKNESS), position = Position(half + (wallW / 2f - half) / 2f, wallH / 2f, 0f), materialInstance = wall)
         CubeNode(size = Size(dw, wallH - dh, WALL_THICKNESS), position = Position(0f, dh + (wallH - dh) / 2f, 0f), materialInstance = wall)
+        // The same wall, higher and wider, out of the light's way (no shadow cast), so the light
+        // through the doorway stays as it was. Above the keyboard the camera stands so far back
+        // that a 16 × 4.5 m wall still left a black corner at the top left (3.0.5, Pixel 9).
+        val sideW = (OUTER_W - wallW) / 2f
+        CubeNode(
+            size = Size(OUTER_W, OUTER_H - wallH, WALL_THICKNESS), position = Position(0f, wallH + (OUTER_H - wallH) / 2f, 0f),
+            materialInstance = wall, apply = { isShadowCaster = false },
+        )
+        CubeNode(
+            size = Size(sideW, wallH, WALL_THICKNESS), position = Position(-(wallW / 2f + sideW / 2f), wallH / 2f, 0f),
+            materialInstance = wall, apply = { isShadowCaster = false },
+        )
+        CubeNode(
+            size = Size(sideW, wallH, WALL_THICKNESS), position = Position(wallW / 2f + sideW / 2f, wallH / 2f, 0f),
+            materialInstance = wall, apply = { isShadowCaster = false },
+        )
         // A doorway, not a white frame on a board: casing standing proud of the wall on both
         // faces, the jambs lining the opening, an oak threshold, skirting along the wall, and the
         // door itself, open into the next room, with its handle.
@@ -221,6 +237,10 @@ fun DoorScene(
 }
 
 private const val WALL_THICKNESS = 0.12f
+
+/** How far the wall and the floor reach, metres: past anything the camera sees, keyboard up. */
+private const val OUTER_W = 48f
+private const val OUTER_H = 16f
 
 /** Where the camera stands and what it looks at. */
 internal data class DoorView(val eye: Position, val target: Position)

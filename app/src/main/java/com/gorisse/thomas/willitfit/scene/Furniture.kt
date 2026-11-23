@@ -529,6 +529,9 @@ fun SceneScope.DimensionMarks(
     heightTagSide: Direction? = null,
     values: Dimensions = dims,
     clearance: TagClearance? = null,
+    // How high the floor lines stand: the 3D room lifts them over its rug, which hid the width
+    // line where it crossed it; AR draws them on the floor.
+    floorLift: Float = 0f,
 ) {
     val w = dims.widthCm / 100f; val h = dims.heightCm / 100f; val d = dims.depthCm / 100f
     val off = 0.07f
@@ -543,17 +546,18 @@ fun SceneScope.DimensionMarks(
     val right = w / 2f + off
     val tick = 0.06f
     // Width, along the floor in front.
-    CubeNode(size = Size(w, t, t), position = Position(0f, t / 2f, front), materialInstance = line, apply = mark)
+    val floorY = floorLift + t / 2f
+    CubeNode(size = Size(w, t, t), position = Position(0f, floorY, front), materialInstance = line, apply = mark)
     CubeNode(size = Size(t, tick, t), position = Position(-w / 2f, tick / 2f, front), materialInstance = line, apply = mark)
     CubeNode(size = Size(t, tick, t), position = Position(w / 2f, tick / 2f, front), materialInstance = line, apply = mark)
     // Depth, along the floor on the right.
-    CubeNode(size = Size(t, t, d), position = Position(right, t / 2f, 0f), materialInstance = line, apply = mark)
+    CubeNode(size = Size(t, t, d), position = Position(right, floorY, 0f), materialInstance = line, apply = mark)
     CubeNode(size = Size(t, tick, t), position = Position(right, tick / 2f, -d / 2f), materialInstance = line, apply = mark)
     // Height, up the right-front corner.
     val hx = right + heightOffset
     CubeNode(size = Size(t, h, t), position = Position(hx, h / 2f, front), materialInstance = line, apply = mark)
     CubeNode(size = Size(tick, t, t), position = Position(hx, h, front), materialInstance = line, apply = mark)
-    CubeNode(size = Size(tick, t, t), position = Position(hx, t / 2f, front), materialInstance = line, apply = mark)
+    CubeNode(size = Size(tick, t, t), position = Position(hx, floorY, front), materialInstance = line, apply = mark)
 
     // Tags in the 4:1 bitmap TextNode draws (512 × 128 px), the figure filling most of it.
     val lw = 0.34f; val lh = 0.085f; val font = 82f
