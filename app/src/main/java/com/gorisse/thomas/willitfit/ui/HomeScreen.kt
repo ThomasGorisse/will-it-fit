@@ -158,7 +158,9 @@ fun HomeScreen(
                             },
                             style = MaterialTheme.typography.bodyMedium,
                             color = scheme.onSurfaceVariant,
-                            maxLines = 1, overflow = TextOverflow.Ellipsis,
+                            // A long name with "check yours" runs past one line on a phone in most
+                            // languages: two lines keep the advice, the ellipsis stays for extremes.
+                            maxLines = 2, overflow = TextOverflow.Ellipsis,
                         )
                     }
                     // The AR tape: measure the object (or the space) and its sides fill in.
