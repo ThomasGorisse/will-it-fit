@@ -16,10 +16,13 @@ class RecentSizesTest {
     private val table = Dimensions(140f, 80f, 75f)
 
     @Test
-    fun `an answered typed size goes first with no preset id`() {
+    fun `an answered typed size goes first and keeps the object it started from`() {
         assertEquals(listOf(sofa), RecentSizes.add(emptyList(), sofa))
         val edited = sofa.copy(presetId = Preset.SOFA_3.id)
-        assertEquals(listOf(sofa, wardrobe), RecentSizes.add(listOf(wardrobe), edited))
+        assertEquals(listOf(edited, wardrobe), RecentSizes.add(listOf(wardrobe), edited))
+        assertEquals(listOf(edited, wardrobe), RecentSizes.decode(RecentSizes.encode(listOf(edited, wardrobe))))
+        // An id this version does not know is dropped, the size is kept.
+        assertEquals(listOf(sofa), RecentSizes.decode("200,90,85,gone"))
     }
 
     @Test
@@ -64,7 +67,7 @@ class RecentSizesTest {
 
     @Test
     fun `missing and garbage storage is ignored`() {
-        listOf(null, "", "garbage", "1,2", "1,2,3,4", "NaN,90,85", "Infinity,90,85", "0,90,85", "1001,90,85").forEach {
+        listOf(null, "", "garbage", "1,2", "1,2,3,4,5", "NaN,90,85", "Infinity,90,85", "0,90,85", "1001,90,85").forEach {
             assertTrue(RecentSizes.decode(it).isEmpty())
         }
         val stored = "bad;200,90,85;NaN,90,85;110,65,210;200.5,90,85;140,80,75;155,75,76"

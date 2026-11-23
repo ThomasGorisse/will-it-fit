@@ -2,6 +2,7 @@ package com.gorisse.thomas.willitfit.data
 
 import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Dimensions
+import com.gorisse.thomas.willitfit.fit.Preset
 import com.gorisse.thomas.willitfit.fit.withMatchingPreset
 import kotlin.math.abs
 
@@ -17,8 +18,9 @@ object RecentSizes {
         return (listOf(entry) + history.filterNot { matches(it, entry) }).take(3)
     }
 
+    // The object it started from rides along, so an edited sofa comes back as a sofa.
     fun encode(history: List<Dimensions>): String = history.joinToString(";") {
-        "${it.widthCm},${it.depthCm},${it.heightCm}"
+        listOfNotNull(it.widthCm, it.depthCm, it.heightCm, it.presetId).joinToString(",")
     }
 
     /** A damaged entry does not hide the other sizes. */
@@ -26,11 +28,12 @@ object RecentSizes {
         val history = mutableListOf<Dimensions>()
         stored?.split(';')?.forEach { entry ->
             val sides = entry.split(',')
-            if (sides.size != 3) return@forEach
+            if (sides.size !in 3..4) return@forEach
             val w = sides[0].toFloatOrNull() ?: return@forEach
             val d = sides[1].toFloatOrNull() ?: return@forEach
             val h = sides[2].toFloatOrNull() ?: return@forEach
-            val dims = ownSize(Dimensions(w, d, h)) ?: return@forEach
+            val preset = sides.getOrNull(3)?.takeIf { Preset.byId(it) != null }
+            val dims = ownSize(Dimensions(w, d, h, presetId = preset)) ?: return@forEach
             if (history.size < 3 && history.none { matches(it, dims) }) history += dims
         }
         return history
@@ -38,8 +41,8 @@ object RecentSizes {
 
     private fun ownSize(dims: Dimensions): Dimensions? {
         if (!dims.isValid || dims.source != DimensionSource.TYPED) return null
-        // An edited preset can still carry its old id; only its actual sides count.
-        val entry = dims.copy(presetId = null)
-        return entry.takeIf { it.withMatchingPreset().source == DimensionSource.TYPED }
+        // An edited preset keeps its id for its look; only its actual sides say if it is typical.
+        val typical = dims.copy(presetId = null).withMatchingPreset().source == DimensionSource.PRESET
+        return dims.takeIf { !typical }
     }
 }

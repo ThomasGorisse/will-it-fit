@@ -250,12 +250,17 @@ private fun PresetRow(
 ) {
     val thumb = if (compact) 48.dp else 60.dp
     val state = rememberLazyListState()
-    val selected = Preset.byId(dims.presetId)
-    LaunchedEffect(Unit) {
+    // A size of the person's own that matches wins the selection: an edited sofa is theirs now.
+    val recentIndex = recentSizes.indexOfFirst { RecentSizes.matches(dims, it) }
+    val selected = if (recentIndex >= 0) null else Preset.byId(dims.presetId)
+    // Again when the history changes: back home after an answer, the size just checked joins
+    // the row after its first frame, and the row would otherwise keep it out of view.
+    LaunchedEffect(recentSizes) {
         // The selected card with its left neighbour in full view, never a card cut in half.
         // The person's own recent sizes lead the row, so a preset sits that many cards further.
-        val i = Preset.entries.indexOf(selected).let { if (it < 0) it else it + recentSizes.size }
-        if (i > 1) state.scrollToItem(i - 1)
+        val i = if (recentIndex >= 0) recentIndex
+        else Preset.entries.indexOf(selected).let { if (it < 0) it else it + recentSizes.size }
+        if (i >= 0) state.scrollToItem((i - 1).coerceAtLeast(0))
     }
     LazyRow(
         state = state,
@@ -270,10 +275,22 @@ private fun PresetRow(
                 selected = RecentSizes.matches(dims, entry),
                 label = formatted.removeSuffix(" ${unit.symbol}"),
                 description = stringResource(R.string.recent_size, formatted),
-                onClick = { onPick(entry.copy(source = DimensionSource.TYPED, presetId = null)) },
+                onClick = { onPick(entry.copy(source = DimensionSource.TYPED)) },
             ) {
-                Box(Modifier.size(thumb), contentAlignment = Alignment.Center) {
-                    Icon(Icons.Outlined.History, null, tint = MaterialTheme.colorScheme.primary)
+                // The object it started from when there is one, a clock otherwise: the label's
+                // numbers already say it is the person's own size.
+                val preset = Preset.byId(entry.presetId)
+                if (preset != null) {
+                    Image(
+                        painter = painterResource(preset.thumbnail()),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(thumb),
+                    )
+                } else {
+                    Box(Modifier.size(thumb), contentAlignment = Alignment.Center) {
+                        Icon(Icons.Outlined.History, null, tint = MaterialTheme.colorScheme.primary)
+                    }
                 }
             }
         }
@@ -295,7 +312,7 @@ private fun PresetRow(
         item(key = "custom") {
             PresetCard(
                 compact = compact,
-                selected = selected == null && recentSizes.none { RecentSizes.matches(dims, it) },
+                selected = selected == null && recentIndex < 0,
                 label = stringResource(R.string.preset_custom),
                 onClick = {
                     onPick(Dimensions(dims.widthCm, dims.depthCm, dims.heightCm))
