@@ -83,55 +83,55 @@ fun ResultScreen(file: File, dims: Dimensions, unit: LengthUnit, onBack: () -> U
     AppScaffold(title = stringResource(R.string.result_title), onBack = onBack) { padding ->
         // Wide windows (tablets, unfolded phones): the photo and its buttons stay phone-wide, centred.
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
-        Column(Modifier.formWidth().fillMaxSize().navigationBarsPadding()) {
-            Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
-                if (loaded != null && bitmap == null) Text(stringResource(R.string.result_missing), style = MaterialTheme.typography.bodyLarge)
-                bitmap?.let {
-                    Image(
-                        it, contentDescription = stringResource(R.string.result_title),
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier.clip(RoundedCornerShape(16.dp)),
-                    )
-                }
-            }
-            Spacer(Modifier.height(16.dp))
-            Column(
-                Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp).fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilledTonalButton(onClick = onRetake, modifier = Modifier.weight(1f).height(56.dp)) {
-                        Icon(Icons.Outlined.PhotoCamera, null, Modifier.size(ButtonDefaults.IconSize))
-                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                        Text(stringResource(R.string.result_retake), maxLines = 1)
+            Column(Modifier.formWidth().fillMaxSize().navigationBarsPadding()) {
+                Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
+                    if (loaded != null && bitmap == null) Text(stringResource(R.string.result_missing), style = MaterialTheme.typography.bodyLarge)
+                    bitmap?.let {
+                        Image(
+                            it, contentDescription = stringResource(R.string.result_title),
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.clip(RoundedCornerShape(16.dp)),
+                        )
                     }
-                    if (canSaveToGallery) {
-                        FilledTonalButton(
-                            onClick = {
-                                saving = true
-                                scope.launch {
-                                    val ok = saveToGallery(context, file)
-                                    saving = false
-                                    saved = ok
-                                    Toast.makeText(context, if (ok) savedText else saveFailedText, Toast.LENGTH_LONG).show()
-                                }
-                            },
-                            enabled = bitmap != null && !saved && !saving,
-                            modifier = Modifier.weight(1f).height(56.dp),
-                        ) {
-                            Icon(if (saved) Icons.Outlined.Check else Icons.Outlined.Download, null, Modifier.size(ButtonDefaults.IconSize))
+                }
+                Spacer(Modifier.height(16.dp))
+                Column(
+                    Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp).fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilledTonalButton(onClick = onRetake, modifier = Modifier.weight(1f).height(56.dp)) {
+                            Icon(Icons.Outlined.PhotoCamera, null, Modifier.size(ButtonDefaults.IconSize))
                             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                            Text(stringResource(if (saved) R.string.result_saved else R.string.result_save), maxLines = 1)
+                            Text(stringResource(R.string.result_retake), maxLines = 1)
+                        }
+                        if (canSaveToGallery) {
+                            FilledTonalButton(
+                                onClick = {
+                                    saving = true
+                                    scope.launch {
+                                        val ok = saveToGallery(context, file)
+                                        saving = false
+                                        saved = ok
+                                        Toast.makeText(context, if (ok) savedText else saveFailedText, Toast.LENGTH_LONG).show()
+                                    }
+                                },
+                                enabled = bitmap != null && !saved && !saving,
+                                modifier = Modifier.weight(1f).height(56.dp),
+                            ) {
+                                Icon(if (saved) Icons.Outlined.Check else Icons.Outlined.Download, null, Modifier.size(ButtonDefaults.IconSize))
+                                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                                Text(stringResource(if (saved) R.string.result_saved else R.string.result_save), maxLines = 1)
+                            }
                         }
                     }
-                }
-                Button(onClick = { sharePhoto(context, file, chooser, message) }, modifier = Modifier.fillMaxWidth().height(56.dp)) {
-                    Icon(Icons.Outlined.Share, null, Modifier.size(ButtonDefaults.IconSize))
-                    Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                    Text(stringResource(R.string.result_share))
+                    Button(onClick = { sharePhoto(context, file, chooser, message) }, modifier = Modifier.fillMaxWidth().height(56.dp)) {
+                        Icon(Icons.Outlined.Share, null, Modifier.size(ButtonDefaults.IconSize))
+                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                        Text(stringResource(R.string.result_share))
+                    }
                 }
             }
-        }
         }
     }
 }
