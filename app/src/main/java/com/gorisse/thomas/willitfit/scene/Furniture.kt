@@ -32,6 +32,8 @@ import io.github.sceneview.math.Scale
 import io.github.sceneview.math.Size
 import io.github.sceneview.node.ContactShadowContext
 import io.github.sceneview.node.RenderableNode
+import io.github.sceneview.loaders.ModelLoader
+import io.github.sceneview.model.ModelInstance
 import io.github.sceneview.rememberModelInstance
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -153,6 +155,7 @@ fun SceneScope.Furniture(
     shape: Shape = dims.shape,
     contactShadow: Boolean = true,
     onShown: () -> Unit = {},
+    preloaded: PreloadedFurniture? = null,
 ) {
     val file = modelFile(shape, dims.presetId)
     val context = LocalContext.current
@@ -161,7 +164,8 @@ fun SceneScope.Furniture(
         // A new file gets its own load; nothing is drawn for the few frames it takes, not even
         // its shadow: on a first launch the pool and the marks stood alone on the floor for
         // seconds before the sofa came.
-        key(file) { ModelFurniture(file, dims, look, contactShadow, onShown) }
+        val ready = preloaded?.takeIf { it.file == file }?.instance
+        key(file) { ModelFurniture(file, dims, look, contactShadow, onShown, ready) }
         return
     }
     if (contactShadow) ContactShadows(dims, look)
@@ -223,6 +227,29 @@ private fun SceneScope.Pool(look: FurnitureLook, intensity: Float, position: Pos
     )
 }
 
+/**
+ * The object's model, loaded by the screen before it is needed. In AR the object is placed the
+ * moment ARCore finds the floor; loaded only then, its size lines stood alone on the floor for
+ * 0.4 s before it came. SceneView asks for the asset first ("Load the asset before setting
+ * assetReady"): the screen passes [ready] as `assetReady`, and this to [Furniture].
+ * The screen owns the model: it lives as long as the screen, across placements.
+ */
+class PreloadedFurniture(val file: String?, val instance: ModelInstance?) {
+    /** True once there is something to draw: the model, or a silhouette (no model ships). */
+    val ready: Boolean get() = file == null || instance != null
+}
+
+@Composable
+fun rememberPreloadedFurniture(modelLoader: ModelLoader, dims: Dimensions): PreloadedFurniture {
+    val context = LocalContext.current
+    val path = modelFile(dims.shape, dims.presetId)
+    val bundled = remember(path) { path != null && context.hasAsset(path) }
+    val file = path.takeIf { bundled }
+    // Keyed by the file, so a different object never shows the previous one while it loads.
+    val instance = key(file) { file?.let { rememberModelInstance(modelLoader, it) } }
+    return PreloadedFurniture(file, instance)
+}
+
 /** The modelled object for a shape, as an asset path. */
 private fun modelFile(shape: Shape, presetId: String?): String? = when (shape) {
     Shape.SOFA -> if (presetId == Preset.SOFA_2.id) "models/sofa2.glb" else "models/sofa3.glb"
@@ -252,9 +279,11 @@ private fun SceneScope.ModelFurniture(
     look: FurnitureLook,
     contactShadow: Boolean,
     onShown: () -> Unit,
+    preloaded: ModelInstance?,
 ) {
     val asked = remember(file) { SystemClock.uptimeMillis() }
-    val instance = rememberModelInstance(modelLoader, file)
+    // Loaded ahead by the screen (and owned by it), or here.
+    val instance = preloaded ?: rememberModelInstance(modelLoader, file)
     LaunchedEffect(instance) {
         // Load time on real phones, read from logcat: the emulator is far slower.
         if (instance != null) {
