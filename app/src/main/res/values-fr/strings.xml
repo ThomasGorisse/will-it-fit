@@ -129,5 +129,5 @@
     <string name="boot_over_length">%1$s trop long pour le coffre</string>
     <string name="boot_over_width">%1$s trop large pour le coffre</string>
     <string name="boot_over_height">%1$s trop haut pour le coffre</string>
-    <string name="photo_boot">Ouverture du coffre : %1$s · Intérieur (L × l × H) : %2$s</string>
+    <string name="photo_boot">Ouverture %1$s · intérieur %2$s</string>
 </resources>

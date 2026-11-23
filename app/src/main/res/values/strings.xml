@@ -138,5 +138,5 @@
     <string name="boot_over_length">%1$s too long for the boot</string>
     <string name="boot_over_width">%1$s too wide for the boot</string>
     <string name="boot_over_height">%1$s too tall for the boot</string>
-    <string name="photo_boot">Boot opening: %1$s · Inside (L × W × H): %2$s</string>
+    <string name="photo_boot">Opening %1$s · inside %2$s</string>
 </resources>

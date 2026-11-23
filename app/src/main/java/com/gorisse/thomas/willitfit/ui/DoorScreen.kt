@@ -138,21 +138,23 @@ fun DoorScreen(
             else -> if (carBoot) R.string.boot_yes else R.string.door_yes
         },
     )
-    val margin = (if (carBoot) {
+    val marginCore = if (carBoot) {
         if (verdict.fits) stringResource(
             R.string.boot_margin_spare, formatMargin(verdict.marginCm, unit), stringResource(bootVerdict.limit.label()),
         ) else stringResource(bootVerdict.limit.overLabel(), formatMargin(verdict.marginCm, unit))
     } else stringResource(
         if (verdict.fits) R.string.door_margin_spare else R.string.door_margin_over,
         formatMargin(verdict.marginCm, unit),
-    )) + " · " + stringResource(
+    )
+    val margin = marginCore + " · " + stringResource(
         // In a boot the object faces the opening, not a door.
         if (carBoot && verdict.carry == Carry.UPRIGHT) R.string.carry_upright_boot else verdict.carry.label(),
     )
     val objectLine = stringResource(R.string.door_object, objectName(dims), formatDimensions(dims, unit))
     val doorLine = if (carBoot) stringResource(
         R.string.photo_boot,
-        "${formatNumber(boot.openingWidthCm, unit)} × ${formatNumber(boot.openingHeightCm, unit)} ${unit.symbol}",
+        // One unit for the line, at its end: the photo's caption has room for one line only.
+        "${formatNumber(boot.openingWidthCm, unit)} × ${formatNumber(boot.openingHeightCm, unit)}",
         "${formatNumber(boot.lengthCm, unit)} × ${formatNumber(boot.widthCm, unit)} × ${formatNumber(boot.heightCm, unit)} ${unit.symbol}",
     ) else stringResource(
         R.string.photo_door, "${formatNumber(door.widthCm, unit)} × ${formatNumber(door.heightCm, unit)} ${unit.symbol}",
@@ -199,8 +201,10 @@ fun DoorScreen(
                             verdict.isTight -> 0xFFF2C46D
                             else -> 0xFF8DD99A // FitColors.success, dark
                         }.toInt()
+                        // The photo shows how it lies; its caption keeps the boot's margin short.
+                        val lines = listOf(objectLine, doorLine, if (carBoot) marginCore else margin)
                         savePhoto(
-                            context, bitmap, answer, listOf(objectLine, doorLine, margin), signature, color,
+                            context, bitmap, answer, lines, signature, color,
                             // The boot floats on the screen's wall colour; the door scene is opaque.
                             background = if (carBoot) bootBackground else null,
                         )

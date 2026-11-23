@@ -129,5 +129,5 @@
     <string name="boot_over_length">%1$s troppo lungo per il bagagliaio</string>
     <string name="boot_over_width">%1$s troppo largo per il bagagliaio</string>
     <string name="boot_over_height">%1$s troppo alto per il bagagliaio</string>
-    <string name="photo_boot">Apertura: %1$s · Interno (L × l × H): %2$s</string>
+    <string name="photo_boot">Apertura %1$s · interno %2$s</string>
 </resources>

@@ -129,5 +129,5 @@
     <string name="boot_over_length">%1$s zu lang für den Kofferraum</string>
     <string name="boot_over_width">%1$s zu breit für den Kofferraum</string>
     <string name="boot_over_height">%1$s zu hoch für den Kofferraum</string>
-    <string name="photo_boot">Kofferraumöffnung: %1$s · Innen (L × B × H): %2$s</string>
+    <string name="photo_boot">Öffnung %1$s · innen %2$s</string>
 </resources>

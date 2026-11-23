@@ -129,5 +129,5 @@
     <string name="boot_over_length">%1$s demasiado largo para el maletero</string>
     <string name="boot_over_width">%1$s demasiado ancho para el maletero</string>
     <string name="boot_over_height">%1$s demasiado alto para el maletero</string>
-    <string name="photo_boot">Apertura: %1$s · Interior (largo × ancho × alto): %2$s</string>
+    <string name="photo_boot">Apertura %1$s · interior %2$s</string>
 </resources>

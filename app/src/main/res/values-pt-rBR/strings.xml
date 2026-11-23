@@ -129,5 +129,5 @@
     <string name="boot_over_length">%1$s comprido demais para o porta-malas</string>
     <string name="boot_over_width">%1$s largo demais para o porta-malas</string>
     <string name="boot_over_height">%1$s alto demais para o porta-malas</string>
-    <string name="photo_boot">Abertura: %1$s · Interior (C × L × A): %2$s</string>
+    <string name="photo_boot">Abertura %1$s · interior %2$s</string>
 </resources>
