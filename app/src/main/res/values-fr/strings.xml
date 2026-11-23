@@ -64,6 +64,7 @@
     <string name="photo_door">Porte · %1$s</string>
     <string name="door_sofa_hint">Un canapé passe souvent incliné sur le dos, pieds devant : l\'assise prend moins de place que cette boîte. Démontez aussi les pieds.</string>
     <string name="carry_upright">debout, face à la porte</string>
+    <string name="carry_upright_boot">debout, face à l\'ouverture</string>
     <string name="carry_upright_sideways">debout, de profil</string>
     <string name="carry_on_side">sur le côté</string>
     <string name="carry_on_side_sideways">sur le côté, de profil</string>
@@ -103,4 +104,30 @@
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Tailles reprises du texte : %1$s</string>
     <string name="text_sizes_none">Aucune taille trouvée dans ce texte. Tapez-les, ou sélectionnez juste la ligne des dimensions.</string>
+    <string name="space_door">Porte</string>
+    <string name="space_boot">Coffre</string>
+    <string name="boot_enter">Entrez les cotes du coffre</string>
+    <string name="boot_yes">Ça rentre dans le coffre</string>
+    <string name="boot_tight">Ça rentre, mais c\'est juste</string>
+    <string name="boot_no">Ça ne rentre pas dans le coffre</string>
+    <string name="boot_opening">Ouverture du coffre</string>
+    <string name="boot_inside">Intérieur du coffre</string>
+    <string name="boot_width">Largeur</string>
+    <string name="boot_height">Hauteur</string>
+    <string name="boot_length">Longueur</string>
+    <string name="boot_help">Ouverture à l\'intérieur des joints ; largeur entre passages de roue ; longueur au sol, sièges relevés ; hauteur à la tablette ou au toit. Tout droit, sans incliner.</string>
+    <string name="boot_example">Break compact</string>
+    <string name="boot_example_help">L\'exemple du break compact est utilisé tant que vous n\'avez pas saisi vos mesures.</string>
+    <string name="boot_margin_spare">%1$s de marge · %2$s</string>
+    <string name="boot_limit_opening_width">largeur de l\'ouverture</string>
+    <string name="boot_limit_opening_height">hauteur de l\'ouverture</string>
+    <string name="boot_limit_length">longueur du coffre</string>
+    <string name="boot_limit_width">largeur du coffre</string>
+    <string name="boot_limit_height">hauteur du coffre</string>
+    <string name="boot_over_opening_width">%1$s trop large pour l\'ouverture</string>
+    <string name="boot_over_opening_height">%1$s trop haut pour l\'ouverture</string>
+    <string name="boot_over_length">%1$s trop long pour le coffre</string>
+    <string name="boot_over_width">%1$s trop large pour le coffre</string>
+    <string name="boot_over_height">%1$s trop haut pour le coffre</string>
+    <string name="photo_boot">Ouverture %1$s · intérieur %2$s</string>
 </resources>

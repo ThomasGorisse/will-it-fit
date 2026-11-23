@@ -71,6 +71,7 @@
     <string name="photo_door">Door · %1$s</string>
     <string name="door_sofa_hint">Sofas often pass tilted back, feet first: the seat takes less room than this box. Take its legs off too.</string>
     <string name="carry_upright">upright, facing the door</string>
+    <string name="carry_upright_boot">upright, facing the opening</string>
     <string name="carry_upright_sideways">upright, turned sideways</string>
     <string name="carry_on_side">on its side</string>
     <string name="carry_on_side_sideways">on its side, turned</string>
@@ -112,4 +113,30 @@
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Sizes from the text: %1$s</string>
     <string name="text_sizes_none">No size found in this text. Type them in, or select just the line with the sizes.</string>
+    <string name="space_door">Door</string>
+    <string name="space_boot">Car boot</string>
+    <string name="boot_enter">Enter the boot\'s size</string>
+    <string name="boot_yes">Yes, it fits in the boot</string>
+    <string name="boot_tight">Yes, but it\'s tight in the boot</string>
+    <string name="boot_no">No, it won\'t fit in the boot</string>
+    <string name="boot_opening">Boot opening</string>
+    <string name="boot_inside">Inside the boot</string>
+    <string name="boot_width">Width</string>
+    <string name="boot_height">Height</string>
+    <string name="boot_length">Length</string>
+    <string name="boot_help">Opening inside the seals; width between wheel arches; floor length with seats up; height to shelf or roof. Straight in, without tilting.</string>
+    <string name="boot_example">Estate car</string>
+    <string name="boot_example_help">Using the estate car example until you enter your own measurements.</string>
+    <string name="boot_margin_spare">%1$s to spare · %2$s</string>
+    <string name="boot_limit_opening_width">opening width</string>
+    <string name="boot_limit_opening_height">opening height</string>
+    <string name="boot_limit_length">boot length</string>
+    <string name="boot_limit_width">boot width</string>
+    <string name="boot_limit_height">boot height</string>
+    <string name="boot_over_opening_width">%1$s too wide for the opening</string>
+    <string name="boot_over_opening_height">%1$s too tall for the opening</string>
+    <string name="boot_over_length">%1$s too long for the boot</string>
+    <string name="boot_over_width">%1$s too wide for the boot</string>
+    <string name="boot_over_height">%1$s too tall for the boot</string>
+    <string name="photo_boot">Opening %1$s · inside %2$s</string>
 </resources>

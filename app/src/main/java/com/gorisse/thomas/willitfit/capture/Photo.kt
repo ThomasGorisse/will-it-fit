@@ -85,9 +85,15 @@ suspend fun savePhoto(
     lines: List<String>,
     signature: String,
     titleColor: Int = 0xFFFFFFFF.toInt(),
+    background: Int? = null,
 ): File =
     withContext(Dispatchers.Default) {
-        val out = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        // A scene drawn over a Compose background reads back transparent there, and a JPEG turns
+        // transparent pixels black: lay it on the colour the screen shows behind it.
+        val out = if (background == null) bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        else Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888).also {
+            Canvas(it).apply { drawColor(background); drawBitmap(bitmap, 0f, 0f, null) }
+        }
         drawCaptionCard(context, Canvas(out), out.width.toFloat(), out.height.toFloat(), title, titleColor, lines, signature)
         val dir = File(context.cacheDir, "photos").apply { mkdirs() }
         // The last few stay: an app the photo was shared to may read it a while later.

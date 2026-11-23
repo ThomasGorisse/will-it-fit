@@ -64,6 +64,7 @@
     <string name="photo_door">Porta · %1$s</string>
     <string name="door_sofa_hint">Um sofá costuma passar inclinado para trás, pés primeiro: o assento ocupa menos que esta caixa. Tire os pés também.</string>
     <string name="carry_upright">em pé, de frente para a porta</string>
+    <string name="carry_upright_boot">em pé, de frente para a abertura</string>
     <string name="carry_upright_sideways">em pé, de lado</string>
     <string name="carry_on_side">deitado de lado</string>
     <string name="carry_on_side_sideways">deitado de lado, virado</string>
@@ -103,4 +104,30 @@
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Medidas tiradas do texto: %1$s</string>
     <string name="text_sizes_none">Nenhuma medida neste texto. Digite-as ou selecione só a linha das medidas.</string>
+    <string name="space_door">Porta</string>
+    <string name="space_boot">Porta-malas</string>
+    <string name="boot_enter">Digite as medidas do porta-malas</string>
+    <string name="boot_yes">Sim, cabe no porta-malas</string>
+    <string name="boot_tight">Sim, mas fica apertado</string>
+    <string name="boot_no">Não cabe no porta-malas</string>
+    <string name="boot_opening">Abertura do porta-malas</string>
+    <string name="boot_inside">Interior do porta-malas</string>
+    <string name="boot_width">Largura</string>
+    <string name="boot_height">Altura</string>
+    <string name="boot_length">Comprimento</string>
+    <string name="boot_help">Abertura dentro das borrachas; largura entre caixas de roda; comprimento do piso com bancos levantados; altura até o tampão ou teto. Reto, sem inclinar.</string>
+    <string name="boot_example">Perua compacta</string>
+    <string name="boot_example_help">O exemplo da perua compacta é usado até você digitar suas medidas.</string>
+    <string name="boot_margin_spare">%1$s de folga · %2$s</string>
+    <string name="boot_limit_opening_width">largura da abertura</string>
+    <string name="boot_limit_opening_height">altura da abertura</string>
+    <string name="boot_limit_length">comprimento do porta-malas</string>
+    <string name="boot_limit_width">largura do porta-malas</string>
+    <string name="boot_limit_height">altura do porta-malas</string>
+    <string name="boot_over_opening_width">%1$s largo demais para a abertura</string>
+    <string name="boot_over_opening_height">%1$s alto demais para a abertura</string>
+    <string name="boot_over_length">%1$s comprido demais para o porta-malas</string>
+    <string name="boot_over_width">%1$s largo demais para o porta-malas</string>
+    <string name="boot_over_height">%1$s alto demais para o porta-malas</string>
+    <string name="photo_boot">Abertura %1$s · interior %2$s</string>
 </resources>

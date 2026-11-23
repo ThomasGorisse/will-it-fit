@@ -304,13 +304,13 @@ internal const val START_GAP = 0.55f
 
 // Object axes: x = width, y = height, z = depth. Inner rotation first, then the outer yaw.
 // See Carry: each maps (across, up, along) onto world (x, y, z).
-private fun innerRotation(c: Carry): Rotation = when (c) {
+internal fun innerRotation(c: Carry): Rotation = when (c) {
     Carry.UPRIGHT, Carry.UPRIGHT_SIDEWAYS -> Rotation()
     Carry.ON_ITS_SIDE, Carry.ON_ITS_SIDE_SIDEWAYS -> Rotation(z = 90f)
     Carry.ON_ITS_BACK, Carry.ON_ITS_BACK_SIDEWAYS -> Rotation(x = -90f)
 }
 
-private fun outerRotation(c: Carry): Rotation = when (c) {
+internal fun outerRotation(c: Carry): Rotation = when (c) {
     Carry.UPRIGHT, Carry.ON_ITS_SIDE, Carry.ON_ITS_BACK -> Rotation()
     Carry.UPRIGHT_SIDEWAYS, Carry.ON_ITS_SIDE_SIDEWAYS, Carry.ON_ITS_BACK_SIDEWAYS -> Rotation(y = 90f)
 }
