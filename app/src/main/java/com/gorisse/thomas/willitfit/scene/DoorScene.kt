@@ -167,8 +167,8 @@ fun DoorScene(
         // on a plain floor, at the sides and in front: copies around it, only then. Phones never
         // see past it.
         if (visibleAspect > 1f) {
-            // Two to the left: the view looks left, down the wall, and sees furthest there.
-            for (i in -2..1) for (j in 0..1) {
+            // Three to the left: the view looks left, down the wall, and sees furthest there.
+            for (i in -3..1) for (j in 0..1) {
                 if (i == 0 && j == 0) continue
                 Parquet(palette.isNight, Position(i * PARQUET_W, 0.001f, 1.2f + j * PARQUET_D))
             }
