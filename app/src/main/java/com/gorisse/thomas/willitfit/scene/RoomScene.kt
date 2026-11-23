@@ -26,11 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.google.android.filament.LightManager
 import com.gorisse.thomas.willitfit.fit.Dimensions
+import com.gorisse.thomas.willitfit.fit.formatLength
+import com.gorisse.thomas.willitfit.fit.toSize
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.shape
 import io.github.sceneview.SceneScope
 import io.github.sceneview.SceneView
 import io.github.sceneview.material.setColor
+import io.github.sceneview.DimensionMarks
 import io.github.sceneview.math.Direction
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
@@ -224,18 +227,21 @@ fun RoomScene(
             Node(scale = Scale(pop.value)) {
                 Furniture(shown, look, onShown = { objectShown = true })
             }
-            if (objectShown) DimensionMarks(
-                dims = shown, values = dims, unit = unit,
-                lineColor = Color.White,
-                labelText = labelText, labelBackground = labelBackground,
-                labelScale = (size / 1.4f).coerceIn(1f, 1.8f),
-                facing = { cameraNode.worldPosition },
-                heightOffset = 0.2f,
-                // Over the rug (1.4 cm at its top), which hid the width line where it crossed it.
-                floorLift = 0.016f,
-                // The camera's right, flat: its view direction turned a quarter.
-                heightTagSide = sqrt(dir.first * dir.first + dir.third * dir.third).let { Direction(dir.third / it, 0f, -dir.first / it) },
-            )
+            // Over the rug (1.4 cm at its top), which hid the width line where it crossed it: the
+            // marks stand 1.6 cm up. SceneView's DimensionMarks draws its floor lines on the floor.
+            if (objectShown) Node(position = Position(y = 0.016f)) {
+                DimensionMarks(
+                    size = shown.toSize(), labels = dims.toSize(),
+                    format = { formatLength(it * 100f, unit) },
+                    lineColor = Color.White,
+                    labelText = labelText, labelBackground = labelBackground,
+                    labelScale = (size / 1.4f).coerceIn(1f, 1.8f),
+                    facing = { cameraNode.worldPosition },
+                    heightOffset = 0.2f,
+                    // The camera's right, flat: its view direction turned a quarter.
+                    heightTagSide = sqrt(dir.first * dir.first + dir.third * dir.third).let { Direction(dir.third / it, 0f, -dir.first / it) },
+                )
+            }
         }
     }
     // After SceneView, so its render-quality preset (applied once) does not undo it: a little

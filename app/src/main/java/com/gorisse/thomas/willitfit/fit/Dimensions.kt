@@ -108,3 +108,7 @@ fun formatMargin(cm: Float, unit: LengthUnit): String {
 /** "220 × 95 × 85 cm" — width × depth × height. */
 fun formatDimensions(d: Dimensions, unit: LengthUnit): String =
     "${formatNumber(d.widthCm, unit)} × ${formatNumber(d.depthCm, unit)} × ${formatNumber(d.heightCm, unit)} ${unit.symbol}"
+
+/** The box in metres, width along X, height along Y, depth along Z, as SceneView measures it. */
+fun Dimensions.toSize(): io.github.sceneview.math.Size =
+    io.github.sceneview.math.Size(widthCm / 100f, heightCm / 100f, depthCm / 100f)
