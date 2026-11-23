@@ -64,6 +64,7 @@
     <string name="photo_door">Tür · %1$s</string>
     <string name="door_sofa_hint">Sofas passen oft nach hinten gekippt, Füße voran: die Sitzfläche braucht weniger Platz als diese Box. Schraub auch die Füße ab.</string>
     <string name="carry_upright">aufrecht, zur Tür gewandt</string>
+    <string name="carry_upright_boot">aufrecht, zur Öffnung gewandt</string>
     <string name="carry_upright_sideways">aufrecht, seitlich</string>
     <string name="carry_on_side">auf der Seite</string>
     <string name="carry_on_side_sideways">auf der Seite, gedreht</string>
@@ -103,4 +104,30 @@
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Maße aus dem Text: %1$s</string>
     <string name="text_sizes_none">In diesem Text steht kein Maß. Tippen Sie es ein oder markieren Sie nur die Zeile mit den Maßen.</string>
+    <string name="space_door">Tür</string>
+    <string name="space_boot">Kofferraum</string>
+    <string name="boot_enter">Gib die Kofferraummaße ein</string>
+    <string name="boot_yes">Ja, es passt in den Kofferraum</string>
+    <string name="boot_tight">Ja, aber es wird eng</string>
+    <string name="boot_no">Nein, es passt nicht in den Kofferraum</string>
+    <string name="boot_opening">Kofferraumöffnung</string>
+    <string name="boot_inside">Im Kofferraum</string>
+    <string name="boot_width">Breite</string>
+    <string name="boot_height">Höhe</string>
+    <string name="boot_length">Länge</string>
+    <string name="boot_help">Öffnung innerhalb der Dichtungen; Breite zwischen Radkästen; Bodenlänge bei aufgestellten Sitzen; Höhe bis Abdeckung oder Dach. Gerade hinein, ohne Kippen.</string>
+    <string name="boot_example">Kompaktkombi</string>
+    <string name="boot_example_help">Bis du eigene Maße eingibst, gilt das Beispiel des Kompaktkombis.</string>
+    <string name="boot_margin_spare">%1$s Spielraum · %2$s</string>
+    <string name="boot_limit_opening_width">Öffnungsbreite</string>
+    <string name="boot_limit_opening_height">Öffnungshöhe</string>
+    <string name="boot_limit_length">Kofferraumlänge</string>
+    <string name="boot_limit_width">Kofferraumbreite</string>
+    <string name="boot_limit_height">Kofferraumhöhe</string>
+    <string name="boot_over_opening_width">%1$s zu breit für die Öffnung</string>
+    <string name="boot_over_opening_height">%1$s zu hoch für die Öffnung</string>
+    <string name="boot_over_length">%1$s zu lang für den Kofferraum</string>
+    <string name="boot_over_width">%1$s zu breit für den Kofferraum</string>
+    <string name="boot_over_height">%1$s zu hoch für den Kofferraum</string>
+    <string name="photo_boot">Kofferraumöffnung: %1$s · Innen (L × B × H): %2$s</string>
 </resources>

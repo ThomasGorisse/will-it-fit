@@ -64,6 +64,7 @@
     <string name="photo_door">Porta · %1$s</string>
     <string name="door_sofa_hint">Spesso un divano passa inclinato all\'indietro, piedi avanti: la seduta occupa meno di questa scatola. Togli anche i piedini.</string>
     <string name="carry_upright">in piedi, di fronte alla porta</string>
+    <string name="carry_upright_boot">in piedi, di fronte all\'apertura</string>
     <string name="carry_upright_sideways">in piedi, di lato</string>
     <string name="carry_on_side">sul fianco</string>
     <string name="carry_on_side_sideways">sul fianco, girato</string>
@@ -103,4 +104,30 @@
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Misure prese dal testo: %1$s</string>
     <string name="text_sizes_none">Nessuna misura in questo testo. Scrivile, o seleziona solo la riga con le misure.</string>
+    <string name="space_door">Porta</string>
+    <string name="space_boot">Bagagliaio</string>
+    <string name="boot_enter">Inserisci le misure del bagagliaio</string>
+    <string name="boot_yes">Sì, entra nel bagagliaio</string>
+    <string name="boot_tight">Sì, ma passa appena</string>
+    <string name="boot_no">Non entra nel bagagliaio</string>
+    <string name="boot_opening">Apertura del bagagliaio</string>
+    <string name="boot_inside">Interno del bagagliaio</string>
+    <string name="boot_width">Larghezza</string>
+    <string name="boot_height">Altezza</string>
+    <string name="boot_length">Lunghezza</string>
+    <string name="boot_help">Apertura dentro le guarnizioni; larghezza tra passaruota; lunghezza del fondo con sedili alzati; altezza alla cappelliera o al tetto. Dritto, senza inclinare.</string>
+    <string name="boot_example">Familiare compatta</string>
+    <string name="boot_example_help">Si usa l\'esempio della familiare compatta finché non inserisci le tue misure.</string>
+    <string name="boot_margin_spare">%1$s di margine · %2$s</string>
+    <string name="boot_limit_opening_width">larghezza dell\'apertura</string>
+    <string name="boot_limit_opening_height">altezza dell\'apertura</string>
+    <string name="boot_limit_length">lunghezza del bagagliaio</string>
+    <string name="boot_limit_width">larghezza del bagagliaio</string>
+    <string name="boot_limit_height">altezza del bagagliaio</string>
+    <string name="boot_over_opening_width">%1$s troppo largo per l\'apertura</string>
+    <string name="boot_over_opening_height">%1$s troppo alto per l\'apertura</string>
+    <string name="boot_over_length">%1$s troppo lungo per il bagagliaio</string>
+    <string name="boot_over_width">%1$s troppo largo per il bagagliaio</string>
+    <string name="boot_over_height">%1$s troppo alto per il bagagliaio</string>
+    <string name="photo_boot">Apertura: %1$s · Interno (L × l × H): %2$s</string>
 </resources>

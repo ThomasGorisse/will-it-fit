@@ -1,6 +1,7 @@
 package com.gorisse.thomas.willitfit.data
 
 import android.content.Context
+import com.gorisse.thomas.willitfit.fit.Boot
 import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
@@ -10,7 +11,7 @@ import com.gorisse.thomas.willitfit.fit.dimensionsIn
 import com.gorisse.thomas.willitfit.fit.withMatchingPreset
 import java.util.Locale
 
-/** The last object, recent sizes, the last door and the unit. On the phone only; nothing leaves it. */
+/** The last object, recent sizes, the spaces and the unit. On the phone only; nothing leaves it. */
 class Prefs(context: Context) {
     private val p = context.getSharedPreferences("will_it_fit", Context.MODE_PRIVATE)
 
@@ -53,6 +54,30 @@ class Prefs(context: Context) {
 
     /** The person typed a door in. Until then the door is the typical one for the unit. */
     val doorTyped: Boolean get() = p.contains("door_w")
+
+    var carBoot: Boolean
+        get() = p.getBoolean("car_boot", false)
+        set(value) = p.edit().putBoolean("car_boot", value).apply()
+
+    var boot: Boot
+        get() {
+            val example = Boot.ESTATE
+            return Boot(
+                p.getFloat("boot_ow", example.openingWidthCm), p.getFloat("boot_oh", example.openingHeightCm),
+                p.getFloat("boot_l", example.lengthCm), p.getFloat("boot_w", example.widthCm),
+                p.getFloat("boot_h", example.heightCm),
+            ).takeIf { it.isValid } ?: example
+        }
+        set(value) = p.edit().putFloat("boot_ow", value.openingWidthCm).putFloat("boot_oh", value.openingHeightCm)
+            .putFloat("boot_l", value.lengthCm).putFloat("boot_w", value.widthCm)
+            .putFloat("boot_h", value.heightCm).putBoolean("boot_typed", true).apply()
+
+    val bootTyped: Boolean get() = p.getBoolean("boot_typed", false)
+
+    fun useExampleBoot() {
+        boot = Boot.ESTATE
+        p.edit().putBoolean("boot_typed", false).apply()
+    }
 
     /** Answers the person got: a door verdict seen, an AR photo taken. Counted on the way back home. */
     var answers: Int

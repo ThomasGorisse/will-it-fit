@@ -64,6 +64,7 @@
     <string name="photo_door">Puerta · %1$s</string>
     <string name="door_sofa_hint">Un sofá suele pasar inclinado hacia atrás, patas primero: el asiento ocupa menos que esta caja. Quítale también las patas.</string>
     <string name="carry_upright">de pie, de frente a la puerta</string>
+    <string name="carry_upright_boot">de pie, de frente a la abertura</string>
     <string name="carry_upright_sideways">de pie, de lado</string>
     <string name="carry_on_side">tumbado de lado</string>
     <string name="carry_on_side_sideways">tumbado de lado, girado</string>
@@ -103,4 +104,30 @@
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Medidas tomadas del texto: %1$s</string>
     <string name="text_sizes_none">No hay ninguna medida en este texto. Escríbelas o selecciona solo la línea de las medidas.</string>
+    <string name="space_door">Puerta</string>
+    <string name="space_boot">Maletero</string>
+    <string name="boot_enter">Introduce las medidas del maletero</string>
+    <string name="boot_yes">Sí, cabe en el maletero</string>
+    <string name="boot_tight">Sí, pero va justo</string>
+    <string name="boot_no">No cabe en el maletero</string>
+    <string name="boot_opening">Apertura del maletero</string>
+    <string name="boot_inside">Interior del maletero</string>
+    <string name="boot_width">Ancho</string>
+    <string name="boot_height">Alto</string>
+    <string name="boot_length">Largo</string>
+    <string name="boot_help">Apertura dentro de las juntas; ancho entre pasos de rueda; largo del suelo con asientos levantados; alto hasta bandeja o techo. Recto, sin inclinar.</string>
+    <string name="boot_example">Familiar compacto</string>
+    <string name="boot_example_help">Se usa el ejemplo del familiar compacto hasta que introduzcas tus medidas.</string>
+    <string name="boot_margin_spare">%1$s de margen · %2$s</string>
+    <string name="boot_limit_opening_width">ancho de la apertura</string>
+    <string name="boot_limit_opening_height">alto de la apertura</string>
+    <string name="boot_limit_length">largo del maletero</string>
+    <string name="boot_limit_width">ancho del maletero</string>
+    <string name="boot_limit_height">alto del maletero</string>
+    <string name="boot_over_opening_width">%1$s demasiado ancho para la apertura</string>
+    <string name="boot_over_opening_height">%1$s demasiado alto para la apertura</string>
+    <string name="boot_over_length">%1$s demasiado largo para el maletero</string>
+    <string name="boot_over_width">%1$s demasiado ancho para el maletero</string>
+    <string name="boot_over_height">%1$s demasiado alto para el maletero</string>
+    <string name="photo_boot">Apertura: %1$s · Interior (largo × ancho × alto): %2$s</string>
 </resources>

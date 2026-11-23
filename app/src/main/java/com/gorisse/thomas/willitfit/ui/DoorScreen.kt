@@ -28,6 +28,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.outlined.Straighten
@@ -40,6 +43,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.key
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,6 +59,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.gorisse.thomas.willitfit.data.Prefs
+import com.gorisse.thomas.willitfit.fit.Boot
+import com.gorisse.thomas.willitfit.fit.Carry
+import com.gorisse.thomas.willitfit.fit.BootLimit
+import com.gorisse.thomas.willitfit.fit.DoorVerdict
+import com.gorisse.thomas.willitfit.fit.checkBoot
+import com.gorisse.thomas.willitfit.scene.BootScene
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.capture.PhotoFailure
 import com.gorisse.thomas.willitfit.capture.PhotoResult
@@ -79,11 +90,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/**
- * Screen 4, "Through the door?". No camera: the door's opening, and the answer — yes or no, by
- * how much, and which way to carry it — acted out in 3D above. Share sends that answer as a
- * picture: the scene held on the doorway, with the answer written on it.
- */
+/** Door and boot checks, with the chosen orientation shown above the measurement sheet. */
 @Composable
 fun DoorScreen(
     dims: Dimensions,
@@ -95,53 +102,77 @@ fun DoorScreen(
     arAvailable: Boolean = false,
     onMeasure: () -> Unit = {},
 ) {
-    val verdict = checkDoor(dims, door)
+    val context = LocalContext.current
+    val prefs = remember(context) { Prefs(context) }
+    var carBoot by remember { mutableStateOf(prefs.carBoot) }
+    var boot by remember { mutableStateOf(prefs.boot) }
+    var bootTyped by remember { mutableStateOf(prefs.bootTyped) }
+    var bootFieldsRevision by remember { mutableIntStateOf(0) }
+    var openingValid by remember(carBoot) { mutableStateOf(true) }
+    var insideValid by remember(carBoot) { mutableStateOf(true) }
+    val bootVerdict = checkBoot(dims, boot)
+    val verdict = if (carBoot) DoorVerdict(bootVerdict.fits, bootVerdict.carry, bootVerdict.marginCm)
+        else checkDoor(dims, door)
     val scheme = MaterialTheme.colorScheme
     val dark = isSystemInDarkTheme()
     val density = LocalDensity.current
     var sheetPx by remember { mutableIntStateOf(0) }
-    var fieldsValid by remember { mutableStateOf(true) }
+    var doorValid by remember(carBoot) { mutableStateOf(true) }
+    val fieldsValid = if (carBoot) openingValid && insideValid else doorValid
     // A verdict on screen for a second counts as seen: an answer, for Play's rating sheet.
-    LaunchedEffect(fieldsValid) {
+    LaunchedEffect(fieldsValid, carBoot) {
         if (fieldsValid) { delay(1_000); onVerdictShown() }
     }
     var holding by remember { mutableStateOf(false) }
     // The last share whose picture did not come out, and why: a card with Try again.
     var photoFailure by remember { mutableStateOf<PhotoFailure?>(null) }
     var shot by remember { mutableStateOf<Job?>(null) }
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val answer = stringResource(
         when {
-            !verdict.fits -> R.string.door_no
-            verdict.isTight -> R.string.door_tight
-            else -> R.string.door_yes
+            !verdict.fits -> if (carBoot) R.string.boot_no else R.string.door_no
+            verdict.isTight -> if (carBoot) R.string.boot_tight else R.string.door_tight
+            else -> if (carBoot) R.string.boot_yes else R.string.door_yes
         },
     )
-    val margin = stringResource(
+    val margin = (if (carBoot) {
+        if (verdict.fits) stringResource(
+            R.string.boot_margin_spare, formatMargin(verdict.marginCm, unit), stringResource(bootVerdict.limit.label()),
+        ) else stringResource(bootVerdict.limit.overLabel(), formatMargin(verdict.marginCm, unit))
+    } else stringResource(
         if (verdict.fits) R.string.door_margin_spare else R.string.door_margin_over,
         formatMargin(verdict.marginCm, unit),
-    ) + " · " + stringResource(verdict.carry.label())
+    )) + " · " + stringResource(
+        // In a boot the object faces the opening, not a door.
+        if (carBoot && verdict.carry == Carry.UPRIGHT) R.string.carry_upright_boot else verdict.carry.label(),
+    )
     val objectLine = stringResource(R.string.door_object, objectName(dims), formatDimensions(dims, unit))
-    val doorLine = stringResource(
+    val doorLine = if (carBoot) stringResource(
+        R.string.photo_boot,
+        "${formatNumber(boot.openingWidthCm, unit)} × ${formatNumber(boot.openingHeightCm, unit)} ${unit.symbol}",
+        "${formatNumber(boot.lengthCm, unit)} × ${formatNumber(boot.widthCm, unit)} × ${formatNumber(boot.heightCm, unit)} ${unit.symbol}",
+    ) else stringResource(
         R.string.photo_door, "${formatNumber(door.widthCm, unit)} × ${formatNumber(door.heightCm, unit)} ${unit.symbol}",
     )
     val signature = stringResource(R.string.photo_signature)
     val chooser = stringResource(R.string.share_chooser)
 
     Box(Modifier.fillMaxSize().imePadding()) {
-        DoorScene(
+        val scenePadding = PaddingValues(
+            top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 68.dp,
+            bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp),
+        )
+        if (carBoot) BootScene(
+            dims = dims, boot = boot, verdict = bootVerdict,
+            accent = FurnitureTeal, palette = if (dark) RoomPalette.Night else RoomPalette.Day,
+            modifier = Modifier.fillMaxSize(), contentPadding = scenePadding,
+        ) else DoorScene(
             dims = dims, door = door, verdict = verdict,
             accent = FurnitureTeal,
             palette = if (dark) RoomPalette.Night else RoomPalette.Day,
             modifier = Modifier.fillMaxSize(),
-            // The top keeps out the back and share buttons (12 dp in, 48 dp high) and a little air:
-            // framed on the whole height, the top of the frame ran under the share button.
-            contentPadding = PaddingValues(
-                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 68.dp,
-                bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp),
-            ),
+            contentPadding = scenePadding,
             hold = holding,
         )
         FilledTonalIconButton(
@@ -208,6 +239,15 @@ fun DoorScreen(
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         ) {
             Column(Modifier.verticalScroll(rememberScrollState()).navigationBarsPadding().padding(top = 20.dp, bottom = 16.dp)) {
+                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 12.dp)) {
+                    listOf(R.string.space_door, R.string.space_boot).forEachIndexed { i, label ->
+                        SegmentedButton(
+                            selected = carBoot == (i == 1),
+                            onClick = { carBoot = i == 1; prefs.carBoot = carBoot; photoFailure = null },
+                            shape = SegmentedButtonDefaults.itemShape(i, 2),
+                        ) { Text(stringResource(label)) }
+                    }
+                }
                 Column(Modifier.padding(horizontal = 24.dp)) {
                     Text(
                         stringResource(R.string.door_object, objectName(dims), formatDimensions(dims, unit)),
@@ -216,8 +256,8 @@ fun DoorScreen(
                     )
                     Spacer(Modifier.height(8.dp))
                     if (!fieldsValid) {
-                        Text(stringResource(R.string.door_enter), style = MaterialTheme.typography.headlineSmall)
-                    } else AnimatedContent(verdict.fits to verdict.isTight, label = "verdict") { (fits, tight) ->
+                        Text(stringResource(if (carBoot) R.string.boot_enter else R.string.door_enter), style = MaterialTheme.typography.headlineSmall)
+                    } else AnimatedContent(Triple(carBoot, verdict.fits, verdict.isTight), label = "verdict") { (bootMode, fits, tight) ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 if (fits) Icons.Outlined.CheckCircle else Icons.Outlined.Cancel,
@@ -229,9 +269,9 @@ fun DoorScreen(
                             Text(
                                 stringResource(
                                     when {
-                                        !fits -> R.string.door_no
-                                        tight -> R.string.door_tight
-                                        else -> R.string.door_yes
+                                        !fits -> if (bootMode) R.string.boot_no else R.string.door_no
+                                        tight -> if (bootMode) R.string.boot_tight else R.string.door_tight
+                                        else -> if (bootMode) R.string.boot_yes else R.string.door_yes
                                     },
                                 ),
                                 style = MaterialTheme.typography.headlineSmall,
@@ -240,13 +280,10 @@ fun DoorScreen(
                     }
                     Spacer(Modifier.height(4.dp))
                     if (fieldsValid) Text(
-                        text = stringResource(
-                            if (verdict.fits) R.string.door_margin_spare else R.string.door_margin_over,
-                            formatMargin(verdict.marginCm, unit),
-                        ) + " · " + stringResource(verdict.carry.label()),
+                        text = margin,
                         style = MaterialTheme.typography.bodyLarge,
                     )
-                    if (fieldsValid && !verdict.fits && dims.shape == Shape.SOFA) {
+                    if (!carBoot && fieldsValid && !verdict.fits && dims.shape == Shape.SOFA) {
                         Spacer(Modifier.height(4.dp))
                         Text(
                             stringResource(R.string.door_sofa_hint),
@@ -256,29 +293,82 @@ fun DoorScreen(
                     }
                 }
                 Spacer(Modifier.height(16.dp))
-                LengthFields(
-                    labels = listOf(stringResource(R.string.door_width), stringResource(R.string.door_height)),
-                    values = listOf(door.widthCm, door.heightCm),
-                    unit = unit,
-                    onChange = { i, cm -> onDoor(if (i == 0) door.copy(widthCm = cm) else door.copy(heightCm = cm)) },
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    onValidChange = { fieldsValid = it },
-                )
-                Text(
-                    stringResource(R.string.door_help),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = scheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp),
-                )
-                if (arAvailable) TextButton(
-                    onClick = onMeasure,
-                    modifier = Modifier.padding(start = 12.dp, top = 4.dp),
-                ) {
-                    Icon(Icons.Outlined.Straighten, null, Modifier.size(ButtonDefaults.IconSize))
-                    Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                    Text(stringResource(R.string.door_measure))
+                if (carBoot) key(carBoot, bootFieldsRevision) {
+                    val updateBoot: (Boot) -> Unit = { boot = it; prefs.boot = it; bootTyped = true }
+                    Text(stringResource(R.string.boot_opening), modifier = Modifier.padding(horizontal = 24.dp), style = MaterialTheme.typography.titleSmall)
+                    LengthFields(
+                        labels = listOf(stringResource(R.string.boot_width), stringResource(R.string.boot_height)),
+                        values = listOf(boot.openingWidthCm, boot.openingHeightCm), unit = unit,
+                        onChange = { i, cm -> updateBoot(if (i == 0) boot.copy(openingWidthCm = cm) else boot.copy(openingHeightCm = cm)) },
+                        modifier = Modifier.padding(horizontal = 16.dp), onValidChange = { openingValid = it },
+                    )
+                    Text(stringResource(R.string.boot_inside), modifier = Modifier.padding(start = 24.dp, top = 8.dp), style = MaterialTheme.typography.titleSmall)
+                    LengthFields(
+                        labels = listOf(stringResource(R.string.boot_length), stringResource(R.string.boot_width), stringResource(R.string.boot_height)),
+                        values = listOf(boot.lengthCm, boot.widthCm, boot.heightCm), unit = unit,
+                        onChange = { i, cm -> updateBoot(when (i) {
+                            0 -> boot.copy(lengthCm = cm)
+                            1 -> boot.copy(widthCm = cm)
+                            else -> boot.copy(heightCm = cm)
+                        }) },
+                        modifier = Modifier.padding(horizontal = 16.dp), onValidChange = { insideValid = it },
+                    )
+                    Text(
+                        stringResource(R.string.boot_help) + if (!bootTyped) " " + stringResource(R.string.boot_example_help) else "",
+                        style = MaterialTheme.typography.bodySmall, color = scheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp),
+                    )
+                    TextButton(onClick = {
+                        prefs.useExampleBoot()
+                        boot = prefs.boot
+                        bootTyped = false
+                        bootFieldsRevision++
+                        openingValid = true
+                        insideValid = true
+                    }, modifier = Modifier.padding(start = 12.dp)) {
+                        Text(stringResource(R.string.boot_example))
+                    }
+                } else key(carBoot) {
+                    LengthFields(
+                        labels = listOf(stringResource(R.string.door_width), stringResource(R.string.door_height)),
+                        values = listOf(door.widthCm, door.heightCm),
+                        unit = unit,
+                        onChange = { i, cm -> onDoor(if (i == 0) door.copy(widthCm = cm) else door.copy(heightCm = cm)) },
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        onValidChange = { doorValid = it },
+                    )
+                    Text(
+                        stringResource(R.string.door_help),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = scheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp),
+                    )
+                    if (arAvailable) TextButton(
+                        onClick = onMeasure,
+                        modifier = Modifier.padding(start = 12.dp, top = 4.dp),
+                    ) {
+                        Icon(Icons.Outlined.Straighten, null, Modifier.size(ButtonDefaults.IconSize))
+                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                        Text(stringResource(R.string.door_measure))
+                    }
                 }
             }
         }
     }
+}
+
+private fun BootLimit.label(): Int = when (this) {
+    BootLimit.OPENING_WIDTH -> R.string.boot_limit_opening_width
+    BootLimit.OPENING_HEIGHT -> R.string.boot_limit_opening_height
+    BootLimit.LENGTH -> R.string.boot_limit_length
+    BootLimit.WIDTH -> R.string.boot_limit_width
+    BootLimit.HEIGHT -> R.string.boot_limit_height
+}
+
+private fun BootLimit.overLabel(): Int = when (this) {
+    BootLimit.OPENING_WIDTH -> R.string.boot_over_opening_width
+    BootLimit.OPENING_HEIGHT -> R.string.boot_over_opening_height
+    BootLimit.LENGTH -> R.string.boot_over_length
+    BootLimit.WIDTH -> R.string.boot_over_width
+    BootLimit.HEIGHT -> R.string.boot_over_height
 }
