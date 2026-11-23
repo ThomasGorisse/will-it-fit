@@ -5,7 +5,10 @@ import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.Preset
 import com.gorisse.thomas.willitfit.fit.formatDimensions
 
-/** The launcher and the activity share centimetres, regardless of the label's unit. */
+/**
+ * The launcher and the activity share centimetres, regardless of the label's unit. Sides travel
+ * as Double: a shortcut's intent extras go into a PersistableBundle, which refuses Float.
+ */
 object SizeShortcuts {
     const val ACTION = "com.gorisse.thomas.willitfit.action.CHECK_SIZE"
     const val WIDTH = "width_cm"
@@ -40,9 +43,9 @@ object SizeShortcuts {
                 preset = preset,
                 extras = buildMap {
                     put(ID, id)
-                    put(WIDTH, dims.widthCm)
-                    put(DEPTH, dims.depthCm)
-                    put(HEIGHT, dims.heightCm)
+                    put(WIDTH, dims.widthCm.toDouble())
+                    put(DEPTH, dims.depthCm.toDouble())
+                    put(HEIGHT, dims.heightCm.toDouble())
                     preset?.let { put(PRESET, it.id) }
                 },
             )
@@ -50,9 +53,9 @@ object SizeShortcuts {
 
     fun dimensions(action: String?, extra: (String) -> Any?): Dimensions? {
         if (action != ACTION) return null
-        val width = extra(WIDTH) as? Float ?: return null
-        val depth = extra(DEPTH) as? Float ?: return null
-        val height = extra(HEIGHT) as? Float ?: return null
+        val width = (extra(WIDTH) as? Number)?.toFloat() ?: return null
+        val depth = (extra(DEPTH) as? Number)?.toFloat() ?: return null
+        val height = (extra(HEIGHT) as? Number)?.toFloat() ?: return null
         val preset = (extra(PRESET) as? String)?.takeIf { Preset.byId(it) != null }
         return Dimensions(width, depth, height, presetId = preset).takeIf { it.isValid }
     }

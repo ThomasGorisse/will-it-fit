@@ -2,6 +2,7 @@ package com.gorisse.thomas.willitfit.data
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -19,7 +20,7 @@ fun publishSizeShortcuts(context: Context, prefs: Prefs) {
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         entry.extras.forEach { (key, value) ->
             when (value) {
-                is Float -> intent.putExtra(key, value)
+                is Double -> intent.putExtra(key, value)
                 is String -> intent.putExtra(key, value)
             }
         }
@@ -31,8 +32,11 @@ fun publishSizeShortcuts(context: Context, prefs: Prefs) {
             .setIntent(intent)
             .build()
     }
-    if (shortcuts.isEmpty()) ShortcutManagerCompat.removeAllDynamicShortcuts(context)
-    else ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
+    // A launcher that refuses shortcuts costs the shortcuts, never the app.
+    runCatching {
+        if (shortcuts.isEmpty()) ShortcutManagerCompat.removeAllDynamicShortcuts(context)
+        else ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
+    }.onFailure { Log.w("WillItFit", "Shortcuts not published", it) }
 }
 
 @Suppress("DEPRECATION")

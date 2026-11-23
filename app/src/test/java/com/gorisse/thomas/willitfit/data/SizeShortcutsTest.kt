@@ -38,7 +38,7 @@ class SizeShortcutsTest {
     fun `ids follow recency and both launcher capacity and three entry limit apply`() {
         val sizes = (0..4).map { size.copy(widthCm = 200f + it) }
         assertEquals(listOf("recent_0", "recent_1", "recent_2"), entries(sizes).map { it.id })
-        assertEquals(listOf(200f, 201f), entries(sizes, max = 2).map { it.extras[SizeShortcuts.WIDTH] })
+        assertEquals(listOf(200.0, 201.0), entries(sizes, max = 2).map { it.extras[SizeShortcuts.WIDTH] })
         assertTrue(entries(sizes, max = 0).isEmpty())
         assertTrue(entries(sizes, max = -1).isEmpty())
         assertTrue(entries(emptyList()).isEmpty())
@@ -76,5 +76,12 @@ class SizeShortcutsTest {
         assertEquals(size, SizeShortcuts.dimensions(SizeShortcuts.ACTION, (extras + (SizeShortcuts.PRESET to "gone"))::get))
         assertNull(SizeShortcuts.usedId { "recent_3" })
         assertNull(SizeShortcuts.usedId { null })
+    }
+
+    @Test
+    fun `extras are types a PersistableBundle accepts`() {
+        // A Float here made the system throw while building the shortcut, closing the app on start.
+        val entry = entries(listOf(size.copy(presetId = Preset.SOFA_3.id))).single()
+        assertTrue(entry.extras.values.all { it is String || it is Double })
     }
 }
