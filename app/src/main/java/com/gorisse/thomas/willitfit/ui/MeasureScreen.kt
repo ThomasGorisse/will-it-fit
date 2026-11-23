@@ -212,7 +212,7 @@ private fun TapeOverlay(
             modifier = Modifier.statusBarsPadding().padding(12.dp).size(48.dp),
         ) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, stringResource(R.string.action_back)) }
         Surface(
-            modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(top = 18.dp, start = 72.dp, end = 72.dp),
+            modifier = Modifier.align(Alignment.TopCenter).formWidth().statusBarsPadding().padding(top = 18.dp, start = 72.dp, end = 72.dp),
             color = Color(0xCC141218),
             contentColor = Color.White,
             shape = RoundedCornerShape(12.dp),
@@ -234,7 +234,7 @@ private fun TapeOverlay(
         }
 
         Column(
-            Modifier.align(Alignment.BottomCenter).fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp),
+            Modifier.align(Alignment.BottomCenter).formWidth().fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             lastUse?.takeIf { !done && points.isEmpty() }?.let { (target, cm) ->

@@ -203,7 +203,7 @@ fun DoorScreen(
             // Never over the back and share buttons: with very large text the sheet stops below
             // them and scrolls.
             modifier = Modifier.align(Alignment.BottomCenter).statusBarsPadding().padding(top = 72.dp)
-                .fillMaxWidth().onSizeChanged { sheetPx = it.height },
+                .formWidth().fillMaxWidth().onSizeChanged { sheetPx = it.height },
             color = scheme.surfaceContainerLow,
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         ) {
