@@ -11,6 +11,7 @@
     <string name="action_door">Passa na porta?</string>
     <string name="ar_unsupported">A RA não está disponível neste celular. O teste da porta funciona mesmo assim.</string>
     <string name="preset_custom">Suas medidas</string>
+    <string name="recent_size">Medidas recentes: %1$s</string>
     <string name="preset_sofa2">Sofá 2 lugares</string>
     <string name="preset_sofa3">Sofá 3 lugares</string>
     <string name="preset_bed140">Cama 140</string>

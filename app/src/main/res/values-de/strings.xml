@@ -11,6 +11,7 @@
     <string name="action_door">Durch die Tür?</string>
     <string name="ar_unsupported">AR ist auf diesem Handy nicht verfügbar. Der Türcheck funktioniert trotzdem.</string>
     <string name="preset_custom">Deine Maße</string>
+    <string name="recent_size">Letzte Maße: %1$s</string>
     <string name="preset_sofa2">Sofa, 2-Sitzer</string>
     <string name="preset_sofa3">Sofa, 3-Sitzer</string>
     <string name="preset_bed140">Bett 140</string>

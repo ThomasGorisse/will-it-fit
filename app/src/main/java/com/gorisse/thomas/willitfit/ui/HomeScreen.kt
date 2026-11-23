@@ -32,6 +32,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.outlined.ViewInAr
 import androidx.compose.material.icons.outlined.DoorFront
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -59,6 +60,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
@@ -66,6 +68,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.gorisse.thomas.willitfit.data.RecentSizes
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.scene.FurnitureTeal
 import com.gorisse.thomas.willitfit.fit.DimensionSource
@@ -92,6 +95,7 @@ fun HomeScreen(
     onDoor: () -> Unit,
     onSettings: () -> Unit,
     onMeasure: () -> Unit = {},
+    recentSizes: List<Dimensions> = emptyList(),
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -187,7 +191,7 @@ fun HomeScreen(
                     onValidChange = { fieldsValid = it },
                 )
                 Spacer(Modifier.height(if (compact) 8.dp else 12.dp))
-                PresetRow(dims, unit, compact, onPick = { onDims(it) })
+                PresetRow(dims, unit, compact, recentSizes, onPick = { onDims(it) })
                 Spacer(Modifier.height(if (compact) 10.dp else 14.dp))
                 // The two answers, stacked at the bottom where the thumb rests.
                 Column(
@@ -237,20 +241,59 @@ fun HomeScreen(
 }
 
 @Composable
-private fun PresetRow(dims: Dimensions, unit: LengthUnit, compact: Boolean, onPick: (Dimensions) -> Unit) {
+private fun PresetRow(
+    dims: Dimensions,
+    unit: LengthUnit,
+    compact: Boolean,
+    recentSizes: List<Dimensions>,
+    onPick: (Dimensions) -> Unit,
+) {
     val thumb = if (compact) 48.dp else 60.dp
     val state = rememberLazyListState()
-    val selected = Preset.byId(dims.presetId)
-    LaunchedEffect(Unit) {
+    // A size of the person's own that matches wins the selection: an edited sofa is theirs now.
+    val recentIndex = recentSizes.indexOfFirst { RecentSizes.matches(dims, it) }
+    val selected = if (recentIndex >= 0) null else Preset.byId(dims.presetId)
+    // Again when the history changes: back home after an answer, the size just checked joins
+    // the row after its first frame, and the row would otherwise keep it out of view.
+    LaunchedEffect(recentSizes) {
         // The selected card with its left neighbour in full view, never a card cut in half.
-        val i = Preset.entries.indexOf(selected)
-        if (i > 1) state.scrollToItem(i - 1)
+        // The person's own recent sizes lead the row, so a preset sits that many cards further.
+        val i = if (recentIndex >= 0) recentIndex
+        else Preset.entries.indexOf(selected).let { if (it < 0) it else it + recentSizes.size }
+        if (i >= 0) state.scrollToItem((i - 1).coerceAtLeast(0))
     }
     LazyRow(
         state = state,
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        // Sizes the person checked before come first: they are why the row is opened again.
+        items(recentSizes, key = { "recent_${it.widthCm}_${it.depthCm}_${it.heightCm}" }) { entry ->
+            val formatted = formatDimensions(entry, unit)
+            PresetCard(
+                compact = compact,
+                selected = RecentSizes.matches(dims, entry),
+                label = formatted.removeSuffix(" ${unit.symbol}"),
+                description = stringResource(R.string.recent_size, formatted),
+                onClick = { onPick(entry.copy(source = DimensionSource.TYPED)) },
+            ) {
+                // The object it started from when there is one, a clock otherwise: the label's
+                // numbers already say it is the person's own size.
+                val preset = Preset.byId(entry.presetId)
+                if (preset != null) {
+                    Image(
+                        painter = painterResource(preset.thumbnail()),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(thumb),
+                    )
+                } else {
+                    Box(Modifier.size(thumb), contentAlignment = Alignment.Center) {
+                        Icon(Icons.Outlined.History, null, tint = MaterialTheme.colorScheme.primary)
+                    }
+                }
+            }
+        }
         items(Preset.entries, key = { it.id }) { preset ->
             PresetCard(
                 compact = compact,
@@ -269,7 +312,7 @@ private fun PresetRow(dims: Dimensions, unit: LengthUnit, compact: Boolean, onPi
         item(key = "custom") {
             PresetCard(
                 compact = compact,
-                selected = selected == null,
+                selected = selected == null && recentIndex < 0,
                 label = stringResource(R.string.preset_custom),
                 onClick = {
                     onPick(Dimensions(dims.widthCm, dims.depthCm, dims.heightCm))
@@ -284,12 +327,23 @@ private fun PresetRow(dims: Dimensions, unit: LengthUnit, compact: Boolean, onPi
 }
 
 @Composable
-private fun PresetCard(compact: Boolean, selected: Boolean, label: String, onClick: () -> Unit, image: @Composable () -> Unit) {
+private fun PresetCard(
+    compact: Boolean,
+    selected: Boolean,
+    label: String,
+    onClick: () -> Unit,
+    description: String? = null,
+    image: @Composable () -> Unit,
+) {
     val scheme = MaterialTheme.colorScheme
     Card(
         onClick = onClick,
         // As wide as its name needs ("Canapé 3 places", "Waschmaschine"), never cut with an ellipsis.
-        modifier = Modifier.widthIn(min = if (compact) 80.dp else 88.dp).semantics { this.selected = selected; role = Role.RadioButton },
+        modifier = Modifier.widthIn(min = if (compact) 80.dp else 88.dp).semantics {
+            this.selected = selected
+            role = Role.RadioButton
+            if (description != null) contentDescription = description
+        },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (selected) scheme.secondaryContainer else scheme.surfaceContainerHigh,

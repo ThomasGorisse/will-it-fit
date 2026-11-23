@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.ar.core.ArCoreApk
+import com.gorisse.thomas.willitfit.data.RecentSizes
 import com.gorisse.thomas.willitfit.data.Prefs
 import com.gorisse.thomas.willitfit.data.ReviewPolicy
 import com.gorisse.thomas.willitfit.fit.DimensionSource
@@ -58,6 +59,7 @@ class MainActivity : ComponentActivity() {
                 Surface(color = MaterialTheme.colorScheme.surface) {
                     var route by rememberSaveable { mutableStateOf(Route.HOME) }
                     var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
+                    var recentSizes by remember { mutableStateOf(prefs.recentSizes) }
                     var dims by remember { mutableStateOf(prefs.dimensions) }
                     var door by remember { mutableStateOf(prefs.door) }
                     var unit by remember { mutableStateOf(prefs.unit) }
@@ -88,6 +90,8 @@ class MainActivity : ComponentActivity() {
                         if (route == lastRoute) return@LaunchedEffect
                         if (route == Route.RESULT || (route == Route.HOME && lastRoute == Route.DOOR && doorVerdictSeen)) {
                             prefs.answers += 1
+                            recentSizes = RecentSizes.add(recentSizes, dims)
+                            prefs.recentSizes = recentSizes
                         }
                         if (route == Route.HOME && !reviewInFlight && ReviewPolicy.shouldAsk(prefs.review, System.currentTimeMillis())) {
                             reviewInFlight = true
@@ -112,7 +116,7 @@ class MainActivity : ComponentActivity() {
                     run {
                         when (route) {
                             Route.HOME -> HomeScreen(
-                                dims = dims, unit = unit, arAvailable = arAvailable,
+                                dims = dims, unit = unit, arAvailable = arAvailable, recentSizes = recentSizes,
                                 onDims = { dims = it; if (it.isValid) prefs.dimensions = it },
                                 onAr = { route = Route.AR },
                                 onDoor = { doorVerdictSeen = false; route = Route.DOOR },
