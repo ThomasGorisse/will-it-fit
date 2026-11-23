@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -93,12 +94,14 @@ fun HomeScreen(
     onMeasure: () -> Unit = {},
 ) {
     val density = LocalDensity.current
-    var sheetPx by remember { mutableIntStateOf(0) }
+    val configuration = LocalConfiguration.current
+    val sidePane = configuration.screenWidthDp >= 840
+    var sheetPx by remember(sidePane) { mutableIntStateOf(0) }
     var fieldsValid by remember { mutableStateOf(true) }
     val dark = isSystemInDarkTheme()
     val scheme = MaterialTheme.colorScheme
     // Short phones (5", 16:9, or a big font) keep at least half the screen for the room.
-    val compact = LocalConfiguration.current.screenHeightDp < 760
+    val compact = configuration.screenHeightDp < 760
     val buttonHeight = if (compact) 48.dp else 52.dp
     Box(Modifier.fillMaxSize().imePadding()) {
         RoomScene(
@@ -109,16 +112,30 @@ fun HomeScreen(
             labelText = Color(0xFF1C1B1F),
             labelBackground = Color(0xF2FFFFFF),
             modifier = Modifier.fillMaxSize(),
-            // Keep the object centred in what the sheet leaves free, minus its rounded top.
-            contentPadding = PaddingValues(bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp)),
+            // SceneView resolves end padding with the layout direction and centres the camera
+            // in the space beside the pane. Bottom sheets keep the phone's existing framing.
+            contentPadding = if (sidePane) PaddingValues(end = 400.dp) else PaddingValues(
+                bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp),
+            ),
         )
         Surface(
-            // With very large text the sheet stops under the status bar and scrolls.
-            modifier = Modifier.align(Alignment.BottomCenter).statusBarsPadding().fillMaxWidth().onSizeChanged { sheetPx = it.height },
+            // The pane fills a wide window's end edge; smaller windows keep the bottom sheet.
+            // With very large text the content still scrolls clear of the system bars.
+            modifier = if (sidePane) {
+                Modifier.align(Alignment.CenterEnd).width(400.dp).fillMaxHeight()
+            } else {
+                Modifier.align(Alignment.BottomCenter).statusBarsPadding().formWidth()
+                    .fillMaxWidth().onSizeChanged { sheetPx = it.height }
+            },
             color = scheme.surfaceContainerLow,
-            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+            shape = if (sidePane) RoundedCornerShape(topStart = 28.dp, bottomStart = 28.dp)
+            else RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         ) {
-            Column(Modifier.verticalScroll(rememberScrollState()).navigationBarsPadding().padding(top = if (compact) 12.dp else 16.dp, bottom = 12.dp)) {
+            Column(
+                Modifier.then(if (sidePane) Modifier.statusBarsPadding() else Modifier)
+                    .verticalScroll(rememberScrollState()).navigationBarsPadding()
+                    .padding(top = if (compact) 12.dp else 16.dp, bottom = 12.dp),
+            ) {
                 Row(
                     Modifier.padding(start = 24.dp, end = 12.dp).fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,

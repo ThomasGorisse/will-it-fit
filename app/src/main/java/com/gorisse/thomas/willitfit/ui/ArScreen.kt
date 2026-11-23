@@ -247,7 +247,7 @@ fun ArScreen(
                 Icon(Icons.AutoMirrored.Outlined.ArrowBack, stringResource(R.string.action_back))
             }
             Surface(
-                modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(top = 18.dp)
+                modifier = Modifier.align(Alignment.TopCenter).formWidth().statusBarsPadding().padding(top = 18.dp)
                     .onGloballyPositioned { titleBottom = it.positionInParent().y + it.size.height },
                 color = Color(0xCC141218),
                 contentColor = Color.White,
@@ -260,7 +260,7 @@ fun ArScreen(
             }
 
             Column(
-                Modifier.align(Alignment.BottomCenter).fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp)
+                Modifier.align(Alignment.BottomCenter).formWidth().fillMaxWidth().navigationBarsPadding().padding(bottom = 24.dp)
                     .onGloballyPositioned { controlsTop = it.positionInParent().y },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
