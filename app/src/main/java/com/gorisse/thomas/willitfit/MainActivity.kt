@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -20,6 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.ar.core.ArCoreApk
+import com.gorisse.thomas.willitfit.data.publishSizeShortcuts
+import com.gorisse.thomas.willitfit.data.shortcutDimensions
+import com.gorisse.thomas.willitfit.data.sizeShortcutId
 import com.gorisse.thomas.willitfit.data.RecentSizes
 import com.gorisse.thomas.willitfit.data.Prefs
 import com.gorisse.thomas.willitfit.data.ReviewPolicy
@@ -54,10 +58,16 @@ class MainActivity : ComponentActivity() {
         // Text from a listing, shared or selected in another app. Read once: not again when the
         // activity is recreated.
         val incoming = if (savedInstanceState == null) intent.sharedText() else null
+        val shortcut = if (savedInstanceState == null) intent.shortcutDimensions() else null
+        if (shortcut != null) {
+            prefs.dimensions = shortcut
+            intent.sizeShortcutId()?.let { ShortcutManagerCompat.reportShortcutUsed(this, it) }
+        }
+        publishSizeShortcuts(this, prefs)
         setContent {
             WillItFitTheme {
                 Surface(color = MaterialTheme.colorScheme.surface) {
-                    var route by rememberSaveable { mutableStateOf(Route.HOME) }
+                    var route by rememberSaveable { mutableStateOf(if (shortcut != null) Route.DOOR else Route.HOME) }
                     var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
                     var recentSizes by remember { mutableStateOf(prefs.recentSizes) }
                     var dims by remember { mutableStateOf(prefs.dimensions) }
@@ -92,6 +102,7 @@ class MainActivity : ComponentActivity() {
                             prefs.answers += 1
                             recentSizes = RecentSizes.add(recentSizes, dims)
                             prefs.recentSizes = recentSizes
+                            publishSizeShortcuts(this@MainActivity, prefs)
                         }
                         if (route == Route.HOME && !reviewInFlight && ReviewPolicy.shouldAsk(prefs.review, System.currentTimeMillis())) {
                             reviewInFlight = true
@@ -163,6 +174,7 @@ class MainActivity : ComponentActivity() {
                                     // A door never typed in is the default, not a measure: it follows too.
                                     if (!prefs.doorTyped) door = Door.typicalFor(new)
                                     unit = new; prefs.unit = new
+                                    publishSizeShortcuts(this@MainActivity, prefs)
                                 },
                                 onBack = { route = Route.HOME },
                             )
