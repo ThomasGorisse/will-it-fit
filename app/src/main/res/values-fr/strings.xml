@@ -11,6 +11,7 @@
     <string name="action_door">Passe la porte ?</string>
     <string name="ar_unsupported">La réalité augmentée n\'est pas disponible sur ce téléphone. Le test de la porte marche quand même.</string>
     <string name="preset_custom">Vos cotes</string>
+    <string name="recent_size">Cotes récentes : %1$s</string>
     <string name="preset_sofa2">Canapé 2 places</string>
     <string name="preset_sofa3">Canapé 3 places</string>
     <string name="preset_bed140">Lit 140</string>

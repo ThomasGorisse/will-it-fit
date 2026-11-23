@@ -11,6 +11,7 @@
     <string name="action_door">Passa dalla porta?</string>
     <string name="ar_unsupported">La realtà aumentata non è disponibile su questo telefono. La prova della porta funziona comunque.</string>
     <string name="preset_custom">Le tue misure</string>
+    <string name="recent_size">Misure recenti: %1$s</string>
     <string name="preset_sofa2">Divano 2 posti</string>
     <string name="preset_sofa3">Divano 3 posti</string>
     <string name="preset_bed140">Letto 140</string>

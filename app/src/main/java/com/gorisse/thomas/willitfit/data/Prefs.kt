@@ -10,7 +10,7 @@ import com.gorisse.thomas.willitfit.fit.dimensionsIn
 import com.gorisse.thomas.willitfit.fit.withMatchingPreset
 import java.util.Locale
 
-/** The last object, the last door and the unit. On the phone only; nothing leaves it. */
+/** The last object, recent sizes, the last door and the unit. On the phone only; nothing leaves it. */
 class Prefs(context: Context) {
     private val p = context.getSharedPreferences("will_it_fit", Context.MODE_PRIVATE)
 
@@ -38,6 +38,10 @@ class Prefs(context: Context) {
         }
         set(d) = p.edit().putFloat("w", d.widthCm).putFloat("d", d.depthCm).putFloat("h", d.heightCm)
             .putString("src", d.source.name).putString("preset", d.presetId).apply()
+
+    var recentSizes: List<Dimensions>
+        get() = RecentSizes.decode(runCatching { p.getString(KEY_RECENT_SIZES, null) }.getOrNull())
+        set(value) = p.edit().putString(KEY_RECENT_SIZES, RecentSizes.encode(value)).apply()
 
     var door: Door
         get() {
@@ -79,6 +83,7 @@ class Prefs(context: Context) {
             .apply()
 
     private companion object {
+        const val KEY_RECENT_SIZES = "recent_sizes_v1"
         const val KEY_UNIT = "unit"
         const val KEY_LEGACY_REVIEW_ASKED = "review_asked"
         const val KEY_REVIEW_REQUESTS = "review_requests"
