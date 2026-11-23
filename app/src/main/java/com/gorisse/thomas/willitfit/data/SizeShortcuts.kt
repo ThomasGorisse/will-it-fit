@@ -31,8 +31,10 @@ object SizeShortcuts {
         maxCount: Int,
         presetName: (Preset) -> String,
     ): List<Entry> = recentSizes.filter { it.isValid }.take(maxCount.coerceIn(0, 3))
-        .mapIndexed { index, dims ->
-            val id = "recent_$index"
+        .map { dims ->
+            // The id names the size, not its place in the list: a shortcut pinned to the home
+            // screen keeps opening the same object, whatever is checked next. Rank gives the order.
+            val id = idFor(dims)
             val preset = Preset.byId(dims.presetId)
             val formatted = formatDimensions(dims, unit)
             Entry(
@@ -61,5 +63,14 @@ object SizeShortcuts {
     }
 
     fun usedId(extra: (String) -> Any?): String? =
-        (extra(ID) as? String)?.takeIf { it in setOf("recent_0", "recent_1", "recent_2") }
+        (extra(ID) as? String)?.takeIf { it.startsWith(ID_PREFIX) && it.length <= 64 }
+
+    private const val ID_PREFIX = "size_"
+
+    /** Tenths of a centimetre: the same size typed twice gets the same id. */
+    fun idFor(dims: Dimensions): String {
+        fun side(cm: Float) = Math.round(cm * 10f).toString()
+        val sides = listOf(dims.widthCm, dims.depthCm, dims.heightCm).joinToString("x") { side(it) }
+        return ID_PREFIX + sides + (dims.presetId?.let { "_$it" } ?: "")
+    }
 }

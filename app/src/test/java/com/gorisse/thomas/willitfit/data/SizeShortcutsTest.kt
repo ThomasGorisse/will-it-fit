@@ -35,9 +35,12 @@ class SizeShortcutsTest {
     }
 
     @Test
-    fun `ids follow recency and both launcher capacity and three entry limit apply`() {
+    fun `ids name the size, the list keeps recency, and both limits apply`() {
         val sizes = (0..4).map { size.copy(widthCm = 200f + it) }
-        assertEquals(listOf("recent_0", "recent_1", "recent_2"), entries(sizes).map { it.id })
+        assertEquals(listOf("size_2000x900x850", "size_2010x900x850", "size_2020x900x850"), entries(sizes).map { it.id })
+        // A newer size in front does not hand an older size's id to another object.
+        val later = entries(listOf(size.copy(widthCm = 150f)) + sizes).map { it.id }
+        assertEquals("size_2000x900x850", later[1])
         assertEquals(listOf(200.0, 201.0), entries(sizes, max = 2).map { it.extras[SizeShortcuts.WIDTH] })
         assertTrue(entries(sizes, max = 0).isEmpty())
         assertTrue(entries(sizes, max = -1).isEmpty())
@@ -58,7 +61,7 @@ class SizeShortcutsTest {
     fun `invalid sizes do not consume a shortcut slot`() {
         val invalid = listOf(0f, -1f, 1001f, Float.NaN, Float.POSITIVE_INFINITY)
             .map { size.copy(depthCm = it) }
-        assertEquals(listOf("recent_0"), entries(invalid + size).map { it.id })
+        assertEquals(listOf("size_2000x900x850"), entries(invalid + size).map { it.id })
         invalid.forEach { dims ->
             val extras = mapOf(SizeShortcuts.WIDTH to dims.widthCm,
                 SizeShortcuts.DEPTH to dims.depthCm, SizeShortcuts.HEIGHT to dims.heightCm)
@@ -75,6 +78,7 @@ class SizeShortcutsTest {
         }
         assertEquals(size, SizeShortcuts.dimensions(SizeShortcuts.ACTION, (extras + (SizeShortcuts.PRESET to "gone"))::get))
         assertNull(SizeShortcuts.usedId { "recent_3" })
+        assertEquals("size_2000x900x850", SizeShortcuts.usedId { "size_2000x900x850" })
         assertNull(SizeShortcuts.usedId { null })
     }
 
