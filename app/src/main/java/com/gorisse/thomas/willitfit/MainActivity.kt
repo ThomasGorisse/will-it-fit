@@ -56,8 +56,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             WillItFitTheme {
                 Surface(color = MaterialTheme.colorScheme.surface) {
-                    var route by rememberSaveable { mutableStateOf(Route.HOME) }
-                    var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
+                    // QA ONLY (qa/2311, never merged): open the Result screen on a photo file.
+                    val qaPhoto = if (BuildConfig.DEBUG) intent.getStringExtra("qa_result") else null
+                    var route by rememberSaveable { mutableStateOf(if (qaPhoto != null) Route.RESULT else Route.HOME) }
+                    var photoPath by rememberSaveable { mutableStateOf(qaPhoto) }
                     var dims by remember { mutableStateOf(prefs.dimensions) }
                     var door by remember { mutableStateOf(prefs.door) }
                     var unit by remember { mutableStateOf(prefs.unit) }
