@@ -39,6 +39,10 @@
     <string name="result_missing">Impossibile leggere la foto. Scattala di nuovo.</string>
     <string name="result_share">Condividi</string>
     <string name="result_retake">Rifai</string>
+    <string name="result_save">Salva</string>
+    <string name="result_saved">Salvata</string>
+    <string name="result_saved_where">Salvata nella galleria, album %1$s</string>
+    <string name="result_save_failed">Impossibile salvare la foto. Controlla lo spazio libero del telefono.</string>
     <string name="share_chooser">Condividi la foto</string>
     <string name="photo_failed_title">Niente foto stavolta</string>
     <string name="photo_failed_not_ready">La vista non era ancora pronta. Aspetta un secondo, poi riprova.</string>
@@ -69,7 +73,7 @@
     <string name="unit_cm">Centimetri</string>
     <string name="unit_in">Pollici</string>
     <string name="settings_privacy_title">Privacy</string>
-    <string name="settings_privacy">Funziona offline. Nessun account, nessuna pubblicità. L\'app non invia nulla: conserva sul telefono solo le ultime misure e l\'unità, e scatta una foto solo quando lo chiedi, perché tu la condivida. In AR, Google Play Services for AR raccoglie un identificativo, dati di prestazioni e diagnostica e quali funzioni AR vengono usate; vedi l\'avviso di Google qui sotto.</string>
+    <string name="settings_privacy">Funziona offline. Nessun account, nessuna pubblicità. L\'app non invia nulla: conserva sul telefono solo le ultime misure e l\'unità, e scatta una foto solo quando lo chiedi, perché tu la condivida o la salvi. In AR, Google Play Services for AR raccoglie un identificativo, dati di prestazioni e diagnostica e quali funzioni AR vengono usate; vedi l\'avviso di Google qui sotto.</string>
     <string name="settings_privacy_policy">Informativa sulla privacy</string>
     <string name="settings_licenses">Licenze open source</string>
     <string name="settings_licenses_body">Realizzato con SceneView, Google Filament, Jetpack Compose e Material 3 (Apache 2.0) e ARCore (Termini di servizio delle API di Google).</string>

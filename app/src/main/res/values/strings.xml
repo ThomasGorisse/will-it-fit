@@ -44,6 +44,10 @@
     <string name="result_missing">The photo could not be read. Take it again.</string>
     <string name="result_share">Share</string>
     <string name="result_retake">Retake</string>
+    <string name="result_save">Save</string>
+    <string name="result_saved">Saved</string>
+    <string name="result_saved_where">Saved in your gallery, album %1$s</string>
+    <string name="result_save_failed">The photo could not be saved. Check the free space on the phone.</string>
     <string name="share_chooser">Share the photo</string>
     <string name="photo_failed_title">No photo this time</string>
     <string name="photo_failed_not_ready">The view wasn\'t ready yet. Wait a second, then try again.</string>
@@ -77,7 +81,7 @@
     <string name="unit_cm">Centimetres</string>
     <string name="unit_in">Inches</string>
     <string name="settings_privacy_title">Privacy</string>
-    <string name="settings_privacy">Works offline. No account, no ads. The app itself sends nothing: it keeps only your last size and unit on your phone, and takes a photo only when you ask, for you to share. In AR, Google Play Services for AR collects an identifier, performance and diagnostic data, and which AR features are used; see Google\'s notice below.</string>
+    <string name="settings_privacy">Works offline. No account, no ads. The app itself sends nothing: it keeps only your last size and unit on your phone, and takes a photo only when you ask, for you to share or save. In AR, Google Play Services for AR collects an identifier, performance and diagnostic data, and which AR features are used; see Google\'s notice below.</string>
     <string name="settings_privacy_policy">Privacy policy</string>
     <string name="settings_arcore_title" translatable="false">Google Play Services for AR</string>
     <string name="settings_licenses">Open-source licences</string>

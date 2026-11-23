@@ -39,6 +39,10 @@
     <string name="result_missing">Impossible de lire la photo. Reprenez-la.</string>
     <string name="result_share">Partager</string>
     <string name="result_retake">Reprendre</string>
+    <string name="result_save">Enregistrer</string>
+    <string name="result_saved">Enregistrée</string>
+    <string name="result_saved_where">Enregistrée dans votre galerie, album %1$s</string>
+    <string name="result_save_failed">Impossible d\'enregistrer la photo. Vérifiez l\'espace libre du téléphone.</string>
     <string name="share_chooser">Partager la photo</string>
     <string name="photo_failed_title">Pas de photo cette fois</string>
     <string name="photo_failed_not_ready">La vue n\'était pas encore prête. Attendez une seconde, puis réessayez.</string>
@@ -69,7 +73,7 @@
     <string name="unit_cm">Centimètres</string>
     <string name="unit_in">Pouces</string>
     <string name="settings_privacy_title">Confidentialité</string>
-    <string name="settings_privacy">Fonctionne hors ligne. Ni compte, ni pub. L\'app elle-même n\'envoie rien : elle garde seulement vos dernières dimensions et l\'unité sur le téléphone, et ne prend une photo que si vous le demandez, pour que vous la partagiez. En AR, Google Play Services for AR collecte un identifiant, des données de performance et de diagnostic, et les fonctions AR utilisées ; voir la notice de Google ci-dessous.</string>
+    <string name="settings_privacy">Fonctionne hors ligne. Ni compte, ni pub. L\'app elle-même n\'envoie rien : elle garde seulement vos dernières dimensions et l\'unité sur le téléphone, et ne prend une photo que si vous le demandez, pour que vous la partagiez ou l\'enregistriez. En AR, Google Play Services for AR collecte un identifiant, des données de performance et de diagnostic, et les fonctions AR utilisées ; voir la notice de Google ci-dessous.</string>
     <string name="settings_privacy_policy">Politique de confidentialité</string>
     <string name="settings_licenses">Licences open source</string>
     <string name="settings_licenses_body">Construit avec SceneView, Google Filament, Jetpack Compose et Material 3 (Apache 2.0), et ARCore (conditions d\'utilisation des API Google).</string>

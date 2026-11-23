@@ -39,6 +39,10 @@
     <string name="result_missing">No se puede leer la foto. Vuelve a hacerla.</string>
     <string name="result_share">Compartir</string>
     <string name="result_retake">Repetir</string>
+    <string name="result_save">Guardar</string>
+    <string name="result_saved">Guardada</string>
+    <string name="result_saved_where">Guardada en tu galería, álbum %1$s</string>
+    <string name="result_save_failed">No se pudo guardar la foto. Comprueba el espacio libre del teléfono.</string>
     <string name="share_chooser">Compartir la foto</string>
     <string name="photo_failed_title">Esta vez no hay foto</string>
     <string name="photo_failed_not_ready">La vista aún no estaba lista. Espera un segundo y vuelve a intentarlo.</string>
@@ -69,7 +73,7 @@
     <string name="unit_cm">Centímetros</string>
     <string name="unit_in">Pulgadas</string>
     <string name="settings_privacy_title">Privacidad</string>
-    <string name="settings_privacy">Funciona sin conexión. Sin cuenta ni anuncios. La app no envía nada: solo guarda en el móvil tus últimas medidas y la unidad, y solo hace una foto cuando lo pides, para que la compartas. En RA, Google Play Services for AR recoge un identificador, datos de rendimiento y diagnóstico, y qué funciones de RA se usan; consulta el aviso de Google abajo.</string>
+    <string name="settings_privacy">Funciona sin conexión. Sin cuenta ni anuncios. La app no envía nada: solo guarda en el móvil tus últimas medidas y la unidad, y solo hace una foto cuando lo pides, para que la compartas o la guardes. En RA, Google Play Services for AR recoge un identificador, datos de rendimiento y diagnóstico, y qué funciones de RA se usan; consulta el aviso de Google abajo.</string>
     <string name="settings_privacy_policy">Política de privacidad</string>
     <string name="settings_licenses">Licencias de código abierto</string>
     <string name="settings_licenses_body">Hecho con SceneView, Google Filament, Jetpack Compose y Material 3 (Apache 2.0), y ARCore (Condiciones de las API de Google).</string>
