@@ -95,4 +95,7 @@
     <string name="tape_side_height">Höhe</string>
     <string name="tape_side_door_width">Türbreite</string>
     <string name="tape_side_door_height">Türhöhe</string>
+    <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
+    <string name="text_sizes_found">Maße aus dem Text: %1$s</string>
+    <string name="text_sizes_none">In diesem Text steht kein Maß. Tippen Sie es ein oder markieren Sie nur die Zeile mit den Maßen.</string>
 </resources>

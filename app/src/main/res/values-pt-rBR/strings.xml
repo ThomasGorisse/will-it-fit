@@ -95,4 +95,7 @@
     <string name="tape_side_height">altura</string>
     <string name="tape_side_door_width">largura da porta</string>
     <string name="tape_side_door_height">altura da porta</string>
+    <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
+    <string name="text_sizes_found">Medidas tiradas do texto: %1$s</string>
+    <string name="text_sizes_none">Nenhuma medida neste texto. Digite-as ou selecione só a linha das medidas.</string>
 </resources>
