@@ -163,6 +163,12 @@ fun DoorScene(
             apply = { isShadowReceiver = true },
         )
         Parquet(palette.isNight, Position(0f, 0.001f, 1.2f))
+        // A wide view (a tablet or an unfolded phone in landscape) saw the 6.5 m parquet end on
+        // both sides, on a plain floor: a copy each side, only then. Phones never see past it.
+        if (visibleAspect > 1f) {
+            Parquet(palette.isNight, Position(-PARQUET_W, 0.001f, 1.2f))
+            Parquet(palette.isNight, Position(PARQUET_W, 0.001f, 1.2f))
+        }
         // Tall and wide enough that the camera never sees past it, and a far wall in the next
         // room, so neither the top of the frame nor the doorway opens onto the void. Framed
         // between the buttons and the keyboard, the camera stands further back: at 10 m wide the
@@ -238,8 +244,14 @@ fun DoorScene(
 
 private const val WALL_THICKNESS = 0.12f
 
-/** How far the wall and the floor reach, metres: past anything the camera sees, keyboard up. */
-private const val OUTER_W = 48f
+/**
+ * How far the wall and the floor reach, metres: past anything the camera sees, keyboard up. At
+ * 48 m a landscape tablet still saw past the wall's end, a black corner at the top left.
+ */
+private const val OUTER_W = 96f
+
+/** The parquet model's width (tools/furniture, FLOOR_SIZE), metres. */
+private const val PARQUET_W = 6.5f
 private const val OUTER_H = 16f
 
 /** Where the camera stands and what it looks at. */
