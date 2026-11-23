@@ -2,7 +2,7 @@
 agp = "9.5.1"
 kotlin = "2.4.21"
 # SceneView: the first release with AutoPlacementState.guide and DimensionMarks (#5210).
-sceneview = "4.71.0"
+sceneview = "4.72.0"
 # Compose BOM 2026.09.00 = Compose 1.12.1, Material 3 1.4.0 (stable).
 composeBom = "2026.09.00"
 activityCompose = "1.13.0"
