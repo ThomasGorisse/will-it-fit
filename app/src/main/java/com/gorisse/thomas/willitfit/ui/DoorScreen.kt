@@ -54,6 +54,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -128,6 +129,7 @@ fun DoorScreen(
     var photoFailure by remember { mutableStateOf<PhotoFailure?>(null) }
     var shot by remember { mutableStateOf<Job?>(null) }
     val scope = rememberCoroutineScope()
+    val bootBackground = (if (dark) RoomPalette.Night else RoomPalette.Day).wall.toArgb()
 
     val answer = stringResource(
         when {
@@ -197,7 +199,11 @@ fun DoorScreen(
                             verdict.isTight -> 0xFFF2C46D
                             else -> 0xFF8DD99A // FitColors.success, dark
                         }.toInt()
-                        savePhoto(context, bitmap, answer, listOf(objectLine, doorLine, margin), signature, color)
+                        savePhoto(
+                            context, bitmap, answer, listOf(objectLine, doorLine, margin), signature, color,
+                            // The boot floats on the screen's wall colour; the door scene is opaque.
+                            background = if (carBoot) bootBackground else null,
+                        )
                     },
                 )
                 when (result) {
