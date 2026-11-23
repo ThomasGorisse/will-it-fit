@@ -39,6 +39,10 @@
     <string name="result_missing">Não foi possível ler a foto. Tire outra.</string>
     <string name="result_share">Compartilhar</string>
     <string name="result_retake">Tirar outra</string>
+    <string name="result_save">Salvar</string>
+    <string name="result_saved">Salva</string>
+    <string name="result_saved_where">Salva na sua galeria, álbum %1$s</string>
+    <string name="result_save_failed">Não foi possível salvar a foto. Verifique o espaço livre do celular.</string>
     <string name="share_chooser">Compartilhar a foto</string>
     <string name="photo_failed_title">Sem foto desta vez</string>
     <string name="photo_failed_not_ready">A visualização ainda não estava pronta. Espere um segundo e tente de novo.</string>

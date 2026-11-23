@@ -2,6 +2,7 @@ package com.gorisse.thomas.willitfit.capture
 
 import android.app.Activity
 import android.content.ClipData
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -12,8 +13,11 @@ import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Typeface
+import android.os.Build
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.Log
@@ -160,4 +164,46 @@ fun sharePhoto(context: Context, file: File, chooserTitle: String, text: String)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
     context.startActivity(Intent.createChooser(send, chooserTitle))
+}
+
+/** The gallery album the photos go to: Pictures/Will It Fit. */
+const val GALLERY_ALBUM = "Will It Fit"
+
+/**
+ * Saving to the gallery needs no permission from Android 10 on (the app writes only its own
+ * pictures through MediaStore). On Android 9 it would need the storage permission, which the app
+ * does not ask for: there the button is not shown, and the share sheet still offers to save.
+ */
+val canSaveToGallery: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
+/**
+ * Copies the captioned photo into Pictures/[GALLERY_ALBUM], where the gallery and Google Photos
+ * find it. Pending until fully written, so a half-written picture never shows; removed if the
+ * copy fails. Returns false when it could not be saved (often a phone short on space).
+ */
+suspend fun saveToGallery(context: Context, file: File): Boolean = withContext(Dispatchers.IO) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return@withContext false
+    val resolver = context.contentResolver
+    val values = ContentValues().apply {
+        put(MediaStore.Images.Media.DISPLAY_NAME, file.name)
+        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/$GALLERY_ALBUM")
+        put(MediaStore.Images.Media.IS_PENDING, 1)
+    }
+    val uri = try {
+        resolver.insert(MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), values)
+    } catch (e: Exception) {
+        Log.w("WillItFit", "photo not added to the gallery", e)
+        null
+    } ?: return@withContext false
+    try {
+        resolver.openOutputStream(uri)?.use { out -> file.inputStream().use { it.copyTo(out) } }
+            ?: error("no output stream")
+        resolver.update(uri, ContentValues().apply { put(MediaStore.Images.Media.IS_PENDING, 0) }, null, null)
+        true
+    } catch (e: Exception) {
+        Log.w("WillItFit", "photo not saved to the gallery", e)
+        runCatching { resolver.delete(uri, null, null) }
+        false
+    }
 }

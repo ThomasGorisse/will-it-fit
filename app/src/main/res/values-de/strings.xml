@@ -39,6 +39,10 @@
     <string name="result_missing">Das Foto lässt sich nicht lesen. Nimm es neu auf.</string>
     <string name="result_share">Teilen</string>
     <string name="result_retake">Neu aufnehmen</string>
+    <string name="result_save">Speichern</string>
+    <string name="result_saved">Gespeichert</string>
+    <string name="result_saved_where">In deiner Galerie gespeichert, Album %1$s</string>
+    <string name="result_save_failed">Das Foto ließ sich nicht speichern. Prüfe den freien Speicher.</string>
     <string name="share_chooser">Foto teilen</string>
     <string name="photo_failed_title">Diesmal kein Foto</string>
     <string name="photo_failed_not_ready">Die Ansicht war noch nicht bereit. Warte kurz und versuch es noch einmal.</string>

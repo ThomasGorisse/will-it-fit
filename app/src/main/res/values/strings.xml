@@ -44,6 +44,10 @@
     <string name="result_missing">The photo could not be read. Take it again.</string>
     <string name="result_share">Share</string>
     <string name="result_retake">Retake</string>
+    <string name="result_save">Save</string>
+    <string name="result_saved">Saved</string>
+    <string name="result_saved_where">Saved in your gallery, album %1$s</string>
+    <string name="result_save_failed">The photo could not be saved. Check the free space on the phone.</string>
     <string name="share_chooser">Share the photo</string>
     <string name="photo_failed_title">No photo this time</string>
     <string name="photo_failed_not_ready">The view wasn\'t ready yet. Wait a second, then try again.</string>
