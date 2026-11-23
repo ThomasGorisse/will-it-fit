@@ -1,6 +1,6 @@
 What's new
+• AR tape: aim at two ends, then use the length as a side of the object or of the doorway.
+• Share or select a listing's text, like "220 × 95 × 85 cm", and the sizes fill in.
 • AR: the size tags face you and keep clear of the buttons; the object fades when you walk into it.
-• AR: a soft contact shadow grounds the object, without hard edges.
-• Door check: the doorway and the object stay in full view, in real wall and frame materials.
-• 3D room: the size tags show the final size at once.
-Pick a typical object or type its size in cm or inches, see it in a 3D room or at real size in AR, and check a doorway. Free, no ads, no account, offline.
+• Door check: the doorway and the object stay in full view, keyboard up or not.
+Free, no ads, no account, offline.

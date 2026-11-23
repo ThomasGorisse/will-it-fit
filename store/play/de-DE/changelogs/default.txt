@@ -1,6 +1,6 @@
 Neu
+• AR-Maßband: Ziele auf zwei Enden und übernimm die Länge als Seite des Gegenstands oder der Tür.
+• Teile oder markiere den Text einer Anzeige („220 × 95 × 85 cm“), und die Maße werden eingetragen.
 • AR: Die Maßangaben drehen sich zu dir und weichen den Tasten aus; der Gegenstand blendet aus, wenn du hineinläufst.
-• AR: Ein weicher Kontaktschatten stellt den Gegenstand auf den Boden.
-• Türcheck: Türrahmen und Gegenstand bleiben ganz im Bild, mit echten Materialien.
-• 3D-Raum: Die Maßangaben zeigen sofort die Endgröße.
-Wähle einen Gegenstand oder gib seine Maße ein, sieh ihn im 3D-Raum oder in Originalgröße in AR, prüfe eine Tür. Kostenlos, ohne Werbung und Konto, offline.
+• Türcheck: Türrahmen und Gegenstand bleiben ganz im Bild, auch mit Tastatur.
+Kostenlos, ohne Werbung und Konto, offline.
