@@ -81,7 +81,9 @@ fun ResultScreen(file: File, dims: Dimensions, unit: LengthUnit, onBack: () -> U
     val saveFailedText = stringResource(R.string.result_save_failed)
     val message = objectName(dims) + " · " + stringResource(R.string.ar_real_size, formatDimensions(dims, unit)) + "\n" + STORE_LINK
     AppScaffold(title = stringResource(R.string.result_title), onBack = onBack) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding).navigationBarsPadding()) {
+        // Wide windows (tablets, unfolded phones): the photo and its buttons stay phone-wide, centred.
+        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
+        Column(Modifier.formWidth().fillMaxSize().navigationBarsPadding()) {
             Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
                 if (loaded != null && bitmap == null) Text(stringResource(R.string.result_missing), style = MaterialTheme.typography.bodyLarge)
                 bitmap?.let {
@@ -129,6 +131,7 @@ fun ResultScreen(file: File, dims: Dimensions, unit: LengthUnit, onBack: () -> U
                     Text(stringResource(R.string.result_share))
                 }
             }
+        }
         }
     }
 }
