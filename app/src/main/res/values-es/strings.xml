@@ -39,6 +39,10 @@
     <string name="result_missing">No se puede leer la foto. Vuelve a hacerla.</string>
     <string name="result_share">Compartir</string>
     <string name="result_retake">Repetir</string>
+    <string name="result_save">Guardar</string>
+    <string name="result_saved">Guardada</string>
+    <string name="result_saved_where">Guardada en tu galería, álbum %1$s</string>
+    <string name="result_save_failed">No se pudo guardar la foto. Comprueba el espacio libre del teléfono.</string>
     <string name="share_chooser">Compartir la foto</string>
     <string name="photo_failed_title">Esta vez no hay foto</string>
     <string name="photo_failed_not_ready">La vista aún no estaba lista. Espera un segundo y vuelve a intentarlo.</string>

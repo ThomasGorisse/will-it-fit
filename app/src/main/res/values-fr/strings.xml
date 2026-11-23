@@ -39,6 +39,10 @@
     <string name="result_missing">Impossible de lire la photo. Reprenez-la.</string>
     <string name="result_share">Partager</string>
     <string name="result_retake">Reprendre</string>
+    <string name="result_save">Enregistrer</string>
+    <string name="result_saved">Enregistrée</string>
+    <string name="result_saved_where">Enregistrée dans votre galerie, album %1$s</string>
+    <string name="result_save_failed">Impossible d\'enregistrer la photo. Vérifiez l\'espace libre du téléphone.</string>
     <string name="share_chooser">Partager la photo</string>
     <string name="photo_failed_title">Pas de photo cette fois</string>
     <string name="photo_failed_not_ready">La vue n\'était pas encore prête. Attendez une seconde, puis réessayez.</string>
