@@ -1,6 +1,8 @@
 Neu
-• AR-Maßband: Ziele auf zwei Enden und übernimm die Länge als Seite des Gegenstands oder der Tür.
+• Passt es ins Auto? Gib Öffnung und Innenmaße des Kofferraums ein: Die Antwort nennt das Maß, das blockiert.
+• Deine letzten Maße kommen mit einem Tipp zurück.
+• Speichere das Foto in deiner Galerie.
+• AR-Maßband: Ziele auf zwei Enden und übernimm die Länge als Seite.
 • Teile oder markiere den Text einer Anzeige („220 × 95 × 85 cm“), und die Maße werden eingetragen.
-• AR: Die Maßangaben drehen sich zu dir und weichen den Tasten aus; der Gegenstand blendet aus, wenn du hineinläufst.
-• Türcheck: Türrahmen und Gegenstand bleiben ganz im Bild, auch mit Tastatur.
+• Auch für Tablets und Foldables.
 Kostenlos, ohne Werbung und Konto, offline.

@@ -1,6 +1,8 @@
 Nouveautés
-• Mètre AR : visez deux bouts, puis prenez la longueur comme côté de l'objet ou de la porte.
+• Ça rentre dans la voiture ? Entrez l'ouverture et l'intérieur du coffre : la réponse dit quelle cote bloque.
+• Vos dernières tailles reviennent d'un geste.
+• Enregistrez la photo dans votre galerie.
+• Mètre AR : visez deux bouts, prenez la longueur comme côté.
 • Partagez ou sélectionnez le texte d'une annonce (« 220 × 95 × 85 cm ») : les tailles se remplissent.
-• AR : les étiquettes se tournent vers vous et évitent les boutons ; l'objet s'efface quand on entre dedans.
-• Porte : l'encadrement et l'objet restent entiers à l'écran, clavier ouvert ou non.
+• Aussi pour tablettes et pliables.
 Gratuit, sans pub ni compte, hors ligne.
