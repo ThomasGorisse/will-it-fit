@@ -32,7 +32,6 @@ import io.github.sceneview.math.Scale
 import io.github.sceneview.math.Size
 import io.github.sceneview.node.ContactShadowContext
 import io.github.sceneview.node.RenderableNode
-import io.github.sceneview.loaders.ModelLoader
 import io.github.sceneview.rememberModelInstance
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -224,34 +223,6 @@ private fun SceneScope.Pool(look: FurnitureLook, intensity: Float, position: Pos
     )
 }
 
-/**
- * The object's model, loaded by the screen before it is needed. In AR the object is placed the
- * moment ARCore finds the floor; loaded only then, its size lines stood alone on the floor for
- * 0.4 s before it came. SceneView asks for the asset first ("Load the asset before setting
- * assetReady"): the screen passes [ready] as `assetReady`.
- *
- * Each placement still loads its own instance (the file is warm by then), and [Furniture]'s
- * `onShown` holds the lines until it stands. One instance shared by two placements was not
- * safe: after a reset the new placement's ModelNode can be built before the old one leaves, both
- * wrapping the same entities, and on the 4a a body of the old object stayed on the floor,
- * without its lines.
- */
-class PreloadedFurniture(private val file: String?, private val loaded: Boolean) {
-    /** True once there is something to draw: the model, or a silhouette (no model ships). */
-    val ready: Boolean get() = file == null || loaded
-}
-
-@Composable
-fun rememberPreloadedFurniture(modelLoader: ModelLoader, dims: Dimensions): PreloadedFurniture {
-    val context = LocalContext.current
-    val path = modelFile(dims.shape, dims.presetId)
-    val bundled = remember(path) { path != null && context.hasAsset(path) }
-    val file = path.takeIf { bundled }
-    // Keyed by the file, so a different object never counts as loaded while it loads.
-    val instance = key(file) { file?.let { rememberModelInstance(modelLoader, it) } }
-    return PreloadedFurniture(file, instance != null)
-}
-
 /** The modelled object for a shape, as an asset path. */
 private fun modelFile(shape: Shape, presetId: String?): String? = when (shape) {
     Shape.SOFA -> if (presetId == Preset.SOFA_2.id) "models/sofa2.glb" else "models/sofa3.glb"
@@ -283,7 +254,9 @@ private fun SceneScope.ModelFurniture(
     onShown: () -> Unit,
 ) {
     val asked = remember(file) { SystemClock.uptimeMillis() }
-    // This placement's own instance: never shared with another placement (see PreloadedFurniture).
+    // Each placement loads its own instance. One shared across a reset was not safe: SceneView
+    // can build the new placement's ModelNode before the old one leaves, both wrapping the same
+    // entities, and on the 4a a body of the old object stayed on the floor without its lines.
     val instance = rememberModelInstance(modelLoader, file)
     LaunchedEffect(instance) {
         // Load time on real phones, read from logcat: the emulator is far slower.

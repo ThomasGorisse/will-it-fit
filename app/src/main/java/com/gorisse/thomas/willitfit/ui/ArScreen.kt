@@ -80,7 +80,6 @@ import io.github.sceneview.DimensionMarks
 import io.github.sceneview.DimensionTagClearance
 import com.gorisse.thomas.willitfit.scene.Furniture
 import com.gorisse.thomas.willitfit.scene.rememberFurnitureLook
-import com.gorisse.thomas.willitfit.scene.rememberPreloadedFurniture
 import io.github.sceneview.ar.ARHapticFeedback
 import io.github.sceneview.ar.AutoPlacementNode
 import io.github.sceneview.ar.AutoPlacementScene
@@ -122,9 +121,6 @@ fun ArScreen(
     val engine = rememberEngine()
     val modelLoader = rememberModelLoader(engine)
     val materialLoader = rememberMaterialLoader(engine)
-    // The object's model, loaded while ARCore looks for the floor: placed only once it is there,
-    // so the object and its size lines land together.
-    val furniture = rememberPreloadedFurniture(modelLoader, dims)
     // Furniture never changes size in AR: pinch, double-tap and scaleTo are off.
     // The size is the answer here: the marks stay on whenever the object stands (#5209).
     val state = remember { AutoPlacementState().apply { allowsScaling = false; alwaysShowsDimensions = true } }
@@ -194,7 +190,7 @@ fun ArScreen(
     Box(Modifier.fillMaxSize().onSizeChanged { screenHeight = it.height }) {
         CompositionLocalProvider(LocalARSessionProbe provides camera) {
             AutoPlacementScene(
-                assetReady = furniture.ready,
+                assetReady = true,
                 modifier = Modifier.fillMaxSize(),
                 state = state,
                 engine = engine,
