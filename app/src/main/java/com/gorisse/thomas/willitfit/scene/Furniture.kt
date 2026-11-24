@@ -254,6 +254,9 @@ private fun SceneScope.ModelFurniture(
     onShown: () -> Unit,
 ) {
     val asked = remember(file) { SystemClock.uptimeMillis() }
+    // Each placement loads its own instance. One shared across a reset was not safe: SceneView
+    // can build the new placement's ModelNode before the old one leaves, both wrapping the same
+    // entities, and on the 4a a body of the old object stayed on the floor without its lines.
     val instance = rememberModelInstance(modelLoader, file)
     LaunchedEffect(instance) {
         // Load time on real phones, read from logcat: the emulator is far slower.

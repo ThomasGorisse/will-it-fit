@@ -221,8 +221,10 @@ fun ArScreen(
                     val look = rememberFurnitureLook(
                         FurnitureTeal, opacity = opacity * presence, transparent = true, selectable = true,
                     )
-                    Furniture(dims, look, contactShadow = false)
-                    if (state.guide.dimensions) DimensionMarks(
+                    // The marks wait for the object, should it still be loading.
+                    var objectShown by remember { mutableStateOf(false) }
+                    Furniture(dims, look, contactShadow = false, onShown = { objectShown = true })
+                    if (objectShown && state.guide.dimensions) DimensionMarks(
                         size = dims.toSize(),
                         format = { formatLength(it * 100f, unit) },
                         lineColor = Color.White,
