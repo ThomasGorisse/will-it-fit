@@ -227,7 +227,7 @@ fun ArScreen(
                     )
                     // The marks wait for the object, should it still be loading.
                     var objectShown by remember { mutableStateOf(false) }
-                    Furniture(dims, look, contactShadow = false, onShown = { objectShown = true }, preloaded = furniture)
+                    Furniture(dims, look, contactShadow = false, onShown = { objectShown = true })
                     if (objectShown && state.guide.dimensions) DimensionMarks(
                         size = dims.toSize(),
                         format = { formatLength(it * 100f, unit) },
