@@ -19,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import com.android.installreferrer.api.InstallReferrerClient
+import com.android.installreferrer.api.InstallReferrerStateListener
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.ar.core.ArCoreApk
 import com.gorisse.thomas.willitfit.data.publishSizeShortcuts
@@ -30,6 +32,8 @@ import com.gorisse.thomas.willitfit.data.ReviewPolicy
 import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Door
 import com.gorisse.thomas.willitfit.fit.Preset
+import com.gorisse.thomas.willitfit.fit.SharedCheck
+import com.gorisse.thomas.willitfit.fit.Space
 import com.gorisse.thomas.willitfit.fit.TapeTarget
 import com.gorisse.thomas.willitfit.fit.withTape
 import com.gorisse.thomas.willitfit.fit.dimensionsIn
@@ -51,6 +55,9 @@ class MainActivity : ComponentActivity() {
     /** A rating flow is running: going home again meanwhile does not start a second one. */
     private var reviewInFlight = false
 
+    /** A check from Play's install referrer: it arrives a moment after the first launch. */
+    private var referredCheck by mutableStateOf<SharedCheck?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -59,6 +66,10 @@ class MainActivity : ComponentActivity() {
         // activity is recreated.
         val incoming = if (savedInstanceState == null) intent.sharedText() else null
         val shortcut = if (savedInstanceState == null) intent.shortcutDimensions() else null
+        // A check someone sent: its link opens the same check, once, before anything is read.
+        val linked = if (savedInstanceState == null) intent.sharedCheck() else null
+        linked?.let { prefs.apply(it) }
+        if (linked == null && savedInstanceState == null && !prefs.referrerRead) readInstallReferrer(prefs)
         if (shortcut != null) {
             prefs.dimensions = shortcut
             intent.sizeShortcutId()?.let { ShortcutManagerCompat.reportShortcutUsed(this, it) }
@@ -67,13 +78,27 @@ class MainActivity : ComponentActivity() {
         setContent {
             WillItFitTheme {
                 Surface(color = MaterialTheme.colorScheme.surface) {
-                    var route by rememberSaveable { mutableStateOf(if (shortcut != null) Route.DOOR else Route.HOME) }
+                    var route by rememberSaveable { mutableStateOf(if (shortcut != null || linked?.space != null) Route.DOOR else Route.HOME) }
                     var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
                     var recentSizes by remember { mutableStateOf(prefs.recentSizes) }
                     var dims by remember { mutableStateOf(prefs.dimensions) }
                     var door by remember { mutableStateOf(prefs.door) }
                     var unit by remember { mutableStateOf(prefs.unit) }
                     val context = LocalContext.current
+                    LaunchedEffect(Unit) {
+                        if (linked != null) Toast.makeText(this@MainActivity, R.string.link_opened, Toast.LENGTH_LONG).show()
+                    }
+                    // Installed from a shared link: the first launch opens the check it carried,
+                    // unless the person already went somewhere.
+                    LaunchedEffect(referredCheck) {
+                        val check = referredCheck ?: return@LaunchedEffect
+                        referredCheck = null
+                        if (route != Route.HOME) return@LaunchedEffect
+                        prefs.apply(check)
+                        dims = prefs.dimensions; door = prefs.door
+                        if (check.space != null) route = Route.DOOR
+                        Toast.makeText(this@MainActivity, R.string.link_opened, Toast.LENGTH_LONG).show()
+                    }
                     LaunchedEffect(Unit) {
                         if (incoming == null) return@LaunchedEffect
                         // Text from anywhere: a text it cannot read finds nothing, never closes the app.
@@ -183,6 +208,59 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    /**
+     * Play's install referrer, read once in the app's life: after an install from a shared link
+     * it carries the check (see [SharedCheck]); otherwise just where the install came from, and
+     * nothing happens. Read on the phone from Play; nothing is sent.
+     */
+    private fun readInstallReferrer(prefs: Prefs) {
+        val client = runCatching { InstallReferrerClient.newBuilder(this).build() }.getOrNull() ?: return
+        runCatching {
+            client.startConnection(object : InstallReferrerStateListener {
+                override fun onInstallReferrerSetupFinished(code: Int) {
+                    when (code) {
+                        InstallReferrerClient.InstallReferrerResponse.OK -> {
+                            val referrer = runCatching { client.installReferrer.installReferrer }.getOrNull()
+                            prefs.referrerRead = true
+                            SharedCheck.parse(referrer)?.let { check -> runOnUiThread { referredCheck = check } }
+                        }
+                        // No Play, or a Play too old to tell: asking again will not help.
+                        InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED,
+                        InstallReferrerClient.InstallReferrerResponse.DEVELOPER_ERROR -> prefs.referrerRead = true
+                        else -> Unit // Play busy or away: the next launch asks again.
+                    }
+                    runCatching { client.endConnection() }
+                }
+
+                override fun onInstallReferrerServiceDisconnected() = Unit
+            })
+        }
+    }
+}
+
+/**
+ * The check a link carries, when it is one of ours: the shared link keeps the sizes after its "#"
+ * (https://thomasgorisse.github.io/willitfit/check/#o=…); the page's own button hands them over
+ * as a query, straight to the app.
+ */
+private fun Intent.sharedCheck(): SharedCheck? {
+    if (action != Intent.ACTION_VIEW) return null
+    val uri = data ?: return null
+    if (uri.scheme != "https" || uri.host != SharedCheck.HOST) return null
+    if (uri.path?.trimEnd('/') != SharedCheck.PATH.trimEnd('/')) return null
+    return SharedCheck.parse(uri.encodedFragment ?: uri.encodedQuery)
+}
+
+/** Takes a check as the person's own: the object, and the space it was checked against. */
+private fun Prefs.apply(check: SharedCheck) {
+    dimensions = check.dims
+    when (check.space) {
+        Space.DOOR -> { check.door?.let { door = it }; carBoot = false; hallway = false }
+        Space.BOOT -> { check.boot?.let { boot = it }; carBoot = true; hallway = false }
+        Space.HALL -> { check.hall?.let { hall = it }; hallway = true }
+        null -> Unit
     }
 }
 

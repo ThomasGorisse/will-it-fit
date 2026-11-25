@@ -46,7 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.capture.GALLERY_ALBUM
-import com.gorisse.thomas.willitfit.capture.STORE_LINK
+import com.gorisse.thomas.willitfit.fit.SharedCheck
 import com.gorisse.thomas.willitfit.capture.canSaveToGallery
 import com.gorisse.thomas.willitfit.capture.saveToGallery
 import com.gorisse.thomas.willitfit.capture.sharePhoto
@@ -79,7 +79,7 @@ fun ResultScreen(file: File, dims: Dimensions, unit: LengthUnit, onBack: () -> U
     var saving by remember(file.path) { mutableStateOf(false) }
     val savedText = stringResource(R.string.result_saved_where, GALLERY_ALBUM)
     val saveFailedText = stringResource(R.string.result_save_failed)
-    val message = objectName(dims) + " · " + stringResource(R.string.ar_real_size, formatDimensions(dims, unit)) + "\n" + STORE_LINK
+    val message = objectName(dims) + " · " + stringResource(R.string.ar_real_size, formatDimensions(dims, unit)) + "\n" + SharedCheck(dims, unit = unit).link()
     AppScaffold(title = stringResource(R.string.result_title), onBack = onBack) { padding ->
         // Wide windows (tablets, unfolded phones): the photo and its buttons stay phone-wide, centred.
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {

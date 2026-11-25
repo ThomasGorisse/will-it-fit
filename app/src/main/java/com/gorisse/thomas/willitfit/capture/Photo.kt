@@ -63,13 +63,6 @@ private fun findSurfaceView(view: View): SurfaceView? {
     return null
 }
 
-/**
- * Where whoever receives a picture finds the app: the release build's store page, whatever build
- * shares. The referrer marks the installs that came from a shared picture in Play Console's
- * acquisition report (utm_source "share"); nothing is sent anywhere by the app.
- */
-const val STORE_LINK = "https://play.google.com/store/apps/details?id=com.gorisse.thomas.willitfit&referrer=utm_source%3Dshare"
-
 /** Earlier photos kept next to the new one, for apps that read a shared photo late. */
 private const val KEPT_PHOTOS = 4
 
