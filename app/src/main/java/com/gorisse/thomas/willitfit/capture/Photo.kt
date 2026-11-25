@@ -74,6 +74,8 @@ enum class CardVerdict { FITS, TIGHT, NO }
 /** The card is a phone screen, 9:16: what a story, a status or a chat shows whole. */
 const val CARD_WIDTH = 1080
 const val CARD_HEIGHT = 1920
+/** The picture's frame at the top of the card. */
+const val CARD_SCENE_HEIGHT = 1200
 
 /**
  * Lays the picture out as a 9:16 card and saves it as a JPEG: the scene (or the AR photo) on top,
@@ -120,7 +122,7 @@ private fun drawCard(
 
     // The scene, cut to fill its frame without stretching. A scene drawn over a Compose
     // background reads back transparent there: it lies on the colour the screen shows behind it.
-    val frame = RectF(0f, 0f, w, 1200f)
+    val frame = RectF(0f, 0f, w, CARD_SCENE_HEIGHT.toFloat())
     if (background != null) c.drawRect(frame, Paint().apply { color = background })
     val source = crop?.takeIf { !it.isEmpty } ?: Rect(0, 0, scene.width, scene.height)
     c.drawBitmap(scene, centerCrop(source, frame.width() / frame.height()), frame, Paint(Paint.FILTER_BITMAP_FLAG))

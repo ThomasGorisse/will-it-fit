@@ -78,6 +78,8 @@ import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.capture.PhotoFailure
 import com.gorisse.thomas.willitfit.capture.PhotoResult
 import android.graphics.Rect
+import com.gorisse.thomas.willitfit.capture.CARD_SCENE_HEIGHT
+import com.gorisse.thomas.willitfit.capture.CARD_WIDTH
 import com.gorisse.thomas.willitfit.capture.CardVerdict
 import com.gorisse.thomas.willitfit.capture.captureScene
 import com.gorisse.thomas.willitfit.capture.savePhoto
@@ -242,6 +244,8 @@ fun DoorScreen(
                             hallPicture(
                                 dims, hall, hallVerdict, hallLabels, FurnitureTeal,
                                 if (dark) RoomPalette.Night else RoomPalette.Day, measurer, density,
+                                // Drawn to the card's picture frame, so nothing of the plan is cut.
+                                width = CARD_WIDTH, height = CARD_SCENE_HEIGHT,
                             ).asAndroidBitmap(),
                         ) else {
                             // Hold the object on the answer and let the scene draw it before reading it back.
