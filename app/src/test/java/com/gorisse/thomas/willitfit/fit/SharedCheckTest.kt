@@ -23,8 +23,8 @@ class SharedCheckTest {
     }
 
     @Test fun bootAndHallRoundTrip() {
-        val boot = SharedCheck(Dimensions(60f, 60f, 85f), Space.BOOT, boot = Boot.ESTATE)
-        assertEquals("o=60x60x85&boot=108x80x103x104x68", boot.query())
+        val boot = SharedCheck(Dimensions(61f, 59f, 85f), Space.BOOT, boot = Boot.ESTATE)
+        assertEquals("o=61x59x85&boot=108x80x103x104x68", boot.query())
         assertEquals(boot, SharedCheck.parse(boot.query()))
         val hall = SharedCheck(Dimensions(200f, 90f, 80f), Space.HALL, hall = Hall.TYPICAL)
         assertEquals(hall, SharedCheck.parse("#" + hall.query()))
@@ -47,6 +47,13 @@ class SharedCheckTest {
         val back = SharedCheck.parse("o=200x90x80&p=sofa3&door=80x204")!!
         assertNull(back.dims.presetId)
         assertEquals(DimensionSource.TYPED, back.dims.source)
+    }
+
+    @Test fun presetSizesSentWithoutNameKeepTheirSizes() {
+        val back = SharedCheck.parse("o=60x60x85&boot=108x80x103x104x68")!!
+        assertEquals("washer", back.dims.presetId)
+        assertEquals(DimensionSource.TYPED, back.dims.source)
+        assertEquals(60f, back.dims.widthCm)
     }
 
     @Test fun readsPlayReferrerNextToUtm() {
