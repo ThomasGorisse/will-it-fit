@@ -1,8 +1,6 @@
 Novità
+• Gira l'angolo? Inserisci la larghezza del corridoio e lo spazio dopo l'angolo: la risposta dice se il divano passa.
+• Invia una verifica: il link apre le stesse misure e la stessa risposta, nell'app o su una pagina web.
 • Entra in auto? Inserisci apertura e interno del bagagliaio: la risposta dice quale misura blocca.
-• Le tue ultime misure tornano con un tocco, nell'app o tenendo premuta la sua icona.
-• Salva la foto nella tua galleria.
-• Metro AR: punta due estremi e usa la lunghezza come lato.
-• Condividi o seleziona il testo di un annuncio («220 × 95 × 85 cm») e le misure si compilano.
-• Anche per tablet e pieghevoli.
+• Le tue ultime misure tornano con un tocco o tenendo premuta l'icona.
 Gratis, senza pubblicità né account, offline.
