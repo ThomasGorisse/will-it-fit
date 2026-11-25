@@ -5,6 +5,7 @@ import com.gorisse.thomas.willitfit.fit.Boot
 import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
+import com.gorisse.thomas.willitfit.fit.Hall
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.Preset
 import com.gorisse.thomas.willitfit.fit.dimensionsIn
@@ -58,6 +59,22 @@ class Prefs(context: Context) {
     var carBoot: Boolean
         get() = p.getBoolean("car_boot", false)
         set(value) = p.edit().putBoolean("car_boot", value).apply()
+
+    /** The hallway turn was the last space checked; it wins over [carBoot]. */
+    var hallway: Boolean
+        get() = p.getBoolean("hallway", false)
+        set(value) = p.edit().putBoolean("hallway", value).apply()
+
+    var hall: Hall
+        get() {
+            val typical = Hall.typicalFor(unit)
+            return Hall(
+                p.getFloat("hall_w", typical.widthCm), p.getFloat("hall_t", typical.turnWidthCm),
+                p.getFloat("hall_c", typical.ceilingCm),
+            ).takeIf { it.isValid } ?: typical
+        }
+        set(h) = p.edit().putFloat("hall_w", h.widthCm).putFloat("hall_t", h.turnWidthCm)
+            .putFloat("hall_c", h.ceilingCm).apply()
 
     var boot: Boot
         get() {

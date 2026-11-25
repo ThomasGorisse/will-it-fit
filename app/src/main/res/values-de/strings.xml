@@ -130,4 +130,22 @@
     <string name="boot_over_width">%1$s zu breit für den Kofferraum</string>
     <string name="boot_over_height">%1$s zu hoch für den Kofferraum</string>
     <string name="photo_boot">Öffnung %1$s · innen %2$s</string>
+    <string name="space_hall">Flur</string>
+    <string name="hall_enter">Gib die Flurmaße ein</string>
+    <string name="hall_yes">Ja, es kommt um die Ecke</string>
+    <string name="hall_tight">Ja, aber die Ecke wird eng</string>
+    <string name="hall_no">Nein, es kommt nicht um die Ecke</string>
+    <string name="hall_width">Flurbreite</string>
+    <string name="hall_turn">Nach der Ecke</string>
+    <string name="hall_ceiling">Deckenhöhe</string>
+    <string name="hall_help">Von Wand zu Wand an der engsten Stelle. Biegst du in eine Tür ab? Gib ihre Breite bei Nach der Ecke ein. Waagerecht getragen, ohne Kippen.</string>
+    <string name="hall_margin_spare">%1$s Spielraum · %2$s</string>
+    <string name="hall_limit_width">Flurbreite</string>
+    <string name="hall_limit_turn">die Ecke</string>
+    <string name="hall_limit_ceiling">Decke</string>
+    <string name="hall_over_width">%1$s zu breit für den Flur</string>
+    <string name="hall_over_turn">%1$s zu lang für die Ecke</string>
+    <string name="hall_over_ceiling">%1$s zu hoch für die Decke</string>
+    <string name="photo_hall">Flur %1$s · Decke %2$s</string>
+    <string name="carry_upright_hall">aufrecht, in Gehrichtung</string>
 </resources>

@@ -66,6 +66,13 @@ import com.gorisse.thomas.willitfit.fit.Carry
 import com.gorisse.thomas.willitfit.fit.BootLimit
 import com.gorisse.thomas.willitfit.fit.DoorVerdict
 import com.gorisse.thomas.willitfit.fit.checkBoot
+import com.gorisse.thomas.willitfit.fit.HallLimit
+import com.gorisse.thomas.willitfit.fit.checkHall
+import com.gorisse.thomas.willitfit.scene.HallLabels
+import com.gorisse.thomas.willitfit.scene.HallScene
+import com.gorisse.thomas.willitfit.scene.hallPicture
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.text.rememberTextMeasurer
 import com.gorisse.thomas.willitfit.scene.BootScene
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.capture.PhotoFailure
@@ -105,23 +112,36 @@ fun DoorScreen(
 ) {
     val context = LocalContext.current
     val prefs = remember(context) { Prefs(context) }
-    var carBoot by remember { mutableStateOf(prefs.carBoot) }
+    // 0 the door, 1 the car boot, 2 the hallway turn.
+    var space by remember { mutableIntStateOf(if (prefs.hallway) 2 else if (prefs.carBoot) 1 else 0) }
+    val carBoot = space == 1
+    val hallway = space == 2
+    var hall by remember { mutableStateOf(prefs.hall) }
+    var hallValid by remember(space) { mutableStateOf(true) }
     var boot by remember { mutableStateOf(prefs.boot) }
     var bootTyped by remember { mutableStateOf(prefs.bootTyped) }
     var bootFieldsRevision by remember { mutableIntStateOf(0) }
-    var openingValid by remember(carBoot) { mutableStateOf(true) }
-    var insideValid by remember(carBoot) { mutableStateOf(true) }
+    var openingValid by remember(space) { mutableStateOf(true) }
+    var insideValid by remember(space) { mutableStateOf(true) }
     val bootVerdict = checkBoot(dims, boot)
-    val verdict = if (carBoot) DoorVerdict(bootVerdict.fits, bootVerdict.carry, bootVerdict.marginCm)
-        else checkDoor(dims, door)
+    val hallVerdict = checkHall(dims, hall)
+    val verdict = when {
+        carBoot -> DoorVerdict(bootVerdict.fits, bootVerdict.carry, bootVerdict.marginCm)
+        hallway -> DoorVerdict(hallVerdict.fits, hallVerdict.carry, hallVerdict.marginCm)
+        else -> checkDoor(dims, door)
+    }
     val scheme = MaterialTheme.colorScheme
     val dark = isSystemInDarkTheme()
     val density = LocalDensity.current
     var sheetPx by remember { mutableIntStateOf(0) }
-    var doorValid by remember(carBoot) { mutableStateOf(true) }
-    val fieldsValid = if (carBoot) openingValid && insideValid else doorValid
+    var doorValid by remember(space) { mutableStateOf(true) }
+    val fieldsValid = when {
+        carBoot -> openingValid && insideValid
+        hallway -> hallValid
+        else -> doorValid
+    }
     // A verdict on screen for a second counts as seen: an answer, for Play's rating sheet.
-    LaunchedEffect(fieldsValid, carBoot) {
+    LaunchedEffect(fieldsValid, space) {
         if (fieldsValid) { delay(1_000); onVerdictShown() }
     }
     var holding by remember { mutableStateOf(false) }
@@ -129,16 +149,15 @@ fun DoorScreen(
     var photoFailure by remember { mutableStateOf<PhotoFailure?>(null) }
     var shot by remember { mutableStateOf<Job?>(null) }
     val scope = rememberCoroutineScope()
+    val measurer = rememberTextMeasurer()
     val bootBackground = (if (dark) RoomPalette.Night else RoomPalette.Day).wall.toArgb()
 
-    val answer = stringResource(
-        when {
-            !verdict.fits -> if (carBoot) R.string.boot_no else R.string.door_no
-            verdict.isTight -> if (carBoot) R.string.boot_tight else R.string.door_tight
-            else -> if (carBoot) R.string.boot_yes else R.string.door_yes
-        },
-    )
-    val marginCore = if (carBoot) {
+    val answer = stringResource(answerFor(space, verdict.fits, verdict.isTight))
+    val marginCore = if (hallway) {
+        if (verdict.fits) stringResource(
+            R.string.hall_margin_spare, formatMargin(verdict.marginCm, unit), stringResource(hallVerdict.limit.label()),
+        ) else stringResource(hallVerdict.limit.overLabel(), formatMargin(verdict.marginCm, unit))
+    } else if (carBoot) {
         if (verdict.fits) stringResource(
             R.string.boot_margin_spare, formatMargin(verdict.marginCm, unit), stringResource(bootVerdict.limit.label()),
         ) else stringResource(bootVerdict.limit.overLabel(), formatMargin(verdict.marginCm, unit))
@@ -147,11 +166,23 @@ fun DoorScreen(
         formatMargin(verdict.marginCm, unit),
     )
     val margin = marginCore + " · " + stringResource(
-        // In a boot the object faces the opening, not a door.
-        if (carBoot && verdict.carry == Carry.UPRIGHT) R.string.carry_upright_boot else verdict.carry.label(),
+        // In a boot the object faces the opening, in a hallway the way you walk, not a door.
+        when {
+            verdict.carry != Carry.UPRIGHT || space == 0 -> verdict.carry.label()
+            carBoot -> R.string.carry_upright_boot
+            else -> R.string.carry_upright_hall
+        },
     )
     val objectLine = stringResource(R.string.door_object, objectName(dims), formatDimensions(dims, unit))
-    val doorLine = if (carBoot) stringResource(
+    val hallLabels = HallLabels(
+        width = "${formatNumber(hall.widthCm, unit)} ${unit.symbol}",
+        turnWidth = "${formatNumber(hall.turnWidthCm, unit)} ${unit.symbol}",
+    )
+    val doorLine = if (hallway) stringResource(
+        R.string.photo_hall,
+        "${formatNumber(hall.widthCm, unit)} → ${formatNumber(hall.turnWidthCm, unit)} ${unit.symbol}",
+        "${formatNumber(hall.ceilingCm, unit)} ${unit.symbol}",
+    ) else if (carBoot) stringResource(
         R.string.photo_boot,
         // One unit for the line, at its end: the photo's caption has room for one line only.
         "${formatNumber(boot.openingWidthCm, unit)} × ${formatNumber(boot.openingHeightCm, unit)}",
@@ -167,7 +198,11 @@ fun DoorScreen(
             top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 68.dp,
             bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp),
         )
-        if (carBoot) BootScene(
+        if (hallway) HallScene(
+            dims = dims, hall = hall, verdict = hallVerdict, labels = hallLabels,
+            accent = FurnitureTeal, palette = if (dark) RoomPalette.Night else RoomPalette.Day,
+            modifier = Modifier.fillMaxSize(), contentPadding = scenePadding,
+        ) else if (carBoot) BootScene(
             dims = dims, boot = boot, verdict = bootVerdict,
             accent = FurnitureTeal, palette = if (dark) RoomPalette.Night else RoomPalette.Day,
             modifier = Modifier.fillMaxSize(), contentPadding = scenePadding,
@@ -191,9 +226,17 @@ fun DoorScreen(
                 val result = takePhoto(
                     setBusy = { holding = it },
                     capture = {
-                        // Hold the object on the answer and let the scene draw it before reading it back.
-                        delay(250)
-                        captureScene(activity)
+                        if (hallway) PhotoResult.Success(
+                            // Drawn, not read back from the screen: the plan is not a 3D scene.
+                            hallPicture(
+                                dims, hall, hallVerdict, hallLabels, FurnitureTeal,
+                                if (dark) RoomPalette.Night else RoomPalette.Day, measurer, density,
+                            ).asAndroidBitmap(),
+                        ) else {
+                            // Hold the object on the answer and let the scene draw it before reading it back.
+                            delay(250)
+                            captureScene(activity)
+                        }
                     },
                     save = { bitmap ->
                         val color = when {
@@ -202,7 +245,7 @@ fun DoorScreen(
                             else -> 0xFF8DD99A // FitColors.success, dark
                         }.toInt()
                         // The photo shows how it lies; its caption keeps the boot's margin short.
-                        val lines = listOf(objectLine, doorLine, if (carBoot) marginCore else margin)
+                        val lines = listOf(objectLine, doorLine, if (space != 0) marginCore else margin)
                         savePhoto(
                             context, bitmap, answer, lines, signature, color,
                             // The boot floats on the screen's wall colour; the door scene is opaque.
@@ -250,12 +293,17 @@ fun DoorScreen(
         ) {
             Column(Modifier.verticalScroll(rememberScrollState()).navigationBarsPadding().padding(top = 20.dp, bottom = 16.dp)) {
                 SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 12.dp)) {
-                    listOf(R.string.space_door, R.string.space_boot).forEachIndexed { i, label ->
+                    listOf(R.string.space_door, R.string.space_boot, R.string.space_hall).forEachIndexed { i, label ->
                         SegmentedButton(
-                            selected = carBoot == (i == 1),
-                            onClick = { carBoot = i == 1; prefs.carBoot = carBoot; photoFailure = null },
-                            shape = SegmentedButtonDefaults.itemShape(i, 2),
-                        ) { Text(stringResource(label)) }
+                            selected = space == i,
+                            onClick = {
+                                space = i
+                                prefs.carBoot = i == 1
+                                prefs.hallway = i == 2
+                                photoFailure = null
+                            },
+                            shape = SegmentedButtonDefaults.itemShape(i, 3),
+                        ) { Text(stringResource(label), maxLines = 1) }
                     }
                 }
                 Column(Modifier.padding(horizontal = 24.dp)) {
@@ -266,8 +314,11 @@ fun DoorScreen(
                     )
                     Spacer(Modifier.height(8.dp))
                     if (!fieldsValid) {
-                        Text(stringResource(if (carBoot) R.string.boot_enter else R.string.door_enter), style = MaterialTheme.typography.headlineSmall)
-                    } else AnimatedContent(Triple(carBoot, verdict.fits, verdict.isTight), label = "verdict") { (bootMode, fits, tight) ->
+                        Text(
+                            stringResource(when (space) { 1 -> R.string.boot_enter; 2 -> R.string.hall_enter; else -> R.string.door_enter }),
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                    } else AnimatedContent(Triple(space, verdict.fits, verdict.isTight), label = "verdict") { (shown, fits, tight) ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 if (fits) Icons.Outlined.CheckCircle else Icons.Outlined.Cancel,
@@ -277,13 +328,7 @@ fun DoorScreen(
                             )
                             Spacer(Modifier.width(12.dp))
                             Text(
-                                stringResource(
-                                    when {
-                                        !fits -> if (bootMode) R.string.boot_no else R.string.door_no
-                                        tight -> if (bootMode) R.string.boot_tight else R.string.door_tight
-                                        else -> if (bootMode) R.string.boot_yes else R.string.door_yes
-                                    },
-                                ),
+                                stringResource(answerFor(shown, fits, tight)),
                                 style = MaterialTheme.typography.headlineSmall,
                             )
                         }
@@ -293,7 +338,7 @@ fun DoorScreen(
                         text = margin,
                         style = MaterialTheme.typography.bodyLarge,
                     )
-                    if (!carBoot && fieldsValid && !verdict.fits && dims.shape == Shape.SOFA) {
+                    if (space == 0 && fieldsValid && !verdict.fits && dims.shape == Shape.SOFA) {
                         Spacer(Modifier.height(4.dp))
                         Text(
                             stringResource(R.string.door_sofa_hint),
@@ -303,7 +348,31 @@ fun DoorScreen(
                     }
                 }
                 Spacer(Modifier.height(16.dp))
-                if (carBoot) key(carBoot, bootFieldsRevision) {
+                if (hallway) key(space) {
+                    LengthFields(
+                        labels = listOf(
+                            stringResource(R.string.hall_width), stringResource(R.string.hall_turn), stringResource(R.string.hall_ceiling),
+                        ),
+                        values = listOf(hall.widthCm, hall.turnWidthCm, hall.ceilingCm),
+                        unit = unit,
+                        onChange = { i, cm ->
+                            hall = when (i) {
+                                0 -> hall.copy(widthCm = cm)
+                                1 -> hall.copy(turnWidthCm = cm)
+                                else -> hall.copy(ceilingCm = cm)
+                            }
+                            prefs.hall = hall
+                        },
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        onValidChange = { hallValid = it },
+                    )
+                    Text(
+                        stringResource(R.string.hall_help),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = scheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp),
+                    )
+                } else if (carBoot) key(space, bootFieldsRevision) {
                     val updateBoot: (Boot) -> Unit = { boot = it; prefs.boot = it; bootTyped = true }
                     Text(stringResource(R.string.boot_opening), modifier = Modifier.padding(horizontal = 24.dp), style = MaterialTheme.typography.titleSmall)
                     LengthFields(
@@ -338,7 +407,7 @@ fun DoorScreen(
                     }, modifier = Modifier.padding(start = 12.dp)) {
                         Text(stringResource(R.string.boot_example))
                     }
-                } else key(carBoot) {
+                } else key(space) {
                     LengthFields(
                         labels = listOf(stringResource(R.string.door_width), stringResource(R.string.door_height)),
                         values = listOf(door.widthCm, door.heightCm),
@@ -365,6 +434,24 @@ fun DoorScreen(
             }
         }
     }
+}
+
+private fun answerFor(space: Int, fits: Boolean, tight: Boolean): Int = when (space) {
+    1 -> if (!fits) R.string.boot_no else if (tight) R.string.boot_tight else R.string.boot_yes
+    2 -> if (!fits) R.string.hall_no else if (tight) R.string.hall_tight else R.string.hall_yes
+    else -> if (!fits) R.string.door_no else if (tight) R.string.door_tight else R.string.door_yes
+}
+
+private fun HallLimit.label(): Int = when (this) {
+    HallLimit.WIDTH -> R.string.hall_limit_width
+    HallLimit.TURN -> R.string.hall_limit_turn
+    HallLimit.CEILING -> R.string.hall_limit_ceiling
+}
+
+private fun HallLimit.overLabel(): Int = when (this) {
+    HallLimit.WIDTH -> R.string.hall_over_width
+    HallLimit.TURN -> R.string.hall_over_turn
+    HallLimit.CEILING -> R.string.hall_over_ceiling
 }
 
 private fun BootLimit.label(): Int = when (this) {

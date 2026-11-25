@@ -139,4 +139,22 @@
     <string name="boot_over_width">%1$s too wide for the boot</string>
     <string name="boot_over_height">%1$s too tall for the boot</string>
     <string name="photo_boot">Opening %1$s · inside %2$s</string>
+    <string name="space_hall">Hallway</string>
+    <string name="hall_enter">Enter the hallway\'s size</string>
+    <string name="hall_yes">Yes, it makes the turn</string>
+    <string name="hall_tight">Yes, but the turn is tight</string>
+    <string name="hall_no">No, it won\'t make the turn</string>
+    <string name="hall_width">Hallway width</string>
+    <string name="hall_turn">After the turn</string>
+    <string name="hall_ceiling">Ceiling height</string>
+    <string name="hall_help">Wall to wall at the narrowest point. Turning through a door? Enter its width as After the turn. Carried level, without tilting.</string>
+    <string name="hall_margin_spare">%1$s to spare · %2$s</string>
+    <string name="hall_limit_width">hallway width</string>
+    <string name="hall_limit_turn">the turn</string>
+    <string name="hall_limit_ceiling">ceiling</string>
+    <string name="hall_over_width">%1$s too wide for the hallway</string>
+    <string name="hall_over_turn">%1$s too long to make the turn</string>
+    <string name="hall_over_ceiling">%1$s too tall for the ceiling</string>
+    <string name="photo_hall">Hallway %1$s · ceiling %2$s</string>
+    <string name="carry_upright_hall">upright, facing ahead</string>
 </resources>

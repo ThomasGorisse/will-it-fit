@@ -130,4 +130,22 @@
     <string name="boot_over_width">%1$s largo demais para o porta-malas</string>
     <string name="boot_over_height">%1$s alto demais para o porta-malas</string>
     <string name="photo_boot">Abertura %1$s · interior %2$s</string>
+    <string name="space_hall">Corredor</string>
+    <string name="hall_enter">Digite as medidas do corredor</string>
+    <string name="hall_yes">Sim, faz a curva</string>
+    <string name="hall_tight">Sim, mas a curva é apertada</string>
+    <string name="hall_no">Não, não faz a curva</string>
+    <string name="hall_width">Largura do corredor</string>
+    <string name="hall_turn">Após a curva</string>
+    <string name="hall_ceiling">Altura do teto</string>
+    <string name="hall_help">De parede a parede, no ponto mais estreito. Vai virar numa porta? Digite a largura dela em Após a curva. Carregado na horizontal, sem inclinar.</string>
+    <string name="hall_margin_spare">%1$s de folga · %2$s</string>
+    <string name="hall_limit_width">largura do corredor</string>
+    <string name="hall_limit_turn">a curva</string>
+    <string name="hall_limit_ceiling">teto</string>
+    <string name="hall_over_width">%1$s largo demais para o corredor</string>
+    <string name="hall_over_turn">%1$s comprido demais para a curva</string>
+    <string name="hall_over_ceiling">%1$s alto demais para o teto</string>
+    <string name="photo_hall">Corredor %1$s · teto %2$s</string>
+    <string name="carry_upright_hall">em pé, de frente</string>
 </resources>
