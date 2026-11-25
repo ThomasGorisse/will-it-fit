@@ -77,6 +77,8 @@ import com.gorisse.thomas.willitfit.scene.BootScene
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.capture.PhotoFailure
 import com.gorisse.thomas.willitfit.capture.PhotoResult
+import android.graphics.Rect
+import com.gorisse.thomas.willitfit.capture.CardVerdict
 import com.gorisse.thomas.willitfit.capture.captureScene
 import com.gorisse.thomas.willitfit.capture.savePhoto
 import com.gorisse.thomas.willitfit.capture.sharePhoto
@@ -253,12 +255,21 @@ fun DoorScreen(
                             verdict.isTight -> 0xFFF2C46D
                             else -> 0xFF8DD99A // FitColors.success, dark
                         }.toInt()
-                        // The photo shows how it lies; its caption keeps the boot's margin short.
-                        val lines = listOf(objectLine, doorLine, if (space != 0) marginCore else margin)
+                        // The card: the answer, then the margin in large (with how it is carried
+                        // through a door; the picture shows how it lies elsewhere), then the sizes.
                         savePhoto(
-                            context, bitmap, answer, lines, signature, color,
+                            context, bitmap, answer, if (space != 0) marginCore else margin, listOf(objectLine, doorLine),
+                            signature, color,
+                            verdict = when {
+                                !verdict.fits -> CardVerdict.NO
+                                verdict.isTight -> CardVerdict.TIGHT
+                                else -> CardVerdict.FITS
+                            },
                             // The boot floats on the screen's wall colour; the door scene is opaque.
                             background = if (carBoot) bootBackground else null,
+                            // The scene shows above the sheet: the rest is behind it. The hallway
+                            // plan is drawn for the card, whole.
+                            crop = if (hallway) null else Rect(0, 0, bitmap.width, (bitmap.height - sheetPx + with(density) { 28.dp.roundToPx() }).coerceIn(bitmap.height / 3, bitmap.height)),
                         )
                     },
                 )
