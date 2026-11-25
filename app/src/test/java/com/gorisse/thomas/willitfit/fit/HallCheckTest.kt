@@ -73,6 +73,14 @@ class HallCheckTest {
     }
 
     @Test
+    fun `too wide for the hallway is said as too wide, not too long`() {
+        val v = checkHall(Dimensions(100f, 100f, 100f), hall90)
+        assertFalse(v.fits)
+        assertEquals(HallLimit.WIDTH, v.limit)
+        assertEquals(-10f, v.marginCm, 0.01f)
+    }
+
+    @Test
     fun `the typical hallways are valid in both units`() {
         assertTrue(Hall.typicalFor(LengthUnit.CM).isValid)
         assertTrue(Hall.typicalFor(LengthUnit.INCH).isValid)

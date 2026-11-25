@@ -89,20 +89,29 @@ fun turn(widthCm: Float, turnWidthCm: Float, acrossCm: Float): Turn {
  * closest miss.
  */
 fun checkHall(obj: Dimensions, hall: Hall): HallVerdict {
-    fun verdict(carry: Carry): HallVerdict {
+    val narrowest = minOf(hall.widthCm, hall.turnWidthCm)
+
+    // The verdict, and everything it misses by, all added up: what ranks the misses.
+    fun verdict(carry: Carry): Pair<HallVerdict, Float> {
         val across = obj.side(carry.across)
-        val turn = turn(hall.widthCm, hall.turnWidthCm, across)
-        val gaps = listOf(
-            HallLimit.CEILING to hall.ceilingCm - obj.side(carry.up),
-            HallLimit.WIDTH to minOf(hall.widthCm, hall.turnWidthCm) - across,
-            HallLimit.TURN to turn.longestCm - obj.side(carry.along),
+        val along = obj.side(carry.along)
+        val widthGap = narrowest - across
+        val ceilingGap = hall.ceilingCm - obj.side(carry.up)
+        val turn = turn(hall.widthCm, hall.turnWidthCm, minOf(across, narrowest))
+        val turnGap = turn.longestCm - along
+        val gaps = listOfNotNull(
+            HallLimit.CEILING to ceilingGap,
+            HallLimit.WIDTH to widthGap,
+            // Too wide for a hallway, it never gets to the turn: the width is what stops it.
+            if (widthGap >= 0f) HallLimit.TURN to turnGap else null,
         )
         val (limit, margin) = gaps.minBy { it.second }
-        return HallVerdict(margin >= 0f, carry, margin, limit, turn.angleDeg)
+        val missing = listOf(widthGap, ceilingGap, turnGap).sumOf { minOf(it, 0f).toDouble() }.toFloat()
+        return HallVerdict(margin >= 0f, carry, margin, limit, turn.angleDeg) to missing
     }
 
     val all = Carry.entries.map(::verdict)
-    val fitting = all.filter { it.fits }
+    val fitting = all.map { it.first }.filter { it.fits }
     if (fitting.isNotEmpty()) {
         return fitting.sortedWith(
             compareByDescending<HallVerdict> { it.carry.isUpright }
@@ -110,5 +119,8 @@ fun checkHall(obj: Dimensions, hall: Hall): HallVerdict {
                 .thenBy { it.carry.ordinal },
         ).first()
     }
-    return all.sortedWith(compareByDescending<HallVerdict> { it.marginCm }.thenBy { it.carry.ordinal }).first()
+    // A miss is as close as all it misses by: 5 cm too wide and 1.5 m too long is not close.
+    return all.sortedWith(
+        compareByDescending<Pair<HallVerdict, Float>> { it.second }.thenBy { it.first.carry.ordinal },
+    ).first().first
 }

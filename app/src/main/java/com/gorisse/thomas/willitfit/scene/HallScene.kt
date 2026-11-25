@@ -151,9 +151,12 @@ fun hallPicture(
     val pictureDensity = Density(width / 360f, density.fontScale)
     CanvasDrawScope().draw(pictureDensity, LayoutDirection.Ltr, androidx.compose.ui.graphics.Canvas(image), size) {
         val pad = 24.dp.toPx()
+        // The caption card covers the bottom: 45 hundredths of the width with three lines, see
+        // savePhoto. The plan stays above it.
+        val caption = size.width * 0.48f
         drawHall(
             hallPlan(dims, hall, verdict), verdict, labels, accent, palette, measurer,
-            Rect(pad, pad, size.width - pad, size.height - pad), 1.dp.toPx(),
+            Rect(pad, pad, size.width - pad, size.height - caption), 1.dp.toPx(),
         )
     }
     return image
