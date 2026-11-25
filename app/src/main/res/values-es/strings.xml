@@ -149,4 +149,15 @@
     <string name="hall_over_ceiling">%1$s demasiado alto para el techo</string>
     <string name="photo_hall">Pasillo %1$s · techo %2$s</string>
     <string name="carry_upright_hall">de pie, de frente</string>
+    <string name="news_channel">Novedades y consejos</string>
+    <string name="news_offer">¿Te avisamos cuando lleguen nuevas comprobaciones?</string>
+    <string name="news_offer_body">Dos veces al mes como mucho, nunca un día que uses la app.</string>
+    <string name="news_yes">Sí</string>
+    <string name="news_no">No, gracias</string>
+    <string name="news_turn_off">Desactivar</string>
+    <string name="settings_news_body">Nuevas comprobaciones y consejos, dos veces al mes como mucho.</string>
+    <string name="reminder_title">¿Pensando en un sofá nuevo?</string>
+    <string name="reminder_body">Comprueba que pasa por la puerta antes de que llegue.</string>
+    <string name="whats_new_title">Nuevo: la esquina del pasillo</string>
+    <string name="whats_new_body">¿Gira el sofá la esquina? Introduce las medidas del pasillo y compruébalo.</string>
 </resources>

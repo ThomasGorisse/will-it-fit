@@ -1,6 +1,7 @@
 package com.gorisse.thomas.willitfit.data
 
 import android.content.Context
+import android.os.Build
 import com.gorisse.thomas.willitfit.fit.Boot
 import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Dimensions
@@ -100,6 +101,31 @@ class Prefs(context: Context) {
     var referrerRead: Boolean
         get() = p.getBoolean("referrer_read", false)
         set(value) = p.edit().putBoolean("referrer_read", value).apply()
+
+    /**
+     * News and tips (see [News]). Android 13 and later ask the person first, so it starts off
+     * there; before 13 there is no such question, and every note carries its Turn off.
+     */
+    var newsOn: Boolean
+        get() = p.getBoolean("news_on", Build.VERSION.SDK_INT < 33)
+        set(value) = p.edit().putBoolean("news_on", value).apply()
+
+    /** The offer card was shown once: it never comes back, whatever the answer. */
+    var newsOffered: Boolean
+        get() = p.getBoolean("news_offered", false)
+        set(value) = p.edit().putBoolean("news_offered", value).apply()
+
+    var lastOpenAt: Long
+        get() = p.getLong("last_open_at", 0L)
+        set(value) = p.edit().putLong("last_open_at", value).apply()
+
+    var updatedAt: Long
+        get() = p.getLong("updated_at", 0L)
+        set(value) = p.edit().putLong("updated_at", value).apply()
+
+    var newsSentAt: List<Long>
+        get() = p.getString("news_sent_at", null)?.split(',')?.mapNotNull { it.toLongOrNull() } ?: emptyList()
+        set(value) = p.edit().putString("news_sent_at", value.joinToString(",")).apply()
 
     /** Answers the person got: a door verdict seen, an AR photo taken. Counted on the way back home. */
     var answers: Int

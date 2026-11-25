@@ -149,4 +149,15 @@
     <string name="hall_over_ceiling">%1$s trop haut pour le plafond</string>
     <string name="photo_hall">Couloir %1$s · plafond %2$s</string>
     <string name="carry_upright_hall">debout, face à la marche</string>
+    <string name="news_channel">Nouveautés et astuces</string>
+    <string name="news_offer">Être prévenu quand de nouvelles vérifications arrivent ?</string>
+    <string name="news_offer_body">Deux fois par mois au plus, jamais un jour où vous utilisez l\'app.</string>
+    <string name="news_yes">Oui</string>
+    <string name="news_no">Non merci</string>
+    <string name="news_turn_off">Désactiver</string>
+    <string name="settings_news_body">Nouvelles vérifications et astuces, deux fois par mois au plus.</string>
+    <string name="reminder_title">Un canapé en vue ?</string>
+    <string name="reminder_body">Vérifiez qu\'il passe la porte avant la livraison.</string>
+    <string name="whats_new_title">Nouveau : le virage du couloir</string>
+    <string name="whats_new_body">Le canapé passera-t-il l\'angle ? Entrez les cotes du couloir et vérifiez.</string>
 </resources>

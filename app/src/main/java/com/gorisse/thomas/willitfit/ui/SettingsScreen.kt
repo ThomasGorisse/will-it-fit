@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.outlined.ViewInAr
 import androidx.compose.material3.HorizontalDivider
@@ -21,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,9 +43,15 @@ import com.gorisse.thomas.willitfit.BuildConfig
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 
-/** Screen 5, "Settings": units, privacy, the ARCore notice, licences. */
+/** Screen 5, "Settings": units, news and tips, privacy, the ARCore notice, licences. */
 @Composable
-fun SettingsScreen(unit: LengthUnit, onUnit: (LengthUnit) -> Unit, onBack: () -> Unit) {
+fun SettingsScreen(
+    unit: LengthUnit,
+    onUnit: (LengthUnit) -> Unit,
+    onBack: () -> Unit,
+    newsOn: Boolean = false,
+    onNews: (Boolean) -> Unit = {},
+) {
     AppScaffold(title = stringResource(R.string.settings_title), onBack = onBack) { padding ->
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
             Column(
@@ -63,6 +73,13 @@ fun SettingsScreen(unit: LengthUnit, onUnit: (LengthUnit) -> Unit, onBack: () ->
                             }
                         }
                     },
+                )
+                ListItem(
+                    leadingContent = { Icon(Icons.Outlined.Notifications, null) },
+                    headlineContent = { Text(stringResource(R.string.settings_news)) },
+                    supportingContent = { Text(stringResource(R.string.settings_news_body)) },
+                    trailingContent = { Switch(checked = newsOn, onCheckedChange = null) },
+                    modifier = Modifier.toggleable(value = newsOn, role = Role.Switch, onValueChange = onNews),
                 )
                 HorizontalDivider(Modifier.padding(horizontal = 16.dp))
                 ListItem(

@@ -8,6 +8,8 @@
 
     <!-- Offline app: nothing is downloaded, no model comes from a URL. -->
     <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <!-- News and tips, posted on the phone (see data/News.kt); asked once, after a first "yes". -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -49,6 +51,19 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+
+        <!-- Play updated the app: the version's note is planned for the next day. -->
+        <receiver
+            android:name=".data.AppUpdatedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+        <!-- "Turn off" on a note. -->
+        <receiver
+            android:name=".data.NewsOffReceiver"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

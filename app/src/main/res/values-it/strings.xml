@@ -149,4 +149,15 @@
     <string name="hall_over_ceiling">%1$s troppo alto per il soffitto</string>
     <string name="photo_hall">Corridoio %1$s · soffitto %2$s</string>
     <string name="carry_upright_hall">in piedi, di fronte</string>
+    <string name="news_channel">Novità e consigli</string>
+    <string name="news_offer">Vuoi un avviso quando arrivano nuove verifiche?</string>
+    <string name="news_offer_body">Al massimo due volte al mese, mai in un giorno in cui usi l\'app.</string>
+    <string name="news_yes">Sì</string>
+    <string name="news_no">No, grazie</string>
+    <string name="news_turn_off">Disattiva</string>
+    <string name="settings_news_body">Nuove verifiche e consigli, al massimo due volte al mese.</string>
+    <string name="reminder_title">Un divano nuovo in vista?</string>
+    <string name="reminder_body">Verifica che passi dalla porta prima della consegna.</string>
+    <string name="whats_new_title">Novità: l\'angolo del corridoio</string>
+    <string name="whats_new_body">Il divano gira l\'angolo? Inserisci le misure del corridoio e verifica.</string>
 </resources>

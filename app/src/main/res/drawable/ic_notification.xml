@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The app's door and box, one colour: Android tints the status bar icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M13,2h7v20h-2V4h-5zM3,9l6,-2l5,2v9l-6,2l-5,-2zM5,10.4v6.2l3,1.2v-6.2zM10,11.6v6.2l2,-0.8v-6.2z" />
+</vector>

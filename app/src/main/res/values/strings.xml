@@ -158,4 +158,19 @@
     <string name="hall_over_ceiling">%1$s too tall for the ceiling</string>
     <string name="photo_hall">Hallway %1$s · ceiling %2$s</string>
     <string name="carry_upright_hall">upright, facing ahead</string>
+    <!-- News and tips (data/News.kt). The version's note: empty = no note. Title 40, text 90 at most. -->
+    <string name="news_channel">News and tips</string>
+    <string name="news_offer">Get a note when new checks arrive?</string>
+    <string name="news_offer_body">Twice a month at most, never on a day you use the app.</string>
+    <string name="news_yes">Yes</string>
+    <string name="news_no">No thanks</string>
+    <string name="news_turn_off">Turn off</string>
+    <string name="settings_news_body">New checks and tips, twice a month at most.</string>
+    <string name="reminder_title">Eyeing a new sofa?</string>
+    <string name="reminder_body">Check it fits your door before it\'s delivered.</string>
+    <string name="whats_new_title">New: the hallway turn</string>
+    <string name="whats_new_body">Will the sofa make the corner? Enter the hallway and see.</string>
+    <string name="settings_news">@string/news_channel</string>
+    <!-- Which screen the version's note opens: door, boot, hall or tape. -->
+    <string name="whats_new_open" translatable="false">hall</string>
 </resources>
