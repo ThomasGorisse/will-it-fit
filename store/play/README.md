@@ -4,7 +4,7 @@ the Play-signed APK to test before production).
 Locales: en-US, fr-FR, de-DE, es-ES, it-IT and pt-BR; see locales.json.
 Each locale contains a title, short description, plain-text full description and changelogs/default.txt.
 Run python3 store/play/check.py: character limits checked at 30 / 80 / 4000 / 500, including line breaks.
-feature-graphic.png is 1024×500 RGB; made with the built-in image generation tool; prompts in feature-graphic-prompt.txt.
+feature-graphic.png is 1024×500 RGB: since 2026-11-25 a crop of the real en-US capture `screenshots/phone/en-US/1-sofa.jpg` (crop 1280×624 from y 400, scaled with lanczos), the app's own 3D room with its dimension tags, no text to translate. It replaces a generated sofa photo that could pass for an AR capture. video.txt is empty on purpose: the trailer was a generated landscape clip (1 view), and publish.py clears the Play video when the file is empty.
 
 Phone screenshots (`screenshots/phone/<locale>/1-sofa.jpg`…`5-dark.jpg`, 1280×2560, 2:1, cm): one
 series per locale with the app UI in that language (en-US uses the en-GB UI, for centimetres), taken
