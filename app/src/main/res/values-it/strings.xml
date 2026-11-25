@@ -130,4 +130,22 @@
     <string name="boot_over_width">%1$s troppo largo per il bagagliaio</string>
     <string name="boot_over_height">%1$s troppo alto per il bagagliaio</string>
     <string name="photo_boot">Apertura %1$s · interno %2$s</string>
+    <string name="space_hall">Corridoio</string>
+    <string name="hall_enter">Inserisci le misure del corridoio</string>
+    <string name="hall_yes">Sì, gira l\'angolo</string>
+    <string name="hall_tight">Sì, ma l\'angolo è stretto</string>
+    <string name="hall_no">No, non gira l\'angolo</string>
+    <string name="hall_width">Larghezza del corridoio</string>
+    <string name="hall_turn">Dopo l\'angolo</string>
+    <string name="hall_ceiling">Altezza del soffitto</string>
+    <string name="hall_help">Da muro a muro, nel punto più stretto. Giri in una porta? Metti la sua larghezza in Dopo l\'angolo. Portato in piano, senza inclinarlo.</string>
+    <string name="hall_margin_spare">%1$s di margine · %2$s</string>
+    <string name="hall_limit_width">larghezza del corridoio</string>
+    <string name="hall_limit_turn">l\'angolo</string>
+    <string name="hall_limit_ceiling">soffitto</string>
+    <string name="hall_over_width">%1$s troppo largo per il corridoio</string>
+    <string name="hall_over_turn">%1$s troppo lungo per l\'angolo</string>
+    <string name="hall_over_ceiling">%1$s troppo alto per il soffitto</string>
+    <string name="photo_hall">Corridoio %1$s · soffitto %2$s</string>
+    <string name="carry_upright_hall">in piedi, di fronte</string>
 </resources>

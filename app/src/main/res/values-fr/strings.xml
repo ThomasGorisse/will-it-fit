@@ -130,4 +130,22 @@
     <string name="boot_over_width">%1$s trop large pour le coffre</string>
     <string name="boot_over_height">%1$s trop haut pour le coffre</string>
     <string name="photo_boot">Ouverture %1$s · intérieur %2$s</string>
+    <string name="space_hall">Couloir</string>
+    <string name="hall_enter">Entrez les cotes du couloir</string>
+    <string name="hall_yes">Oui, ça passe le virage</string>
+    <string name="hall_tight">Oui, mais le virage est juste</string>
+    <string name="hall_no">Non, ça ne passe pas le virage</string>
+    <string name="hall_width">Largeur du couloir</string>
+    <string name="hall_turn">Après le virage</string>
+    <string name="hall_ceiling">Hauteur sous plafond</string>
+    <string name="hall_help">De mur à mur, au plus étroit. Vous tournez dans une porte ? Entrez sa largeur dans Après le virage. Porté à plat, sans l\'incliner.</string>
+    <string name="hall_margin_spare">%1$s de marge · %2$s</string>
+    <string name="hall_limit_width">largeur du couloir</string>
+    <string name="hall_limit_turn">le virage</string>
+    <string name="hall_limit_ceiling">plafond</string>
+    <string name="hall_over_width">%1$s trop large pour le couloir</string>
+    <string name="hall_over_turn">%1$s trop long pour le virage</string>
+    <string name="hall_over_ceiling">%1$s trop haut pour le plafond</string>
+    <string name="photo_hall">Couloir %1$s · plafond %2$s</string>
+    <string name="carry_upright_hall">debout, face à la marche</string>
 </resources>
