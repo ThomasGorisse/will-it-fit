@@ -96,6 +96,11 @@ class Prefs(context: Context) {
         p.edit().putBoolean("boot_typed", false).apply()
     }
 
+    /** Play's install referrer was read: it is read once, on the first launch that reaches Play. */
+    var referrerRead: Boolean
+        get() = p.getBoolean("referrer_read", false)
+        set(value) = p.edit().putBoolean("referrer_read", value).apply()
+
     /** Answers the person got: a door verdict seen, an AR photo taken. Counted on the way back home. */
     var answers: Int
         get() = p.getInt("answers", 0)

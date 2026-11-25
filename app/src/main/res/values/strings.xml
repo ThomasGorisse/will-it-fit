@@ -113,6 +113,7 @@
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Sizes from the text: %1$s</string>
     <string name="text_sizes_none">No size found in this text. Type them in, or select just the line with the sizes.</string>
+    <string name="link_opened">The check you were sent is open, with its sizes.</string>
     <string name="space_door">Door</string>
     <string name="space_boot">Car boot</string>
     <string name="boot_enter">Enter the boot\'s size</string>

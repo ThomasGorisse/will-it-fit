@@ -77,7 +77,6 @@ import com.gorisse.thomas.willitfit.scene.BootScene
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.capture.PhotoFailure
 import com.gorisse.thomas.willitfit.capture.PhotoResult
-import com.gorisse.thomas.willitfit.capture.STORE_LINK
 import com.gorisse.thomas.willitfit.capture.captureScene
 import com.gorisse.thomas.willitfit.capture.savePhoto
 import com.gorisse.thomas.willitfit.capture.sharePhoto
@@ -85,6 +84,8 @@ import com.gorisse.thomas.willitfit.capture.takePhoto
 import com.gorisse.thomas.willitfit.scene.FurnitureTeal
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
+import com.gorisse.thomas.willitfit.fit.SharedCheck
+import com.gorisse.thomas.willitfit.fit.Space
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.Shape
 import com.gorisse.thomas.willitfit.fit.checkDoor
@@ -191,6 +192,14 @@ fun DoorScreen(
         R.string.photo_door, "${formatNumber(door.widthCm, unit)} × ${formatNumber(door.heightCm, unit)} ${unit.symbol}",
     )
     val signature = stringResource(R.string.photo_signature)
+    // The link opens the same check for whoever receives it, in the app or on its page.
+    val checkLink = {
+        when (space) {
+            1 -> SharedCheck(dims, Space.BOOT, boot = boot, unit = unit)
+            2 -> SharedCheck(dims, Space.HALL, hall = hall, unit = unit)
+            else -> SharedCheck(dims, Space.DOOR, door = door, unit = unit)
+        }.link()
+    }
     val chooser = stringResource(R.string.share_chooser)
 
     Box(Modifier.fillMaxSize().imePadding()) {
@@ -255,7 +264,7 @@ fun DoorScreen(
                 )
                 when (result) {
                     is PhotoResult.Success -> sharePhoto(
-                        context, result.value, chooser, "$answer · $margin\n$objectLine · $doorLine\n$STORE_LINK",
+                        context, result.value, chooser, "$answer · $margin\n$objectLine · $doorLine\n${checkLink()}",
                     )
                     is PhotoResult.Failure -> photoFailure = result.reason
                 }

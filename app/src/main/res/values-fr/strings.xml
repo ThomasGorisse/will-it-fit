@@ -104,6 +104,7 @@
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Tailles reprises du texte : %1$s</string>
     <string name="text_sizes_none">Aucune taille trouvée dans ce texte. Tapez-les, ou sélectionnez juste la ligne des dimensions.</string>
+    <string name="link_opened">La vérification qu\'on vous a envoyée est ouverte, avec ses mesures.</string>
     <string name="space_door">Porte</string>
     <string name="space_boot">Coffre</string>
     <string name="boot_enter">Entrez les cotes du coffre</string>

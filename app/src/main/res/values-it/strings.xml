@@ -104,6 +104,7 @@
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Misure prese dal testo: %1$s</string>
     <string name="text_sizes_none">Nessuna misura in questo testo. Scrivile, o seleziona solo la riga con le misure.</string>
+    <string name="link_opened">Ecco la verifica che ti hanno mandato, con le sue misure.</string>
     <string name="space_door">Porta</string>
     <string name="space_boot">Bagagliaio</string>
     <string name="boot_enter">Inserisci le misure del bagagliaio</string>
