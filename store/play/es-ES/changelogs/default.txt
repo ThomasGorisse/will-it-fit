@@ -1,6 +1,6 @@
 Novedades
 • ¿Cabe en el coche? Introduce la apertura y el interior del maletero: la respuesta dice qué medida bloquea.
-• Tus últimas medidas vuelven con un toque.
+• Tus últimas medidas vuelven con un toque, en la app o manteniendo pulsado su icono.
 • Guarda la foto en tu galería.
 • Metro RA: apunta a dos extremos y usa la longitud como lado.
 • Comparte o selecciona el texto de un anuncio («220 × 95 × 85 cm») y las medidas se rellenan.

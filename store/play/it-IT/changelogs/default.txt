@@ -1,6 +1,6 @@
 Novità
 • Entra in auto? Inserisci apertura e interno del bagagliaio: la risposta dice quale misura blocca.
-• Le tue ultime misure tornano con un tocco.
+• Le tue ultime misure tornano con un tocco, nell'app o tenendo premuta la sua icona.
 • Salva la foto nella tua galleria.
 • Metro AR: punta due estremi e usa la lunghezza come lato.
 • Condividi o seleziona il testo di un annuncio («220 × 95 × 85 cm») e le misure si compilano.
