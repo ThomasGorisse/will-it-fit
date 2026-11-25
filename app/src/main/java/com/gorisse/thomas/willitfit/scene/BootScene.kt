@@ -119,10 +119,12 @@ fun BootScene(
             intensity = if (palette.isNight) 900f else DEFAULT_FILL_LIGHT_INTENSITY
         },
     ) {
-        val carpetColor = if (palette.isNight) Color(0xFF393633) else Color(0xFF625D57)
-        val trimColor = if (palette.isNight) Color(0xFF302F2D) else Color(0xFF4C4A47)
-        val seatColor = if (palette.isNight) Color(0xFF282726) else Color(0xFF44413E)
-        val bodyColor = if (palette.isNight) Color(0xFF6A7074) else Color(0xFFC4CBCF)
+        // At night the boot stood as one dark block on a dark floor: the paint and the trim keep
+        // enough light to read as a car, the seal alone stays dark to draw the opening.
+        val carpetColor = if (palette.isNight) Color(0xFF46423E) else Color(0xFF625D57)
+        val trimColor = if (palette.isNight) Color(0xFF403E3B) else Color(0xFF4C4A47)
+        val seatColor = if (palette.isNight) Color(0xFF363431) else Color(0xFF44413E)
+        val bodyColor = if (palette.isNight) Color(0xFF9AA1A6) else Color(0xFFC4CBCF)
         val sealColor = if (palette.isNight) Color(0xFF191B1D) else Color(0xFF2D3032)
         val groundColor = if (palette.isNight) Color(0xFF514D48) else Color(0xFFB6B2AA)
         val carpet = remember(materialLoader) { materialLoader.createColorInstance(carpetColor, roughness = 1f) }
