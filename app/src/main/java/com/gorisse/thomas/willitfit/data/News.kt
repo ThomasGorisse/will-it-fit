@@ -144,14 +144,17 @@ object News {
 class NewsWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
     override fun doWork(): Result {
         val kind = inputData.getString("kind")?.let { runCatching { NewsKind.valueOf(it) }.getOrNull() } ?: return Result.success()
-        val prefs = Prefs(applicationContext)
-        val now = System.currentTimeMillis()
-        when (val decision = NewsPolicy.decide(kind, News.state(prefs), now, ZoneId.systemDefault())) {
-            NewsPolicy.Decision.Post -> if (News.allowed(applicationContext, prefs) && News.post(applicationContext, kind)) {
-                prefs.newsSentAt = NewsPolicy.sent(prefs.newsSentAt, now)
+        // Both kinds may wake together: one at a time, so the cap counts the other's note.
+        synchronized(News) {
+            val prefs = Prefs(applicationContext)
+            val now = System.currentTimeMillis()
+            when (val decision = NewsPolicy.decide(kind, News.state(prefs), now, ZoneId.systemDefault())) {
+                NewsPolicy.Decision.Post -> if (News.allowed(applicationContext, prefs) && News.post(applicationContext, kind)) {
+                    prefs.newsSentAt = NewsPolicy.sent(prefs.newsSentAt, now)
+                }
+                is NewsPolicy.Decision.Later -> News.enqueue(applicationContext, kind, decision.at, now)
+                NewsPolicy.Decision.Drop -> Unit
             }
-            is NewsPolicy.Decision.Later -> News.enqueue(applicationContext, kind, decision.at, now)
-            NewsPolicy.Decision.Drop -> Unit
         }
         return Result.success()
     }

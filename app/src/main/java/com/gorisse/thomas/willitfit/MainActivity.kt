@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.google.android.play.core.review.ReviewManagerFactory
@@ -163,10 +164,14 @@ class MainActivity : ComponentActivity() {
                     // News and tips, as Settings shows it: on, and let through by Android.
                     var newsOn by remember { mutableStateOf(News.allowed(this@MainActivity, prefs)) }
                     val askNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-                        if (granted) News.turnOn(this@MainActivity) else openNotificationSettings()
+                        // Refused before: Android no longer asks, its settings are where it comes back.
+                        if (!granted) openNotificationSettings()
                         newsOn = News.allowed(this@MainActivity, prefs)
                     }
-                    LaunchedEffect(route) { if (route == Route.SETTINGS) newsOn = News.allowed(this@MainActivity, prefs) }
+                    LifecycleResumeEffect(Unit) {
+                        newsOn = News.allowed(this@MainActivity, prefs)
+                        onPauseOrDispose { }
+                    }
                     // The AR tape opens from home (the object) or from the door, and goes back there.
                     var measureDoor by rememberSaveable { mutableStateOf(noted == News.OPEN_TAPE) }
                     BackHandler(enabled = route != Route.HOME) {
@@ -219,16 +224,19 @@ class MainActivity : ComponentActivity() {
                                 unit = unit,
                                 newsOn = newsOn,
                                 onNews = { on ->
-                                    when {
-                                        !on -> { News.turnOff(this@MainActivity); newsOn = false }
-                                        Build.VERSION.SDK_INT >= 33 && !notificationsGranted() ->
-                                            askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                        else -> {
-                                            News.turnOn(this@MainActivity)
-                                            newsOn = News.allowed(this@MainActivity)
-                                            // Notes blocked in Android's settings: that is where they come back.
-                                            if (!newsOn) openNotificationSettings()
+                                    if (!on) {
+                                        News.turnOff(this@MainActivity); newsOn = false
+                                    } else {
+                                        // The person's yes is kept; Android may still have to let
+                                        // the notes through. The switch shows on once it does
+                                        // (checked again on every return, Android's settings included).
+                                        News.turnOn(this@MainActivity)
+                                        when {
+                                            Build.VERSION.SDK_INT >= 33 && !notificationsGranted() ->
+                                                askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                            !News.allowed(this@MainActivity) -> openNotificationSettings()
                                         }
+                                        newsOn = News.allowed(this@MainActivity)
                                     }
                                 },
                                 onUnit = { new ->
