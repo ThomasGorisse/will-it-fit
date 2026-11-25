@@ -170,7 +170,6 @@
     <string name="reminder_body">Check it fits your door before it\'s delivered.</string>
     <string name="whats_new_title">New: the hallway turn</string>
     <string name="whats_new_body">Will the sofa make the corner? Enter the hallway and see.</string>
-    <string name="settings_news">@string/news_channel</string>
     <!-- Which screen the version's note opens: door, boot, hall or tape. -->
     <string name="whats_new_open" translatable="false">hall</string>
 </resources>

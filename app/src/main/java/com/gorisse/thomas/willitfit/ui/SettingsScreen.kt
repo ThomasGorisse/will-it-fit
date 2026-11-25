@@ -76,7 +76,7 @@ fun SettingsScreen(
                 )
                 ListItem(
                     leadingContent = { Icon(Icons.Outlined.Notifications, null) },
-                    headlineContent = { Text(stringResource(R.string.settings_news)) },
+                    headlineContent = { Text(stringResource(R.string.news_channel)) },
                     supportingContent = { Text(stringResource(R.string.settings_news_body)) },
                     trailingContent = { Switch(checked = newsOn, onCheckedChange = null) },
                     modifier = Modifier.toggleable(value = newsOn, role = Role.Switch, onValueChange = onNews),
