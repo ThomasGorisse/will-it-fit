@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
         val shortcut = if (savedInstanceState == null) intent.shortcutDimensions() else null
         // A check someone sent: its link opens the same check, once, before anything is read.
         val linked = if (savedInstanceState == null) intent.sharedCheck() else null
-        linked?.let { prefs.apply(it) }
+        linked?.let { prefs.takeCheck(it) }
         if (linked == null && savedInstanceState == null && !prefs.referrerRead) readInstallReferrer(prefs)
         if (shortcut != null) {
             prefs.dimensions = shortcut
@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
                         val check = referredCheck ?: return@LaunchedEffect
                         referredCheck = null
                         if (route != Route.HOME) return@LaunchedEffect
-                        prefs.apply(check)
+                        prefs.takeCheck(check)
                         dims = prefs.dimensions; door = prefs.door
                         if (check.space != null) route = Route.DOOR
                         Toast.makeText(this@MainActivity, R.string.link_opened, Toast.LENGTH_LONG).show()
@@ -254,7 +254,7 @@ private fun Intent.sharedCheck(): SharedCheck? {
 }
 
 /** Takes a check as the person's own: the object, and the space it was checked against. */
-private fun Prefs.apply(check: SharedCheck) {
+private fun Prefs.takeCheck(check: SharedCheck) {
     dimensions = check.dims
     when (check.space) {
         Space.DOOR -> { check.door?.let { door = it }; carBoot = false; hallway = false }

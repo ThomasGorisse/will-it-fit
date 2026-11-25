@@ -10,7 +10,9 @@ class SharedCheckTest {
     @Test fun doorRoundTrips() {
         val check = SharedCheck(sofa, Space.DOOR, door = Door(80f, 204f))
         assertEquals("o=220x95x85&p=sofa3&door=80x204", check.query())
-        assertEquals(check, SharedCheck.parse(check.query()))
+        val back = SharedCheck.parse(check.query())!!
+        assertEquals(check.copy(dims = sofa.copy(source = DimensionSource.TYPED)), back)
+        assertEquals(back.query(), check.query())
     }
 
     @Test fun linkIsOnTheSite() {
@@ -24,8 +26,8 @@ class SharedCheckTest {
         val boot = SharedCheck(Dimensions(60f, 60f, 85f), Space.BOOT, boot = Boot.ESTATE)
         assertEquals("o=60x60x85&boot=108x80x103x104x68", boot.query())
         assertEquals(boot, SharedCheck.parse(boot.query()))
-        val hall = SharedCheck(sofa, Space.HALL, hall = Hall.TYPICAL)
-        assertEquals(hall, SharedCheck.parse("?" + hall.query()))
+        val hall = SharedCheck(Dimensions(200f, 90f, 80f), Space.HALL, hall = Hall.TYPICAL)
+        assertEquals(hall, SharedCheck.parse("#" + hall.query()))
     }
 
     @Test fun inchesTravelToTheTenth() {
@@ -33,7 +35,10 @@ class SharedCheckTest {
         assertEquals("o=221x94x83.8&p=sofa3&hall=91.4x91.4x243.8&u=in", check.query())
         val back = SharedCheck.parse(check.query())!!
         assertEquals("sofa3", back.dims.presetId)
-        assertEquals(DimensionSource.PRESET, back.dims.source)
+        // The sizes sent, not the receiver's rounding of the preset.
+        assertEquals(DimensionSource.TYPED, back.dims.source)
+        assertEquals(221f, back.dims.widthCm)
+        assertEquals(83.8f, back.dims.heightCm)
         assertEquals(LengthUnit.INCH, back.unit)
         assertEquals(36f, LengthUnit.INCH.fromCm(back.hall!!.widthCm), 0.05f)
     }

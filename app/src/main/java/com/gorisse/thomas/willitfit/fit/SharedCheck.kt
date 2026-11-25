@@ -28,7 +28,7 @@ data class SharedCheck(
     /** The sizes as the link carries them, without "#". Keys are short: the link goes into a chat message. */
     fun query(): String = buildList {
         add("o=" + join(dims.widthCm, dims.depthCm, dims.heightCm))
-        if (dims.source == DimensionSource.PRESET && dims.presetId != null) add("p=" + dims.presetId)
+        dims.presetId?.let { add("p=$it") }
         when (space) {
             Space.DOOR -> door?.let { add("door=" + join(it.widthCm, it.heightCm)) }
             Space.BOOT -> boot?.let {
@@ -75,8 +75,10 @@ data class SharedCheck(
             val isPreset = preset != null && LengthUnit.entries.map { preset.dimensionsIn(it) }.any {
                 near(it.widthCm, typed.widthCm) && near(it.depthCm, typed.depthCm) && near(it.heightCm, typed.heightCm)
             }
+            // Its name only: as PRESET, the receiver's unit would round it again (87 in is not
+            // 220 cm) and the check would no longer be the one that was sent.
             val dims = if (preset != null && isPreset) {
-                typed.copy(source = DimensionSource.PRESET, presetId = preset.id)
+                typed.copy(presetId = preset.id)
             } else typed
             val unit = if (params["u"] == "in") LengthUnit.INCH else LengthUnit.CM
             numbers(params["door"], 2)?.let { Door(it[0], it[1]) }?.takeIf { it.isValid }?.let {
