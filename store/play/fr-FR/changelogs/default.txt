@@ -1,6 +1,6 @@
 Nouveautés
 • Ça rentre dans la voiture ? Entrez l'ouverture et l'intérieur du coffre : la réponse dit quelle cote bloque.
-• Vos dernières tailles reviennent d'un geste.
+• Vos dernières tailles reviennent d'un geste, dans l'app ou d'un appui long sur son icône.
 • Enregistrez la photo dans votre galerie.
 • Mètre AR : visez deux bouts, prenez la longueur comme côté.
 • Partagez ou sélectionnez le texte d'une annonce (« 220 × 95 × 85 cm ») : les tailles se remplissent.
