@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Debug builds only: post a note now, to look at it (adb shell am broadcast -n …/.data.NewsDebugReceiver --es kind REMINDER). -->
+<!-- Debug builds only: post a note now, to look at it. adb shell am broadcast -n with the
+     receiver, and the string extra kind set to REMINDER or WHATS_NEW. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
         <receiver
