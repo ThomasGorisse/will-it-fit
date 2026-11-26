@@ -75,7 +75,7 @@
     <string name="unit_cm">Centímetros</string>
     <string name="unit_in">Polegadas</string>
     <string name="settings_privacy_title">Privacidade</string>
-    <string name="settings_privacy">Funciona off-line. Sem conta, sem anúncios. O app não envia nada: guarda no celular só as últimas medidas e a unidade, e só tira uma foto quando você pede, para você compartilhar ou salvar. Em RA, o Google Play Services for AR coleta um identificador, dados de desempenho e diagnóstico e quais recursos de RA são usados; veja o aviso do Google abaixo.</string>
+    <string name="settings_privacy">Funciona off-line. Sem conta, sem anúncios. O app não envia nada: guarda no celular só suas medidas, suas passagens, as coisas que você nomeia e a unidade, e só tira uma foto quando você pede, para você compartilhar ou salvar. Em RA, o Google Play Services for AR coleta um identificador, dados de desempenho e diagnóstico e quais recursos de RA são usados; veja o aviso do Google abaixo.</string>
     <string name="settings_privacy_policy">Política de privacidade</string>
     <string name="settings_licenses">Licenças de código aberto</string>
     <string name="settings_licenses_body">Feito com SceneView, Google Filament, Jetpack Compose e Material 3 (Apache 2.0) e ARCore (Termos de Serviço das APIs do Google).</string>
@@ -158,8 +158,8 @@
     <string name="settings_news_body">Novas verificações e dicas, no máximo duas vezes por mês.</string>
     <string name="reminder_title">De olho num sofá novo?</string>
     <string name="reminder_body">Confira se ele passa pela porta antes da entrega.</string>
-    <string name="whats_new_title">Novo: a curva do corredor</string>
-    <string name="whats_new_body">O sofá faz a curva? Digite as medidas do corredor e confira.</string>
+    <string name="whats_new_title">Novo: sua mudança</string>
+    <string name="whats_new_body">Dê nome às suas coisas e veja o que passa pela porta, pelo corredor e cabe no porta-malas.</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">Minha casa</string>

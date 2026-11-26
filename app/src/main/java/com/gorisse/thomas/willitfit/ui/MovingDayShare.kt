@@ -14,12 +14,16 @@ fun movingDayChecklist(
     door: String,
     turn: String,
     car: String,
+    bootTyped: Boolean,
 ): String {
     fun answer(name: String, pass: Pass): String =
         "$name ${if (pass.fits) "✓" else "✗"} ${if (pass.marginCm < 0f) "−" else "+"}${formatMargin(pass.marginCm, unit)}"
 
     return rows.joinToString("\n") { (thing, row) ->
         "${thing.name} — ${formatDimensions(thing.dims, unit)} · " +
-            listOf(answer(door, row.door), answer(turn, row.hall), answer(car, row.boot)).joinToString(" · ")
+            listOfNotNull(
+                answer(door, row.door), answer(turn, row.hall),
+                if (bootTyped) answer(car, row.boot) else null,
+            ).joinToString(" · ")
     } + "\n\nhttps://play.google.com/store/apps/details?id=com.gorisse.thomas.willitfit"
 }

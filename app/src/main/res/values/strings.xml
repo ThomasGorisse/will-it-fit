@@ -83,7 +83,7 @@
     <string name="unit_cm">Centimetres</string>
     <string name="unit_in">Inches</string>
     <string name="settings_privacy_title">Privacy</string>
-    <string name="settings_privacy">Works offline. No account, no ads. The app itself sends nothing: it keeps only your last size and unit on your phone, and takes a photo only when you ask, for you to share or save. In AR, Google Play Services for AR collects an identifier, performance and diagnostic data, and which AR features are used; see Google\'s notice below.</string>
+    <string name="settings_privacy">Works offline. No account, no ads. The app itself sends nothing: it keeps on your phone only your sizes, your spaces, the things you name and your unit, and takes a photo only when you ask, for you to share or save. In AR, Google Play Services for AR collects an identifier, performance and diagnostic data, and which AR features are used; see Google\'s notice below.</string>
     <string name="settings_privacy_policy">Privacy policy</string>
     <string name="settings_arcore_title" translatable="false">Google Play Services for AR</string>
     <string name="settings_licenses">Open-source licences</string>
@@ -168,10 +168,10 @@
     <string name="settings_news_body">New checks and tips, twice a month at most.</string>
     <string name="reminder_title">Eyeing a new sofa?</string>
     <string name="reminder_body">Check it fits your door before it\'s delivered.</string>
-    <string name="whats_new_title">New: the hallway turn</string>
-    <string name="whats_new_body">Will the sofa make the corner? Enter the hallway and see.</string>
-    <!-- Which screen the version's note opens: door, boot, hall or tape. -->
-    <string name="whats_new_open" translatable="false">hall</string>
+    <string name="whats_new_title">New: your moving day</string>
+    <string name="whats_new_body">Name your things once and see what gets through your door, hallway and car.</string>
+    <!-- Which screen the version's note opens: door, boot, hall, tape or home. -->
+    <string name="whats_new_open" translatable="false">home</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">My home</string>

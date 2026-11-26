@@ -19,11 +19,11 @@ fun movingDay(obj: Dimensions, home: Home): MovingDayRow = MovingDayRow(
 )
 
 /** Stable groups keep the person's insertion order while bringing problems to the top. */
-fun <T> orderMovingDay(rows: List<Pair<T, MovingDayRow>>): List<Pair<T, MovingDayRow>> =
+fun <T> orderMovingDay(rows: List<Pair<T, MovingDayRow>>, bootTyped: Boolean): List<Pair<T, MovingDayRow>> =
     rows.sortedBy { (_, row) ->
         when {
             !row.getsIn -> 0
-            row.door.isTight || row.hall.isTight || row.boot.isTight -> 1
+            row.door.isTight || row.hall.isTight || (bootTyped && row.boot.isTight) -> 1
             else -> 2
         }
     }

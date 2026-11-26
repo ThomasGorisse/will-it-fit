@@ -75,7 +75,7 @@
     <string name="unit_cm">Zentimeter</string>
     <string name="unit_in">Zoll</string>
     <string name="settings_privacy_title">Datenschutz</string>
-    <string name="settings_privacy">Funktioniert offline. Kein Konto, keine Werbung. Die App selbst sendet nichts: Sie speichert nur deine letzten Maße und die Einheit auf dem Handy und macht ein Foto nur, wenn du es willst, zum Teilen oder Speichern. In AR erhebt Google Play Services for AR eine Kennung, Leistungs- und Diagnosedaten sowie die genutzten AR-Funktionen; siehe Googles Hinweis unten.</string>
+    <string name="settings_privacy">Funktioniert offline. Kein Konto, keine Werbung. Die App selbst sendet nichts: Sie speichert nur auf dem Handy deine Maße, deine Durchgänge, die Sachen, die du benennst, und die Einheit und macht ein Foto nur, wenn du es willst, zum Teilen oder Speichern. In AR erhebt Google Play Services for AR eine Kennung, Leistungs- und Diagnosedaten sowie die genutzten AR-Funktionen; siehe Googles Hinweis unten.</string>
     <string name="settings_privacy_policy">Datenschutzerklärung</string>
     <string name="settings_licenses">Open-Source-Lizenzen</string>
     <string name="settings_licenses_body">Erstellt mit SceneView, Google Filament, Jetpack Compose und Material 3 (Apache 2.0) sowie ARCore (Nutzungsbedingungen der Google APIs).</string>
@@ -158,8 +158,8 @@
     <string name="settings_news_body">Neue Prüfungen und Tipps, höchstens zweimal im Monat.</string>
     <string name="reminder_title">Ein neues Sofa im Blick?</string>
     <string name="reminder_body">Prüfe vor der Lieferung, ob es durch die Tür passt.</string>
-    <string name="whats_new_title">Neu: die Flurecke</string>
-    <string name="whats_new_body">Kommt das Sofa um die Ecke? Flurmaße eingeben und sehen.</string>
+    <string name="whats_new_title">Neu: dein Umzugstag</string>
+    <string name="whats_new_body">Benenne deine Sachen und sieh, was durch Tür und Flur und in den Kofferraum passt.</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">Mein Zuhause</string>

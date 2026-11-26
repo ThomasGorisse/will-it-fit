@@ -75,7 +75,7 @@
     <string name="unit_cm">Centimetri</string>
     <string name="unit_in">Pollici</string>
     <string name="settings_privacy_title">Privacy</string>
-    <string name="settings_privacy">Funziona offline. Nessun account, nessuna pubblicità. L\'app non invia nulla: conserva sul telefono solo le ultime misure e l\'unità, e scatta una foto solo quando lo chiedi, perché tu la condivida o la salvi. In AR, Google Play Services for AR raccoglie un identificativo, dati di prestazioni e diagnostica e quali funzioni AR vengono usate; vedi l\'avviso di Google qui sotto.</string>
+    <string name="settings_privacy">Funziona offline. Nessun account, nessuna pubblicità. L\'app non invia nulla: conserva sul telefono solo le tue misure, i tuoi passaggi, le cose a cui dai un nome e l\'unità, e scatta una foto solo quando lo chiedi, perché tu la condivida o la salvi. In AR, Google Play Services for AR raccoglie un identificativo, dati di prestazioni e diagnostica e quali funzioni AR vengono usate; vedi l\'avviso di Google qui sotto.</string>
     <string name="settings_privacy_policy">Informativa sulla privacy</string>
     <string name="settings_licenses">Licenze open source</string>
     <string name="settings_licenses_body">Realizzato con SceneView, Google Filament, Jetpack Compose e Material 3 (Apache 2.0) e ARCore (Termini di servizio delle API di Google).</string>
@@ -158,8 +158,8 @@
     <string name="settings_news_body">Nuove verifiche e consigli, al massimo due volte al mese.</string>
     <string name="reminder_title">Un divano nuovo in vista?</string>
     <string name="reminder_body">Verifica che passi dalla porta prima della consegna.</string>
-    <string name="whats_new_title">Novità: l\'angolo del corridoio</string>
-    <string name="whats_new_body">Il divano gira l\'angolo? Inserisci le misure del corridoio e verifica.</string>
+    <string name="whats_new_title">Novità: il tuo trasloco</string>
+    <string name="whats_new_body">Dai un nome alle tue cose e scopri se passano da porta e corridoio e se entrano nel bagagliaio.</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">Casa mia</string>

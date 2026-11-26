@@ -75,7 +75,7 @@
     <string name="unit_cm">Centímetros</string>
     <string name="unit_in">Pulgadas</string>
     <string name="settings_privacy_title">Privacidad</string>
-    <string name="settings_privacy">Funciona sin conexión. Sin cuenta ni anuncios. La app no envía nada: solo guarda en el móvil tus últimas medidas y la unidad, y solo hace una foto cuando lo pides, para que la compartas o la guardes. En RA, Google Play Services for AR recoge un identificador, datos de rendimiento y diagnóstico, y qué funciones de RA se usan; consulta el aviso de Google abajo.</string>
+    <string name="settings_privacy">Funciona sin conexión. Sin cuenta ni anuncios. La app no envía nada: solo guarda en el móvil tus medidas, tus pasos, las cosas a las que pones nombre y la unidad, y solo hace una foto cuando lo pides, para que la compartas o la guardes. En RA, Google Play Services for AR recoge un identificador, datos de rendimiento y diagnóstico, y qué funciones de RA se usan; consulta el aviso de Google abajo.</string>
     <string name="settings_privacy_policy">Política de privacidad</string>
     <string name="settings_licenses">Licencias de código abierto</string>
     <string name="settings_licenses_body">Hecho con SceneView, Google Filament, Jetpack Compose y Material 3 (Apache 2.0), y ARCore (Condiciones de las API de Google).</string>
@@ -158,8 +158,8 @@
     <string name="settings_news_body">Nuevas comprobaciones y consejos, dos veces al mes como mucho.</string>
     <string name="reminder_title">¿Pensando en un sofá nuevo?</string>
     <string name="reminder_body">Comprueba que pasa por la puerta antes de que llegue.</string>
-    <string name="whats_new_title">Nuevo: la esquina del pasillo</string>
-    <string name="whats_new_body">¿Gira el sofá la esquina? Introduce las medidas del pasillo y compruébalo.</string>
+    <string name="whats_new_title">Nuevo: tu mudanza</string>
+    <string name="whats_new_body">Pon nombre a tus cosas y comprueba si pasan por la puerta, el pasillo y caben en el maletero.</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">Mi casa</string>

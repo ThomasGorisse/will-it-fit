@@ -42,8 +42,12 @@ class MovingDayTest {
         )
         assertEquals(
             listOf("Blocked turn", "Blocked door", "Tight car", "Tight door", "Tight turn", "Clear first", "Car only blocked"),
-            orderMovingDay(rows).map { it.first },
+            orderMovingDay(rows, bootTyped = true).map { it.first },
         )
-        assertEquals(emptyList<Pair<String, MovingDayRow>>(), orderMovingDay<String>(emptyList()))
+        assertEquals(
+            listOf("Blocked turn", "Blocked door", "Tight door", "Tight turn", "Clear first", "Tight car", "Car only blocked"),
+            orderMovingDay(rows, bootTyped = false).map { it.first },
+        )
+        assertEquals(emptyList<Pair<String, MovingDayRow>>(), orderMovingDay<String>(emptyList(), bootTyped = false))
     }
 }
