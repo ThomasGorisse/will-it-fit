@@ -33,6 +33,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DirectionsCar
 import androidx.compose.material.icons.outlined.DoorFront
+import androidx.compose.material.icons.outlined.Elevator
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.TurnRight
@@ -175,7 +176,7 @@ fun MyHomeScreen(
                 )
 
                 SpaceItem(
-                    Icons.Outlined.DoorFront, stringResource(R.string.space_lift),
+                    Icons.Outlined.Elevator, stringResource(R.string.space_lift),
                     (home.lift ?: Lift.typicalFor(unit)).let {
                         "${formatNumber(it.cabinWidthCm, unit)} × ${formatNumber(it.cabinDepthCm, unit)} × ${formatLength(it.cabinHeightCm, unit)}"
                     },
@@ -206,7 +207,7 @@ fun MyHomeScreen(
                         ThingCard(thing, unit, listOfNotNull(
                             Triple(Icons.Outlined.DoorFront, stringResource(R.string.space_door), row.door),
                             Triple(Icons.Outlined.TurnRight, stringResource(R.string.space_hall), row.hall),
-                            row.lift?.let { Triple(Icons.Outlined.DoorFront, stringResource(R.string.space_lift), it) },
+                            row.lift?.let { Triple(Icons.Outlined.Elevator, stringResource(R.string.space_lift), it) },
                             if (typed.boot) Triple(Icons.Outlined.DirectionsCar, stringResource(R.string.space_boot), row.boot) else null,
                         ), onClick = { onPick(thing.dims) }, onRemove = { onRemove(thing) },
                             onLongClick = { editingName = thing.name })
