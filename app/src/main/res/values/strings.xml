@@ -168,10 +168,10 @@
     <string name="settings_news_body">New checks and tips, twice a month at most.</string>
     <string name="reminder_title">Eyeing a new sofa?</string>
     <string name="reminder_body">Check it fits your door before it\'s delivered.</string>
-    <string name="whats_new_title">New: the hallway turn</string>
-    <string name="whats_new_body">Will the sofa make the corner? Enter the hallway and see.</string>
-    <!-- Which screen the version's note opens: door, boot, hall or tape. -->
-    <string name="whats_new_open" translatable="false">hall</string>
+    <string name="whats_new_title">New: your moving day</string>
+    <string name="whats_new_body">Name your things once and see what gets through your door, hallway and car.</string>
+    <!-- Which screen the version's note opens: door, boot, hall, tape or home. -->
+    <string name="whats_new_open" translatable="false">home</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">My home</string>

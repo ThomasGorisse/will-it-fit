@@ -158,8 +158,8 @@
     <string name="settings_news_body">Neue Prüfungen und Tipps, höchstens zweimal im Monat.</string>
     <string name="reminder_title">Ein neues Sofa im Blick?</string>
     <string name="reminder_body">Prüfe vor der Lieferung, ob es durch die Tür passt.</string>
-    <string name="whats_new_title">Neu: die Flurecke</string>
-    <string name="whats_new_body">Kommt das Sofa um die Ecke? Flurmaße eingeben und sehen.</string>
+    <string name="whats_new_title">Neu: dein Umzugstag</string>
+    <string name="whats_new_body">Benenne deine Sachen und sieh, was durch Tür und Flur und in den Kofferraum passt.</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">Mein Zuhause</string>

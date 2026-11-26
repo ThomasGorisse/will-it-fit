@@ -158,8 +158,8 @@
     <string name="settings_news_body">Nuevas comprobaciones y consejos, dos veces al mes como mucho.</string>
     <string name="reminder_title">¿Pensando en un sofá nuevo?</string>
     <string name="reminder_body">Comprueba que pasa por la puerta antes de que llegue.</string>
-    <string name="whats_new_title">Nuevo: la esquina del pasillo</string>
-    <string name="whats_new_body">¿Gira el sofá la esquina? Introduce las medidas del pasillo y compruébalo.</string>
+    <string name="whats_new_title">Nuevo: tu mudanza</string>
+    <string name="whats_new_body">Pon nombre a tus cosas y comprueba si pasan por la puerta, el pasillo y caben en el maletero.</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">Mi casa</string>

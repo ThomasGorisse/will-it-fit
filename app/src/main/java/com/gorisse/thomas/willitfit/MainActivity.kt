@@ -103,6 +103,7 @@ class MainActivity : ComponentActivity() {
                     var route by rememberSaveable {
                         mutableStateOf(
                             when {
+                                noted == News.OPEN_MY_HOME -> Route.MY_HOME
                                 noted == News.OPEN_TAPE && arAvailable -> Route.MEASURE
                                 shortcut != null || linked?.space != null || noted != null -> Route.DOOR
                                 else -> Route.HOME

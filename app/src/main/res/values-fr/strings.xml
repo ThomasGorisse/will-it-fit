@@ -158,8 +158,8 @@
     <string name="settings_news_body">Nouvelles vérifications et astuces, deux fois par mois au plus.</string>
     <string name="reminder_title">Un canapé en vue ?</string>
     <string name="reminder_body">Vérifiez qu\'il passe la porte avant la livraison.</string>
-    <string name="whats_new_title">Nouveau : le virage du couloir</string>
-    <string name="whats_new_body">Le canapé passera-t-il l\'angle ? Entrez les cotes du couloir et vérifiez.</string>
+    <string name="whats_new_title">Nouveau : votre déménagement</string>
+    <string name="whats_new_body">Nommez vos objets et voyez ce qui passe par la porte, le couloir et dans le coffre.</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">Mon logement</string>
