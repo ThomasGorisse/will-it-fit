@@ -158,8 +158,8 @@
     <string name="settings_news_body">Novas verificações e dicas, no máximo duas vezes por mês.</string>
     <string name="reminder_title">De olho num sofá novo?</string>
     <string name="reminder_body">Confira se ele passa pela porta antes da entrega.</string>
-    <string name="whats_new_title">Novo: sua mudança</string>
-    <string name="whats_new_body">Dê nome às suas coisas e veja o que passa pela porta, pelo corredor e cabe no porta-malas.</string>
+    <string name="whats_new_title">Novo: cabe no elevador?</string>
+    <string name="whats_new_body">Meça o elevador uma vez e veja o que sobe: em pé, deitado ou na diagonal.</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">Minha casa</string>
