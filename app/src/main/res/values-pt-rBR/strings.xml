@@ -160,4 +160,32 @@
     <string name="reminder_body">Confira se ele passa pela porta antes da entrega.</string>
     <string name="whats_new_title">Novo: a curva do corredor</string>
     <string name="whats_new_body">O sofá faz a curva? Digite as medidas do corredor e confira.</string>
+
+    <!-- My home and moving day -->
+    <string name="home_my_title">Minha casa</string>
+    <string name="home_my_spaces">Suas passagens</string>
+    <string name="home_my_hall_sizes">%1$s de largura, %2$s depois da curva</string>
+    <string name="home_my_boot_sizes">Abertura %1$s</string>
+    <string name="home_my_moving_day">Dia da mudança</string>
+    <string name="home_my_summary">Pela porta e pela curva: %1$d de %2$d</string>
+    <string name="home_my_empty">Dê nome às suas coisas uma vez: no dia da mudança, cada uma tem a resposta para a porta, o corredor e o carro.</string>
+    <string name="home_my_not_measured">%1$s · típico, sem medir</string>
+    <string name="home_my_edit">Editar</string>
+    <string name="home_my_measure">Medir</string>
+    <string name="home_my_remove">Remover %1$s</string>
+    <string name="home_my_pass_yes">%1$s: passa, %2$s de folga</string>
+    <string name="home_my_pass_tight">%1$s: no limite, %2$s de folga</string>
+    <string name="home_my_pass_no">%1$s: não passa, %2$s a mais</string>
+    <string name="home_my_add_title">Guardar este objeto (%1$s) para a mudança</string>
+    <string name="home_my_name">O nome dele</string>
+    <string name="home_my_add">Guardar</string>
+    <string name="home_my_manage">Renomear ou excluir</string>
+    <string name="home_my_rename">Renomear</string>
+    <string name="home_my_delete">Excluir</string>
+    <string name="home_my_cancel">Cancelar</string>
+    <string name="home_my_name_taken">Você já tem um objeto com esse nome.</string>
+    <string name="home_my_share">Compartilhar a mudança</string>
+    <string name="home_my_share_door">porta</string>
+    <string name="home_my_share_turn">curva</string>
+    <string name="home_my_share_car">porta-malas</string>
 </resources>

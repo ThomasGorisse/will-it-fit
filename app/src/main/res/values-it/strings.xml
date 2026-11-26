@@ -160,4 +160,32 @@
     <string name="reminder_body">Verifica che passi dalla porta prima della consegna.</string>
     <string name="whats_new_title">Novità: l\'angolo del corridoio</string>
     <string name="whats_new_body">Il divano gira l\'angolo? Inserisci le misure del corridoio e verifica.</string>
+
+    <!-- My home and moving day -->
+    <string name="home_my_title">Casa mia</string>
+    <string name="home_my_spaces">I tuoi passaggi</string>
+    <string name="home_my_hall_sizes">%1$s di larghezza, %2$s dopo l\'angolo</string>
+    <string name="home_my_boot_sizes">Apertura %1$s</string>
+    <string name="home_my_moving_day">Giorno del trasloco</string>
+    <string name="home_my_summary">Dalla porta e dall\'angolo: %1$d su %2$d</string>
+    <string name="home_my_empty">Dai un nome alle tue cose una volta: il giorno del trasloco, ognuna ha la sua risposta per porta, corridoio e auto.</string>
+    <string name="home_my_not_measured">%1$s · tipico, non misurato</string>
+    <string name="home_my_edit">Modifica</string>
+    <string name="home_my_measure">Misura</string>
+    <string name="home_my_remove">Rimuovi %1$s</string>
+    <string name="home_my_pass_yes">%1$s: passa, %2$s di margine</string>
+    <string name="home_my_pass_tight">%1$s: di misura, %2$s di margine</string>
+    <string name="home_my_pass_no">%1$s: bloccato, %2$s di troppo</string>
+    <string name="home_my_add_title">Tieni questo oggetto (%1$s) per il trasloco</string>
+    <string name="home_my_name">Il suo nome</string>
+    <string name="home_my_add">Tieni</string>
+    <string name="home_my_manage">Rinomina o elimina</string>
+    <string name="home_my_rename">Rinomina</string>
+    <string name="home_my_delete">Elimina</string>
+    <string name="home_my_cancel">Annulla</string>
+    <string name="home_my_name_taken">Hai già un oggetto con questo nome.</string>
+    <string name="home_my_share">Condividi il trasloco</string>
+    <string name="home_my_share_door">porta</string>
+    <string name="home_my_share_turn">svolta</string>
+    <string name="home_my_share_car">bagagliaio</string>
 </resources>

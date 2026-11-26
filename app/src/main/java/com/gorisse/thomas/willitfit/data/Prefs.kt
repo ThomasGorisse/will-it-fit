@@ -46,6 +46,11 @@ class Prefs(context: Context) {
         get() = RecentSizes.decode(runCatching { p.getString(KEY_RECENT_SIZES, null) }.getOrNull())
         set(value) = p.edit().putString(KEY_RECENT_SIZES, RecentSizes.encode(value)).apply()
 
+    /** The person's own things, by name, for moving day (see [MyThings]). */
+    var myThings: List<Thing>
+        get() = MyThings.decode(runCatching { p.getString(KEY_MY_THINGS, null) }.getOrNull())
+        set(value) = p.edit().putString(KEY_MY_THINGS, MyThings.encode(value)).apply()
+
     var door: Door
         get() {
             val typical = Door.typicalFor(unit)
@@ -65,6 +70,9 @@ class Prefs(context: Context) {
     var hallway: Boolean
         get() = p.getBoolean("hallway", false)
         set(value) = p.edit().putBoolean("hallway", value).apply()
+
+    /** The person typed a hallway in. Until then it is the typical one. */
+    val hallTyped: Boolean get() = p.contains("hall_w")
 
     var hall: Hall
         get() {
@@ -157,6 +165,7 @@ class Prefs(context: Context) {
 
     private companion object {
         const val KEY_RECENT_SIZES = "recent_sizes_v1"
+        const val KEY_MY_THINGS = "my_things_v1"
         const val KEY_UNIT = "unit"
         const val KEY_LEGACY_REVIEW_ASKED = "review_asked"
         const val KEY_REVIEW_REQUESTS = "review_requests"
