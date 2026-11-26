@@ -23,7 +23,7 @@ import java.io.File
 import java.util.Locale
 
 /**
- * The caption card written on a shared photo, in the six languages, on a wall-and-floor stand-in
+ * The 9:16 card a shared photo becomes, in the six languages, around a wall-and-floor stand-in
  * for the camera image. The cards are kept in the app's external files ("photo-cards/") to be
  * looked at: `adb pull /sdcard/Android/data/com.gorisse.thomas.willitfit.debug/files/photo-cards`.
  */
@@ -32,7 +32,7 @@ class PhotoCardTest {
     private val app: Context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
-    fun theCardIsWrittenOnThePhotoInEveryLanguage() = runBlocking {
+    fun theCardIsMadeInEveryLanguage() = runBlocking {
         val keep = File(app.getExternalFilesDir(null), "photo-cards").apply { deleteRecursively(); mkdirs() }
         for (tag in listOf("en-GB", "fr-FR", "de-DE", "es-ES", "it-IT", "pt-BR")) {
             val res = app.createConfigurationContext(
@@ -42,24 +42,27 @@ class PhotoCardTest {
             for (preset in listOf(Preset.SOFA_3, Preset.WARDROBE)) {
                 val title = res.getString(if (preset == Preset.SOFA_3) R.string.preset_sofa3 else R.string.preset_wardrobe)
                 val caption = res.getString(R.string.ar_real_size, formatDimensions(preset.dimensions, unit))
-                val file = savePhoto(res, standIn(), title, listOf(caption), res.getString(R.string.photo_signature))
+                val file = savePhoto(res, standIn(), title, caption, emptyList(), res.getString(R.string.photo_signature))
                 val photo = BitmapFactory.decodeFile(file.path)
-                assertEquals(1080, photo.width)
-                // The card's dark ground sits where the floor was light.
-                val ground = photo.getPixel(60, photo.height - 140)
+                assertEquals(CARD_WIDTH, photo.width)
+                assertEquals(CARD_HEIGHT, photo.height)
+                // The picture on top, the card's dark ground below it.
+                assertTrue("no picture on top ($tag)", android.graphics.Color.luminance(photo.getPixel(540, 400)) > 0.3f)
+                val ground = photo.getPixel(60, photo.height - 40)
                 assertTrue("no card at the bottom ($tag)", android.graphics.Color.luminance(ground) < 0.1f)
                 file.copyTo(File(keep, "$tag-${preset.name.lowercase()}.jpg"), overwrite = true)
             }
             // The door's answer: a coloured title and three lines, the longest card there is.
             val door = savePhoto(
                 res, standIn(), res.getString(R.string.door_no),
+                res.getString(R.string.door_margin_over, "3 ${unit.symbol}") + " · " + res.getString(R.string.carry_on_back_sideways),
                 listOf(
                     res.getString(R.string.door_object, res.getString(R.string.preset_wardrobe), formatDimensions(Preset.WARDROBE.dimensions, unit)),
                     res.getString(R.string.photo_door, "78 × 200 ${unit.symbol}"),
-                    res.getString(R.string.door_margin_over, "3 ${unit.symbol}") + " · " + res.getString(R.string.carry_on_back_sideways),
                 ),
-                res.getString(R.string.photo_signature), 0xFFFFB4AB.toInt(),
+                res.getString(R.string.photo_signature), 0xFFFFB4AB.toInt(), verdict = CardVerdict.NO,
             )
+            assertEquals(CARD_HEIGHT, BitmapFactory.decodeFile(door.path).height)
             door.copyTo(File(keep, "$tag-door.jpg"), overwrite = true)
         }
     }

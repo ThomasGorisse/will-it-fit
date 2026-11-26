@@ -178,7 +178,7 @@ fun ArScreen(
             val result = takePhoto(
                 setBusy = { capturing = it },
                 capture = { captureScene(activity) },
-                save = { savePhoto(context, it, name, listOf(realSize), signature) },
+                save = { savePhoto(context, it, name, realSize, emptyList(), signature) },
             )
             when (result) {
                 is PhotoResult.Success -> onPhoto(result.value)
