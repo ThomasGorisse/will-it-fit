@@ -101,6 +101,17 @@
     <string name="tape_side_height">altura</string>
     <string name="tape_side_door_width">largura da porta</string>
     <string name="tape_side_door_height">altura da porta</string>
+    <string name="tape_side_boot_opening_width">largura da abertura</string>
+    <string name="tape_side_boot_opening_height">altura da abertura</string>
+    <string name="tape_side_boot_length">comprimento do porta-malas</string>
+    <string name="tape_side_boot_width">largura do porta-malas</string>
+    <string name="tape_side_boot_height">altura do porta-malas</string>
+    <string name="tape_side_hall_width">largura do corredor</string>
+    <string name="tape_side_hall_turn_width">largura após a curva</string>
+    <string name="tape_side_hall_ceiling">altura do teto</string>
+    <string name="tape_side_cabin_width">largura da cabine</string>
+    <string name="tape_side_cabin_depth">profundidade da cabine</string>
+    <string name="tape_side_cabin_height">altura da cabine</string>
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Medidas tiradas do texto: %1$s</string>
     <string name="text_sizes_none">Nenhuma medida neste texto. Digite-as ou selecione só a linha das medidas.</string>

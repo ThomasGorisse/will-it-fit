@@ -2,16 +2,26 @@ package com.gorisse.thomas.willitfit.fit
 
 import kotlin.math.sqrt
 
-/**
- * Where an AR tape measurement goes once it is taken: one side of the object, or one side of the
- * door. The tape itself only knows a length in centimetres.
- */
-enum class TapeTarget { WIDTH, DEPTH, HEIGHT, DOOR_WIDTH, DOOR_HEIGHT;
+/** The field receiving a length from the AR tape. */
+enum class TapeTarget {
+    WIDTH, DEPTH, HEIGHT, DOOR_WIDTH, DOOR_HEIGHT,
+    BOOT_OPENING_WIDTH, BOOT_OPENING_HEIGHT, BOOT_LENGTH, BOOT_WIDTH, BOOT_HEIGHT,
+    HALL_WIDTH, HALL_TURN_WIDTH, HALL_CEILING,
+    CABIN_WIDTH, CABIN_DEPTH, CABIN_HEIGHT;
 
     companion object {
         val OBJECT = listOf(WIDTH, DEPTH, HEIGHT)
         val DOOR = listOf(DOOR_WIDTH, DOOR_HEIGHT)
+        val BOOT = listOf(BOOT_OPENING_WIDTH, BOOT_OPENING_HEIGHT, BOOT_LENGTH, BOOT_WIDTH, BOOT_HEIGHT)
+        val HALL = listOf(HALL_WIDTH, HALL_TURN_WIDTH, HALL_CEILING)
+        val LIFT = listOf(DOOR_WIDTH, DOOR_HEIGHT, CABIN_WIDTH, CABIN_DEPTH, CABIN_HEIGHT)
     }
+}
+
+/** Saved with the route so rotation keeps the tape's destination. */
+enum class TapeSet(val targets: List<TapeTarget>) {
+    OBJECT(TapeTarget.OBJECT), DOOR(TapeTarget.DOOR), BOOT(TapeTarget.BOOT),
+    HALL(TapeTarget.HALL), LIFT(TapeTarget.LIFT),
 }
 
 /** A point in the AR world, in metres. */
@@ -33,19 +43,59 @@ fun usableTapeCm(cm: Float): Float? =
     cm.takeIf { it.isFinite() && it in Dimensions.MIN_CM..Dimensions.MAX_CM }
         ?.let { Math.round(it * 10f) / 10f }
 
-/** Puts a measured length into [dims] as the side [target] names. Door targets leave it as is. */
+/** Updates only the named object side. */
 fun Dimensions.withTape(target: TapeTarget, cm: Float): Dimensions = when (target) {
     TapeTarget.WIDTH -> withWidth(cm)
     TapeTarget.DEPTH -> withDepth(cm)
     TapeTarget.HEIGHT -> withHeight(cm)
-    TapeTarget.DOOR_WIDTH, TapeTarget.DOOR_HEIGHT -> this
+    else -> this
 }
 
-/** Puts a measured length into [door] as the side [target] names. Object targets leave it as is. */
-fun Door.withTape(target: TapeTarget, cm: Float): Door = when (target) {
-    TapeTarget.DOOR_WIDTH -> copy(widthCm = cm)
-    TapeTarget.DOOR_HEIGHT -> copy(heightCm = cm)
-    else -> this
+/** Updates only the named door side; ignores lengths outside the field range. */
+fun Door.withTape(target: TapeTarget, cm: Float): Door {
+    if (usableTapeCm(cm) == null) return this
+    return when (target) {
+        TapeTarget.DOOR_WIDTH -> copy(widthCm = cm)
+        TapeTarget.DOOR_HEIGHT -> copy(heightCm = cm)
+        else -> this
+    }
+}
+
+/** Updates only the named boot side. */
+fun Boot.withTape(target: TapeTarget, cm: Float): Boot {
+    if (usableTapeCm(cm) == null) return this
+    return when (target) {
+        TapeTarget.BOOT_OPENING_WIDTH -> copy(openingWidthCm = cm)
+        TapeTarget.BOOT_OPENING_HEIGHT -> copy(openingHeightCm = cm)
+        TapeTarget.BOOT_LENGTH -> copy(lengthCm = cm)
+        TapeTarget.BOOT_WIDTH -> copy(widthCm = cm)
+        TapeTarget.BOOT_HEIGHT -> copy(heightCm = cm)
+        else -> this
+    }
+}
+
+/** Updates only the named hallway side. */
+fun Hall.withTape(target: TapeTarget, cm: Float): Hall {
+    if (usableTapeCm(cm) == null) return this
+    return when (target) {
+        TapeTarget.HALL_WIDTH -> copy(widthCm = cm)
+        TapeTarget.HALL_TURN_WIDTH -> copy(turnWidthCm = cm)
+        TapeTarget.HALL_CEILING -> copy(ceilingCm = cm)
+        else -> this
+    }
+}
+
+/** Door targets describe the lift opening too. */
+fun Lift.withTape(target: TapeTarget, cm: Float): Lift {
+    if (usableTapeCm(cm) == null) return this
+    return when (target) {
+        TapeTarget.DOOR_WIDTH -> copy(doorWidthCm = cm)
+        TapeTarget.DOOR_HEIGHT -> copy(doorHeightCm = cm)
+        TapeTarget.CABIN_WIDTH -> copy(cabinWidthCm = cm)
+        TapeTarget.CABIN_DEPTH -> copy(cabinDepthCm = cm)
+        TapeTarget.CABIN_HEIGHT -> copy(cabinHeightCm = cm)
+        else -> this
+    }
 }
 
 /**

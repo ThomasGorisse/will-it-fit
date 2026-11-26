@@ -68,6 +68,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.data.Prefs
+import com.gorisse.thomas.willitfit.fit.TapeSet
 import com.gorisse.thomas.willitfit.fit.Boot
 import com.gorisse.thomas.willitfit.fit.Lift
 import com.gorisse.thomas.willitfit.fit.LiftLimit
@@ -126,7 +127,7 @@ fun DoorScreen(
     onBack: () -> Unit,
     onVerdictShown: () -> Unit = {},
     arAvailable: Boolean = false,
-    onMeasure: () -> Unit = {},
+    onMeasure: (TapeSet) -> Unit = {},
 ) {
     val context = LocalContext.current
     val prefs = remember(context) { Prefs(context) }
@@ -530,14 +531,21 @@ fun DoorScreen(
                         color = scheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp),
                     )
-                    if (arAvailable) TextButton(
-                        onClick = onMeasure,
-                        modifier = Modifier.padding(start = 12.dp, top = 4.dp),
-                    ) {
-                        Icon(Icons.Outlined.Straighten, null, Modifier.size(ButtonDefaults.IconSize))
-                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                        Text(stringResource(R.string.door_measure))
-                    }
+                }
+                if (arAvailable) TextButton(
+                    onClick = {
+                        onMeasure(when (space) {
+                            1 -> TapeSet.BOOT
+                            2 -> TapeSet.HALL
+                            3 -> TapeSet.LIFT
+                            else -> TapeSet.DOOR
+                        })
+                    },
+                    modifier = Modifier.padding(start = 12.dp, top = 4.dp),
+                ) {
+                    Icon(Icons.Outlined.Straighten, null, Modifier.size(ButtonDefaults.IconSize))
+                    Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                    Text(stringResource(R.string.door_measure))
                 }
             }
         }

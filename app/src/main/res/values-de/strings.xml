@@ -101,6 +101,17 @@
     <string name="tape_side_height">Höhe</string>
     <string name="tape_side_door_width">Türbreite</string>
     <string name="tape_side_door_height">Türhöhe</string>
+    <string name="tape_side_boot_opening_width">Öffnungsbreite</string>
+    <string name="tape_side_boot_opening_height">Öffnungshöhe</string>
+    <string name="tape_side_boot_length">Kofferraumlänge</string>
+    <string name="tape_side_boot_width">Kofferraumbreite</string>
+    <string name="tape_side_boot_height">Kofferraumhöhe</string>
+    <string name="tape_side_hall_width">Flurbreite</string>
+    <string name="tape_side_hall_turn_width">Breite nach der Kurve</string>
+    <string name="tape_side_hall_ceiling">Deckenhöhe</string>
+    <string name="tape_side_cabin_width">Kabinenbreite</string>
+    <string name="tape_side_cabin_depth">Kabinentiefe</string>
+    <string name="tape_side_cabin_height">Kabinenhöhe</string>
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Maße aus dem Text: %1$s</string>
     <string name="text_sizes_none">In diesem Text steht kein Maß. Tippen Sie es ein oder markieren Sie nur die Zeile mit den Maßen.</string>
