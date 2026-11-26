@@ -41,7 +41,7 @@ import com.gorisse.thomas.willitfit.fit.Door
 import com.gorisse.thomas.willitfit.fit.Preset
 import com.gorisse.thomas.willitfit.fit.SharedCheck
 import com.gorisse.thomas.willitfit.fit.Space
-import com.gorisse.thomas.willitfit.fit.TapeTarget
+import com.gorisse.thomas.willitfit.fit.TapeSet
 import com.gorisse.thomas.willitfit.fit.withTape
 import com.gorisse.thomas.willitfit.fit.dimensionsIn
 import com.gorisse.thomas.willitfit.fit.formatDimensions
@@ -180,14 +180,14 @@ class MainActivity : ComponentActivity() {
                         newsOn = News.allowed(this@MainActivity, prefs)
                         onPauseOrDispose { }
                     }
-                    // The AR tape opens from home (the object) or from the door, and goes back there.
-                    var measureDoor by rememberSaveable { mutableStateOf(noted == News.OPEN_TAPE) }
+                    // Which sizes the tape fills, kept across rotation; a tape note measures the door.
+                    var measureSet by rememberSaveable { mutableStateOf(if (noted == News.OPEN_TAPE) TapeSet.DOOR else TapeSet.OBJECT) }
                     // A space opened from My home goes back there.
                     var doorFromMyHome by rememberSaveable { mutableStateOf(false) }
                     BackHandler(enabled = route != Route.HOME) {
                         route = when {
                             route == Route.RESULT -> Route.AR
-                            route == Route.MEASURE && measureDoor -> Route.DOOR
+                            route == Route.MEASURE && measureSet != TapeSet.OBJECT -> Route.DOOR
                             route == Route.DOOR && doorFromMyHome -> Route.MY_HOME
                             else -> Route.HOME
                         }
@@ -202,7 +202,7 @@ class MainActivity : ComponentActivity() {
                                 onDoor = { doorVerdictSeen = false; doorFromMyHome = false; route = Route.DOOR },
                                 onSettings = { route = Route.SETTINGS },
                                 onMyHome = { route = Route.MY_HOME },
-                                onMeasure = { measureDoor = false; route = Route.MEASURE },
+                                onMeasure = { measureSet = TapeSet.OBJECT; route = Route.MEASURE },
                             )
                             Route.AR -> ArScreen(
                                 dims = dims, unit = unit,
@@ -218,19 +218,23 @@ class MainActivity : ComponentActivity() {
                                 onVerdictShown = { doorVerdictSeen = true },
                                 onBack = { route = if (doorFromMyHome) Route.MY_HOME else Route.HOME },
                                 arAvailable = arAvailable,
-                                onMeasure = { measureDoor = true; route = Route.MEASURE },
+                                onMeasure = { measureSet = it; route = Route.MEASURE },
                             )
                             Route.MEASURE -> MeasureScreen(
                                 unit = unit,
-                                targets = if (measureDoor) TapeTarget.DOOR else TapeTarget.OBJECT,
+                                targets = measureSet.targets,
                                 onUse = { target, cm ->
-                                    if (measureDoor) {
-                                        door = door.withTape(target, cm); prefs.door = door
-                                    } else {
-                                        dims = dims.withTape(target, cm); if (dims.isValid) prefs.dimensions = dims
+                                    when (measureSet) {
+                                        TapeSet.DOOR -> { door = door.withTape(target, cm); prefs.door = door }
+                                        TapeSet.BOOT -> prefs.boot = prefs.boot.withTape(target, cm)
+                                        TapeSet.HALL -> prefs.hall = prefs.hall.withTape(target, cm)
+                                        TapeSet.LIFT -> prefs.lift = prefs.lift.withTape(target, cm)
+                                        TapeSet.OBJECT -> {
+                                            dims = dims.withTape(target, cm); if (dims.isValid) prefs.dimensions = dims
+                                        }
                                     }
                                 },
-                                onBack = { route = if (measureDoor) Route.DOOR else Route.HOME },
+                                onBack = { route = if (measureSet != TapeSet.OBJECT) Route.DOOR else Route.HOME },
                             )
                             Route.MY_HOME -> {
                                 var things by remember { mutableStateOf(prefs.myThings) }

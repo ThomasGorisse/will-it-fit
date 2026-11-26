@@ -84,6 +84,9 @@
 
     <string name="action_measure">Misura in AR</string>
     <string name="door_measure">Misura la porta in AR</string>
+    <string name="boot_measure">Misura il bagagliaio in AR</string>
+    <string name="hall_measure">Misura il corridoio in AR</string>
+    <string name="lift_measure">Misura l’ascensore in AR</string>
     <string name="tape_title">Metro AR</string>
     <string name="tape_searching">Muovi il telefono lentamente perché trovi le superfici</string>
     <string name="tape_aim_first">Punta il punto su un\'estremità, poi tocca +</string>
@@ -101,6 +104,17 @@
     <string name="tape_side_height">altezza</string>
     <string name="tape_side_door_width">larghezza porta</string>
     <string name="tape_side_door_height">altezza porta</string>
+    <string name="tape_side_boot_opening_width">larghezza dell’apertura</string>
+    <string name="tape_side_boot_opening_height">altezza dell’apertura</string>
+    <string name="tape_side_boot_length">lunghezza del bagagliaio</string>
+    <string name="tape_side_boot_width">larghezza del bagagliaio</string>
+    <string name="tape_side_boot_height">altezza del bagagliaio</string>
+    <string name="tape_side_hall_width">larghezza del corridoio</string>
+    <string name="tape_side_hall_turn_width">larghezza dopo la svolta</string>
+    <string name="tape_side_hall_ceiling">altezza del soffitto</string>
+    <string name="tape_side_cabin_width">larghezza della cabina</string>
+    <string name="tape_side_cabin_depth">profondità della cabina</string>
+    <string name="tape_side_cabin_height">altezza della cabina</string>
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Misure prese dal testo: %1$s</string>
     <string name="text_sizes_none">Nessuna misura in questo testo. Scrivile, o seleziona solo la riga con le misure.</string>

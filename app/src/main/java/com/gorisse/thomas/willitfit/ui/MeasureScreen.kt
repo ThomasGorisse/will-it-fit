@@ -2,6 +2,8 @@ package com.gorisse.thomas.willitfit.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -258,7 +260,8 @@ private fun TapeOverlay(
                         shape = RoundedCornerShape(20.dp),
                         modifier = Modifier.padding(horizontal = 16.dp).widthIn(max = 420.dp),
                     ) {
-                        Column(Modifier.padding(start = 20.dp, end = 12.dp, top = 16.dp, bottom = 10.dp)) {
+                        // Five space targets must stay reachable with large text or a short screen.
+                        Column(Modifier.verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 12.dp, top = 16.dp, bottom = 10.dp)) {
                             Text(formatLength(lengthCm, unit), style = MaterialTheme.typography.headlineMedium)
                             Spacer(Modifier.height(4.dp))
                             Text(
@@ -420,4 +423,15 @@ fun TapeTarget.label(): Int = when (this) {
     TapeTarget.HEIGHT -> R.string.tape_side_height
     TapeTarget.DOOR_WIDTH -> R.string.tape_side_door_width
     TapeTarget.DOOR_HEIGHT -> R.string.tape_side_door_height
+    TapeTarget.BOOT_OPENING_WIDTH -> R.string.tape_side_boot_opening_width
+    TapeTarget.BOOT_OPENING_HEIGHT -> R.string.tape_side_boot_opening_height
+    TapeTarget.BOOT_LENGTH -> R.string.tape_side_boot_length
+    TapeTarget.BOOT_WIDTH -> R.string.tape_side_boot_width
+    TapeTarget.BOOT_HEIGHT -> R.string.tape_side_boot_height
+    TapeTarget.HALL_WIDTH -> R.string.tape_side_hall_width
+    TapeTarget.HALL_TURN_WIDTH -> R.string.tape_side_hall_turn_width
+    TapeTarget.HALL_CEILING -> R.string.tape_side_hall_ceiling
+    TapeTarget.CABIN_WIDTH -> R.string.tape_side_cabin_width
+    TapeTarget.CABIN_DEPTH -> R.string.tape_side_cabin_depth
+    TapeTarget.CABIN_HEIGHT -> R.string.tape_side_cabin_height
 }

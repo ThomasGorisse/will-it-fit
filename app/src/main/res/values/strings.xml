@@ -93,6 +93,9 @@
 
     <string name="action_measure">Measure with AR</string>
     <string name="door_measure">Measure the door with AR</string>
+    <string name="boot_measure">Measure the boot with AR</string>
+    <string name="hall_measure">Measure the hallway with AR</string>
+    <string name="lift_measure">Measure the lift with AR</string>
     <string name="tape_title">AR tape</string>
     <string name="tape_searching">Move the phone slowly so it finds the surfaces</string>
     <string name="tape_aim_first">Aim the dot at one end, then tap +</string>
@@ -110,6 +113,17 @@
     <string name="tape_side_height">height</string>
     <string name="tape_side_door_width">door width</string>
     <string name="tape_side_door_height">door height</string>
+    <string name="tape_side_boot_opening_width">opening width</string>
+    <string name="tape_side_boot_opening_height">opening height</string>
+    <string name="tape_side_boot_length">boot length</string>
+    <string name="tape_side_boot_width">boot width</string>
+    <string name="tape_side_boot_height">boot height</string>
+    <string name="tape_side_hall_width">hallway width</string>
+    <string name="tape_side_hall_turn_width">width after the turn</string>
+    <string name="tape_side_hall_ceiling">ceiling</string>
+    <string name="tape_side_cabin_width">cabin width</string>
+    <string name="tape_side_cabin_depth">cabin depth</string>
+    <string name="tape_side_cabin_height">cabin height</string>
     <!-- Text shared or selected in another app (a listing): the sizes read from it. -->
     <string name="text_sizes_found">Sizes from the text: %1$s</string>
     <string name="text_sizes_none">No size found in this text. Type them in, or select just the line with the sizes.</string>
