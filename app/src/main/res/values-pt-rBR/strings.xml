@@ -167,7 +167,7 @@
     <string name="home_my_hall_sizes">%1$s de largura, %2$s depois da curva</string>
     <string name="home_my_boot_sizes">Abertura %1$s</string>
     <string name="home_my_moving_day">Dia da mudança</string>
-    <string name="home_my_summary">Pela porta e pela curva: %1$d de %2$d</string>
+    <string name="home_my_summary">Dentro de casa: %1$d de %2$d</string>
     <string name="home_my_empty">Dê nome às suas coisas uma vez: no dia da mudança, cada uma tem a resposta para a porta, o corredor e o carro.</string>
     <string name="home_my_not_measured">%1$s · típico, sem medir</string>
     <string name="home_my_edit">Editar</string>
@@ -188,4 +188,23 @@
     <string name="home_my_share_door">porta</string>
     <string name="home_my_share_turn">curva</string>
     <string name="home_my_share_car">porta-malas</string>
+    <string name="space_lift">Elevador</string>
+    <string name="space_boot_short">Porta-malas</string>
+    <string name="space_hall_short">Corredor</string>
+    <string name="lift_enter">Cabe no elevador?</string>
+    <string name="lift_yes">Sim, cabe no elevador</string>
+    <string name="lift_tight">Sim, mas fica apertado</string>
+    <string name="lift_no">Não, não cabe no elevador</string>
+    <string name="lift_opening">Abertura da porta</string>
+    <string name="lift_inside">Interior da cabine</string>
+    <string name="lift_depth">Profundidade</string>
+    <string name="lift_help">Meça a abertura livre e a cabine útil. Passagem reta e depois giro no piso; a manobra de entrada não é simulada.</string>
+    <string name="lift_example_help">Usando um elevador típico até você informar suas medidas</string>
+    <string name="lift_margin_over">%1$s a mais · %2$s</string>
+    <string name="lift_limit_door_width">largura da porta</string>
+    <string name="lift_limit_door_height">altura da porta</string>
+    <string name="lift_limit_floor">piso da cabine</string>
+    <string name="lift_limit_height">altura da cabine</string>
+    <string name="lift_diagonally">na diagonal</string>
+    <string name="photo_lift">Elevador %1$s · cabine %2$s</string>
 </resources>

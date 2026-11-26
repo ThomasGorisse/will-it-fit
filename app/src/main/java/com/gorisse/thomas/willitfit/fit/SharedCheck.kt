@@ -5,10 +5,10 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 /** The space a check was about. */
-enum class Space(val key: String) { DOOR("door"), BOOT("boot"), HALL("hall") }
+enum class Space(val key: String) { DOOR("door"), BOOT("boot"), HALL("hall"), LIFT("lift") }
 
 /**
- * A check, as a link carries it: the object, and the door, boot or hallway it was checked
+ * A check, as a link carries it: the object, and the door, boot, hallway or lift it was checked
  * against. Sizes travel in centimetres to the tenth; the receiver reads them in their own unit.
  * [unit] is the sender's, only for the web page that shows the sizes as they were typed.
  *
@@ -23,6 +23,7 @@ data class SharedCheck(
     val door: Door? = null,
     val boot: Boot? = null,
     val hall: Hall? = null,
+    val lift: Lift? = null,
     val unit: LengthUnit = LengthUnit.CM,
 ) {
     /** The sizes as the link carries them, without "#". Keys are short: the link goes into a chat message. */
@@ -35,6 +36,7 @@ data class SharedCheck(
                 add("boot=" + join(it.openingWidthCm, it.openingHeightCm, it.lengthCm, it.widthCm, it.heightCm))
             }
             Space.HALL -> hall?.let { add("hall=" + join(it.widthCm, it.turnWidthCm, it.ceilingCm)) }
+            Space.LIFT -> lift?.let { add("lift=" + join(it.doorWidthCm, it.doorHeightCm, it.cabinWidthCm, it.cabinDepthCm, it.cabinHeightCm)) }
             null -> Unit
         }
         if (unit == LengthUnit.INCH) add("u=in")
@@ -89,6 +91,9 @@ data class SharedCheck(
             }
             numbers(params["hall"], 3)?.let { Hall(it[0], it[1], it[2]) }?.takeIf { it.isValid }?.let {
                 return SharedCheck(dims, Space.HALL, hall = it, unit = unit)
+            }
+            numbers(params["lift"], 5)?.let { Lift(it[0], it[1], it[2], it[3], it[4]) }?.takeIf { it.isValid }?.let {
+                return SharedCheck(dims, Space.LIFT, lift = it, unit = unit)
             }
             return SharedCheck(dims, unit = unit)
         }

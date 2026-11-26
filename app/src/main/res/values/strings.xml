@@ -179,7 +179,7 @@
     <string name="home_my_hall_sizes">%1$s wide, %2$s after the turn</string>
     <string name="home_my_boot_sizes">Opening %1$s</string>
     <string name="home_my_moving_day">Moving day</string>
-    <string name="home_my_summary">Through the door and round the turn: %1$d of %2$d</string>
+    <string name="home_my_summary">Into your home: %1$d of %2$d</string>
     <string name="home_my_empty">Name your things once: on moving day, each one gets its answer for the door, the hallway and the car.</string>
     <string name="home_my_not_measured">%1$s · typical, not measured</string>
     <string name="home_my_edit">Edit</string>
@@ -200,4 +200,23 @@
     <string name="home_my_share_door">door</string>
     <string name="home_my_share_turn">turn</string>
     <string name="home_my_share_car">car</string>
+    <string name="space_lift">Lift</string>
+    <string name="space_boot_short">Boot</string>
+    <string name="space_hall_short">Hall</string>
+    <string name="lift_enter">Will it fit in the lift?</string>
+    <string name="lift_yes">Yes, it fits in the lift</string>
+    <string name="lift_tight">Yes, but it is a tight fit</string>
+    <string name="lift_no">No, it will not fit in the lift</string>
+    <string name="lift_opening">Door opening</string>
+    <string name="lift_inside">Inside the cabin</string>
+    <string name="lift_depth">Depth</string>
+    <string name="lift_help">Measure the clear door opening and usable cabin. Checked straight through the door, then turned on the floor; the entry manoeuvre is not simulated.</string>
+    <string name="lift_example_help">Using a typical lift until you enter yours</string>
+    <string name="lift_margin_over">%1$s too big · %2$s</string>
+    <string name="lift_limit_door_width">door width</string>
+    <string name="lift_limit_door_height">door height</string>
+    <string name="lift_limit_floor">cabin floor</string>
+    <string name="lift_limit_height">cabin height</string>
+    <string name="lift_diagonally">diagonally</string>
+    <string name="photo_lift">Lift %1$s · cabin %2$s</string>
 </resources>

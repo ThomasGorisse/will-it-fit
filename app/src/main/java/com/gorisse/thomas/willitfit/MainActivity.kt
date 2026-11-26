@@ -83,9 +83,10 @@ class MainActivity : ComponentActivity() {
         // A note from the app (News): it opens the screen of what it speaks of.
         val noted = if (savedInstanceState == null) intent.getStringExtra(News.EXTRA_OPEN) else null
         when (noted) {
-            News.OPEN_DOOR, News.OPEN_TAPE -> { prefs.carBoot = false; prefs.hallway = false }
-            News.OPEN_BOOT -> { prefs.carBoot = true; prefs.hallway = false }
-            News.OPEN_HALL -> prefs.hallway = true
+            News.OPEN_DOOR, News.OPEN_TAPE -> { prefs.liftSelected = false; prefs.carBoot = false; prefs.hallway = false }
+            News.OPEN_BOOT -> { prefs.liftSelected = false; prefs.carBoot = true; prefs.hallway = false }
+            News.OPEN_HALL -> { prefs.liftSelected = false; prefs.hallway = true }
+            News.OPEN_LIFT -> prefs.liftSelected = true
         }
         if (linked == null && savedInstanceState == null && !prefs.referrerRead) readInstallReferrer(prefs)
         if (shortcut != null) {
@@ -234,8 +235,8 @@ class MainActivity : ComponentActivity() {
                             Route.MY_HOME -> {
                                 var things by remember { mutableStateOf(prefs.myThings) }
                                 MyHomeScreen(
-                                    home = Home(door, prefs.hall, prefs.boot),
-                                    typed = HomeTyped(prefs.doorTyped, prefs.hallTyped, prefs.bootTyped),
+                                    home = Home(door, prefs.hall, prefs.boot, prefs.lift.takeIf { prefs.liftTyped }),
+                                    typed = HomeTyped(prefs.doorTyped, prefs.hallTyped, prefs.bootTyped, prefs.liftTyped),
                                     things = things,
                                     current = dims,
                                     unit = unit,
@@ -246,7 +247,7 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onPick = { dims = it; prefs.dimensions = it; route = Route.HOME },
                                     onSpace = { space ->
-                                        prefs.carBoot = space == 1; prefs.hallway = space == 2
+                                        prefs.liftSelected = space == 3; prefs.carBoot = space == 1; prefs.hallway = space == 2
                                         doorVerdictSeen = false; doorFromMyHome = true; route = Route.DOOR
                                     },
                                     onBack = { route = Route.HOME },
@@ -354,9 +355,11 @@ private fun Intent.sharedCheck(): SharedCheck? {
 /** Takes a check as the person's own: the object, and the space it was checked against. */
 private fun Prefs.takeCheck(check: SharedCheck) {
     dimensions = check.dims
+    if (check.space != null) liftSelected = check.space == Space.LIFT
     when (check.space) {
         Space.DOOR -> { check.door?.let { door = it }; carBoot = false; hallway = false }
         Space.BOOT -> { check.boot?.let { boot = it }; carBoot = true; hallway = false }
+        Space.LIFT -> { check.lift?.let { lift = it }; liftSelected = true }
         Space.HALL -> { check.hall?.let { hall = it }; hallway = true }
         null -> Unit
     }

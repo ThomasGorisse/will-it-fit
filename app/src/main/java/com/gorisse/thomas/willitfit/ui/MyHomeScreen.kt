@@ -77,6 +77,7 @@ import com.gorisse.thomas.willitfit.data.MyThings
 import com.gorisse.thomas.willitfit.data.Thing
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Home
+import com.gorisse.thomas.willitfit.fit.Lift
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.Pass
 import com.gorisse.thomas.willitfit.fit.Preset
@@ -88,7 +89,7 @@ import com.gorisse.thomas.willitfit.fit.movingDay
 import com.gorisse.thomas.willitfit.fit.orderMovingDay
 
 /** Which of the home's spaces the person measured; the others are the typical ones. */
-data class HomeTyped(val door: Boolean, val hall: Boolean, val boot: Boolean)
+data class HomeTyped(val door: Boolean, val hall: Boolean, val boot: Boolean, val lift: Boolean = false)
 
 /**
  * "My home": the front door, the hallway and the car, typed once in the checks, and the person's
@@ -117,7 +118,7 @@ fun MyHomeScreen(
         stringResource(R.string.home_my_share_door),
         stringResource(R.string.home_my_share_turn),
         stringResource(R.string.home_my_share_car),
-        bootTyped = typed.boot,
+        bootTyped = typed.boot, lift = stringResource(R.string.space_lift),
     )
     var editingName by rememberSaveable { mutableStateOf<String?>(null) }
     val editing = things.firstOrNull { it.name == editingName }
@@ -173,6 +174,13 @@ fun MyHomeScreen(
                     typed.boot, onClick = { onSpace(1) },
                 )
 
+                SpaceItem(
+                    Icons.Outlined.DoorFront, stringResource(R.string.space_lift),
+                    (home.lift ?: Lift.typicalFor(unit)).let {
+                        "${formatNumber(it.cabinWidthCm, unit)} × ${formatNumber(it.cabinDepthCm, unit)} × ${formatLength(it.cabinHeightCm, unit)}"
+                    },
+                    typed.lift, onClick = { onSpace(3) },
+                )
                 Spacer(Modifier.height(8.dp))
                 SectionTitle(stringResource(R.string.home_my_moving_day))
                 if (things.isNotEmpty()) {
@@ -198,6 +206,7 @@ fun MyHomeScreen(
                         ThingCard(thing, unit, listOfNotNull(
                             Triple(Icons.Outlined.DoorFront, stringResource(R.string.space_door), row.door),
                             Triple(Icons.Outlined.TurnRight, stringResource(R.string.space_hall), row.hall),
+                            row.lift?.let { Triple(Icons.Outlined.DoorFront, stringResource(R.string.space_lift), it) },
                             if (typed.boot) Triple(Icons.Outlined.DirectionsCar, stringResource(R.string.space_boot), row.boot) else null,
                         ), onClick = { onPick(thing.dims) }, onRemove = { onRemove(thing) },
                             onLongClick = { editingName = thing.name })

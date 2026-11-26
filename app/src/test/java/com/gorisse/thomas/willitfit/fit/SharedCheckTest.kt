@@ -2,9 +2,22 @@ package com.gorisse.thomas.willitfit.fit
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SharedCheckTest {
+    @Test fun liftLinkRoundTripsAndRejectsInvalidCabins() {
+        val check = SharedCheck(Dimensions(60f, 60f, 85f), Space.LIFT, lift = Lift.TYPICAL, unit = LengthUnit.INCH)
+        assertTrue(check.query().contains("lift=80x200x100x125x210"))
+        val parsed = SharedCheck.parse(check.query())!!
+        assertEquals(Space.LIFT, parsed.space)
+        assertEquals(Lift.TYPICAL, parsed.lift)
+        assertEquals(LengthUnit.INCH, parsed.unit)
+        for (bad in listOf("0x200x100x125x210", "80x200x100x125", "80xNaNx100x125x210", "80x200x100x125x1001")) {
+            assertEquals(null, SharedCheck.parse("o=60x60x85&lift=$bad")!!.lift)
+        }
+    }
+
     private val sofa = Preset.SOFA_3.dimensions
 
     @Test fun doorRoundTrips() {

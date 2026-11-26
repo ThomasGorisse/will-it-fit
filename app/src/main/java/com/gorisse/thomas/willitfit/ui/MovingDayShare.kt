@@ -15,6 +15,7 @@ fun movingDayChecklist(
     turn: String,
     car: String,
     bootTyped: Boolean,
+    lift: String = "Lift",
 ): String {
     fun answer(name: String, pass: Pass): String =
         "$name ${if (pass.fits) "✓" else "✗"} ${if (pass.marginCm < 0f) "−" else "+"}${formatMargin(pass.marginCm, unit)}"
@@ -23,6 +24,7 @@ fun movingDayChecklist(
         "${thing.name} — ${formatDimensions(thing.dims, unit)} · " +
             listOfNotNull(
                 answer(door, row.door), answer(turn, row.hall),
+                row.lift?.let { answer(lift, it) },
                 if (bootTyped) answer(car, row.boot) else null,
             ).joinToString(" · ")
     } + "\n\nhttps://play.google.com/store/apps/details?id=com.gorisse.thomas.willitfit"

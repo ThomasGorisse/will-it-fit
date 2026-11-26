@@ -167,7 +167,7 @@
     <string name="home_my_hall_sizes">%1$s breit, %2$s nach der Ecke</string>
     <string name="home_my_boot_sizes">Öffnung %1$s</string>
     <string name="home_my_moving_day">Umzugstag</string>
-    <string name="home_my_summary">Durch Tür und Flurecke: %1$d von %2$d</string>
+    <string name="home_my_summary">In dein Zuhause: %1$d von %2$d</string>
     <string name="home_my_empty">Benenne deine Sachen einmal: Am Umzugstag bekommt jede ihre Antwort für Tür, Flur und Auto.</string>
     <string name="home_my_not_measured">%1$s · typisch, nicht gemessen</string>
     <string name="home_my_edit">Ändern</string>
@@ -188,4 +188,23 @@
     <string name="home_my_share_door">Tür</string>
     <string name="home_my_share_turn">Kurve</string>
     <string name="home_my_share_car">Kofferraum</string>
+    <string name="space_lift">Aufzug</string>
+    <string name="space_boot_short">Kofferraum</string>
+    <string name="space_hall_short">Flur</string>
+    <string name="lift_enter">Passt es in den Aufzug?</string>
+    <string name="lift_yes">Ja, es passt in den Aufzug</string>
+    <string name="lift_tight">Ja, aber es wird eng</string>
+    <string name="lift_no">Nein, es passt nicht in den Aufzug</string>
+    <string name="lift_opening">Türöffnung</string>
+    <string name="lift_inside">Innenraum der Kabine</string>
+    <string name="lift_depth">Tiefe</string>
+    <string name="lift_help">Lichte Türöffnung und nutzbare Kabine messen. Gerade durch die Tür, dann auf dem Boden gedreht; das Einfahren wird nicht simuliert.</string>
+    <string name="lift_example_help">Bis zu deinen Maßen wird ein typischer Aufzug verwendet</string>
+    <string name="lift_margin_over">%1$s zu groß · %2$s</string>
+    <string name="lift_limit_door_width">Türbreite</string>
+    <string name="lift_limit_door_height">Türhöhe</string>
+    <string name="lift_limit_floor">Kabinenboden</string>
+    <string name="lift_limit_height">Kabinenhöhe</string>
+    <string name="lift_diagonally">diagonal</string>
+    <string name="photo_lift">Aufzug %1$s · Kabine %2$s</string>
 </resources>

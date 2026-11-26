@@ -2,10 +2,12 @@ package com.gorisse.thomas.willitfit.data
 
 import android.content.Context
 import android.os.Build
+import androidx.core.content.edit
 import com.gorisse.thomas.willitfit.fit.Boot
 import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
+import com.gorisse.thomas.willitfit.fit.Lift
 import com.gorisse.thomas.willitfit.fit.Hall
 import com.gorisse.thomas.willitfit.fit.LengthUnit
 import com.gorisse.thomas.willitfit.fit.Preset
@@ -84,6 +86,25 @@ class Prefs(context: Context) {
         }
         set(h) = p.edit().putFloat("hall_w", h.widthCm).putFloat("hall_t", h.turnWidthCm)
             .putFloat("hall_c", h.ceilingCm).apply()
+
+    var liftSelected: Boolean
+        get() = p.getBoolean("lift_selected", false)
+        set(value) = p.edit { putBoolean("lift_selected", value) }
+
+    val liftTyped: Boolean get() = p.contains("lift_dw")
+
+    var lift: Lift
+        get() {
+            val t = Lift.typicalFor(unit)
+            return Lift(p.getFloat("lift_dw", t.doorWidthCm), p.getFloat("lift_dh", t.doorHeightCm),
+                p.getFloat("lift_cw", t.cabinWidthCm), p.getFloat("lift_cd", t.cabinDepthCm),
+                p.getFloat("lift_ch", t.cabinHeightCm)).takeIf { it.isValid } ?: t
+        }
+        set(value) = p.edit {
+            putFloat("lift_dw", value.doorWidthCm); putFloat("lift_dh", value.doorHeightCm)
+            putFloat("lift_cw", value.cabinWidthCm); putFloat("lift_cd", value.cabinDepthCm)
+            putFloat("lift_ch", value.cabinHeightCm)
+        }
 
     var boot: Boot
         get() {

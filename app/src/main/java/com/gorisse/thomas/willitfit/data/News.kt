@@ -31,10 +31,11 @@ import java.util.concurrent.TimeUnit
  */
 object News {
     const val CHANNEL = "news"
-    /** Which screen a note opens: [OPEN_DOOR], [OPEN_BOOT], [OPEN_HALL], [OPEN_TAPE] or [OPEN_MY_HOME]. */
+    /** Which screen a note opens: [OPEN_DOOR], [OPEN_BOOT], [OPEN_HALL], [OPEN_LIFT], [OPEN_TAPE] or [OPEN_MY_HOME]. */
     const val EXTRA_OPEN = "com.gorisse.thomas.willitfit.extra.OPEN"
     const val OPEN_DOOR = "door"
     const val OPEN_BOOT = "boot"
+    const val OPEN_LIFT = "lift"
     const val OPEN_HALL = "hall"
     const val OPEN_TAPE = "tape"
     const val OPEN_MY_HOME = "home"
