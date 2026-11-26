@@ -69,6 +69,8 @@ internal fun liftFloor(across: Float, along: Float, width: Float, depth: Float):
 /** A static placement after passing the opening; it does not simulate the entry manoeuvre. */
 fun checkLift(obj: Dimensions, lift: Lift): LiftVerdict {
     // No require(): the screen checks while the person types, and a check never crashes the app.
+    // A half-typed size never fits (a NaN would otherwise lose every comparison and pass).
+    if (!obj.isValid || !lift.isValid) return LiftVerdict(false, Carry.entries.first(), 0f, LiftLimit.DOOR_WIDTH, false)
     val all = Carry.entries.map { carry ->
         val across = obj.side(carry.across)
         val up = obj.side(carry.up)
