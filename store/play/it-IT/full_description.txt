@@ -1,7 +1,7 @@
-Quel divano ci sta in soggiorno? Il frigorifero passa dalla porta? Will It Fit ti aiuta a capire quanto spazio occupa un mobile, prima di cambiare disposizione o organizzare un trasloco.
+Quel divano ci sta in soggiorno? Il frigo passa dalla porta? Will It Fit ti aiuta a capire quanto spazio occupa un mobile, prima di cambiare disposizione o organizzare un trasloco.
 
 PARTI DALLE MISURE
-Scegli un divano a 2 o 3 posti, un letto per un materasso da 140 o 160 cm, un armadio, un frigorifero, una lavatrice, una TV da 55 o 65 pollici, una bicicletta o un passeggino. Ogni modello ha già delle misure tipiche. Puoi anche inserire larghezza, profondità e altezza in centimetri o pollici.
+Scegli un divano a 2 o 3 posti, un letto per un materasso da 140 o 160 cm, un armadio, un frigo, una lavatrice, una TV da 55 o 65 pollici, una bici o un passeggino. Ogni modello ha già delle misure tipiche. Puoi anche inserire larghezza, profondità e altezza in centimetri o pollici.
 
 GUARDALO IN UNA STANZA IN 3D
 Una stanza in 3D mostra un modello semplice dell'oggetto con le misure indicate e le quote disegnate sul pavimento. Cambia una misura e il modello si adatta subito. Ruota la vista per valutarne meglio le proporzioni.
@@ -11,15 +11,29 @@ Punta il telefono verso il pavimento: l'oggetto si posiziona a grandezza reale. 
 
 Scatta una foto con le misure scritte sopra e condividila con chi vive con te o ti aiuta con il trasloco.
 
+MISURA CON IL METRO AR
+Segna due punti su una superficie con il Metro AR. Usa la distanza misurata come larghezza, profondità o altezza dell'oggetto, oppure come larghezza o altezza della porta.
+
 PASSA DALLA PORTA?
 Inserisci la larghezza e l'altezza libere dell'apertura, all'interno del telaio. Ottieni un responso con il margine disponibile o la misura in eccesso. Un'animazione 3D mostra la posizione di trasporto suggerita.
 
-Il calcolo confronta sei orientamenti per un passaggio dritto. Non simula inclinazioni in diagonale o svolte nei corridoi. Considera anche lo spazio per le mani e per fare manovra da entrambi i lati.
+La verifica della porta confronta sei orientamenti per un passaggio dritto, senza inclinazioni in diagonale. Considera lo spazio per le mani e per fare manovra da entrambi i lati.
+
+RIESCE A SVOLTARE NEL CORRIDOIO?
+Inserisci la larghezza del corridoio prima e dopo l'angolo e l'altezza del soffitto. Ottieni un responso per una svolta ad angolo retto senza inclinare l'oggetto.
+
+CI STA NEL BAGAGLIAIO?
+Inserisci larghezza e altezza dell'apertura e lunghezza, larghezza e altezza utili all'interno. La verifica confronta sei orientamenti per un carico in linea retta, senza inclinazioni in diagonale.
+
+CONDIVIDI UNA VERIFICA E RIUTILIZZA LE MISURE
+Condividi una verifica di porta, corridoio o bagagliaio con un link che la riapre nell'app installata, con le stesse misure dell'oggetto e dello spazio.
+
+Riutilizza fino a tre serie di misure recenti personalizzate senza doverle riscrivere. Sui launcher compatibili, tieni premuta l'icona dell'app per vedere i collegamenti a quelle misure.
 
 GRATIS E OFFLINE
-L'app è completamente gratuita, senza pubblicità e senza account. Funziona offline. La stanza in 3D e la verifica del passaggio dalla porta funzionano anche sui telefoni senza AR.
+Gratis, senza pubblicità e senza account. L'app funziona offline. La stanza in 3D e tutte e tre le verifiche funzionano senza AR.
 
 CONTROLLA LE MISURE REALI
 Le misure predefinite sono un punto di partenza, non quelle di un prodotto specifico. Controlla le dimensioni indicate dal venditore, inclusi telaio, piedini e maniglie, e inserisci quelle del tuo mobile.
 
-La realtà aumentata offre un'anteprima. Se lo spazio è poco, verifica con un metro. L'AR richiede un telefono compatibile e Google Play Services per AR, che potrebbe essere necessario installare prima. Un pavimento ben illuminato e con una trama riconoscibile facilita il posizionamento.
+L'AR offre un'anteprima e il Metro AR può sbagliare di qualche centimetro. Se lo spazio è poco, verifica con un metro a nastro. L'AR richiede un telefono compatibile e Google Play Services per AR, che potrebbe essere necessario installare prima. Un pavimento ben illuminato e con una trama riconoscibile facilita il posizionamento.
