@@ -69,6 +69,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.data.Prefs
 import com.gorisse.thomas.willitfit.fit.Boot
+import com.gorisse.thomas.willitfit.fit.Lift
+import com.gorisse.thomas.willitfit.fit.LiftLimit
+import com.gorisse.thomas.willitfit.fit.checkLift
+import com.gorisse.thomas.willitfit.scene.LiftScene
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.foundation.horizontalScroll
 import com.gorisse.thomas.willitfit.fit.Carry
 import com.gorisse.thomas.willitfit.fit.BootLimit
 import com.gorisse.thomas.willitfit.fit.DoorVerdict
@@ -124,8 +130,12 @@ fun DoorScreen(
 ) {
     val context = LocalContext.current
     val prefs = remember(context) { Prefs(context) }
-    // 0 the door, 1 the car boot, 2 the hallway turn.
-    var space by remember { mutableIntStateOf(if (prefs.hallway) 2 else if (prefs.carBoot) 1 else 0) }
+    // Keep the persisted space indices: door 0, boot 1, hallway 2, lift 3.
+    var space by remember { mutableIntStateOf(if (prefs.liftSelected) 3 else if (prefs.hallway) 2 else if (prefs.carBoot) 1 else 0) }
+    val elevator = space == 3
+    var lift by remember { mutableStateOf(prefs.lift) }
+    var liftTyped by remember { mutableStateOf(prefs.liftTyped) }
+    val liftVerdict = remember(dims, lift) { checkLift(dims, lift) }
     val carBoot = space == 1
     val hallway = space == 2
     var hall by remember { mutableStateOf(prefs.hall) }
@@ -138,6 +148,7 @@ fun DoorScreen(
     val bootVerdict = checkBoot(dims, boot)
     val hallVerdict = checkHall(dims, hall)
     val verdict = when {
+        elevator -> DoorVerdict(liftVerdict.fits, liftVerdict.carry, liftVerdict.marginCm)
         carBoot -> DoorVerdict(bootVerdict.fits, bootVerdict.carry, bootVerdict.marginCm)
         hallway -> DoorVerdict(hallVerdict.fits, hallVerdict.carry, hallVerdict.marginCm)
         else -> checkDoor(dims, door)
@@ -148,7 +159,7 @@ fun DoorScreen(
     var sheetPx by remember { mutableIntStateOf(0) }
     var doorValid by remember(space) { mutableStateOf(true) }
     val fieldsValid = when {
-        carBoot -> openingValid && insideValid
+        elevator || carBoot -> openingValid && insideValid
         hallway -> hallValid
         else -> doorValid
     }
@@ -180,7 +191,10 @@ fun DoorScreen(
     val bootBackground = (if (dark) RoomPalette.Night else RoomPalette.Day).wall.toArgb()
 
     val answer = stringResource(answerFor(space, verdict.fits, verdict.isTight))
-    val marginCore = if (hallway) {
+    val marginCore = if (elevator) {
+        if (verdict.fits) stringResource(R.string.hall_margin_spare, formatMargin(verdict.marginCm, unit), stringResource(liftVerdict.limit.label()))
+        else stringResource(R.string.lift_margin_over, formatMargin(verdict.marginCm, unit), stringResource(liftVerdict.limit.label()))
+    } else if (hallway) {
         if (verdict.fits) stringResource(
             R.string.hall_margin_spare, formatMargin(verdict.marginCm, unit), stringResource(hallVerdict.limit.label()),
         ) else stringResource(hallVerdict.limit.overLabel(), formatMargin(verdict.marginCm, unit))
@@ -195,17 +209,22 @@ fun DoorScreen(
     val margin = marginCore + " · " + stringResource(
         // In a boot the object faces the opening, in a hallway the way you walk, not a door.
         when {
-            verdict.carry != Carry.UPRIGHT || space == 0 -> verdict.carry.label()
+            verdict.carry != Carry.UPRIGHT || space == 0 || elevator -> verdict.carry.label()
             carBoot -> R.string.carry_upright_boot
             else -> R.string.carry_upright_hall
         },
     )
+    val liftMargin = if (elevator && liftVerdict.diagonal) " · " + stringResource(R.string.lift_diagonally) else ""
     val objectLine = stringResource(R.string.door_object, objectName(dims), formatDimensions(dims, unit))
     val hallLabels = HallLabels(
         width = "${formatNumber(hall.widthCm, unit)} ${unit.symbol}",
         turnWidth = "${formatNumber(hall.turnWidthCm, unit)} ${unit.symbol}",
     )
-    val doorLine = if (hallway) stringResource(
+    val doorLine = if (elevator) stringResource(
+        R.string.photo_lift,
+        "${formatNumber(lift.doorWidthCm, unit)} × ${formatNumber(lift.doorHeightCm, unit)}",
+        "${formatNumber(lift.cabinWidthCm, unit)} × ${formatNumber(lift.cabinDepthCm, unit)} × ${formatNumber(lift.cabinHeightCm, unit)} ${unit.symbol}",
+    ) else if (hallway) stringResource(
         R.string.photo_hall,
         "${formatNumber(hall.widthCm, unit)} → ${formatNumber(hall.turnWidthCm, unit)} ${unit.symbol}",
         "${formatNumber(hall.ceilingCm, unit)} ${unit.symbol}",
@@ -222,6 +241,7 @@ fun DoorScreen(
     val checkLink = {
         when (space) {
             1 -> SharedCheck(dims, Space.BOOT, boot = boot, unit = unit)
+            3 -> SharedCheck(dims, Space.LIFT, lift = lift, unit = unit)
             2 -> SharedCheck(dims, Space.HALL, hall = hall, unit = unit)
             else -> SharedCheck(dims, Space.DOOR, door = door, unit = unit)
         }.link()
@@ -233,7 +253,11 @@ fun DoorScreen(
             top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 68.dp,
             bottom = (with(density) { sheetPx.toDp() } - 28.dp).coerceAtLeast(0.dp),
         )
-        if (hallway) HallScene(
+        if (elevator) LiftScene(
+            dims = dims, lift = lift, verdict = liftVerdict,
+            accent = FurnitureTeal, palette = if (dark) RoomPalette.Night else RoomPalette.Day,
+            modifier = Modifier.fillMaxSize(), contentPadding = scenePadding,
+        ) else if (hallway) HallScene(
             dims = dims, hall = hall, verdict = hallVerdict, labels = hallLabels,
             accent = FurnitureTeal, palette = if (dark) RoomPalette.Night else RoomPalette.Day,
             modifier = Modifier.fillMaxSize(), contentPadding = scenePadding,
@@ -284,7 +308,7 @@ fun DoorScreen(
                         // The card: the answer, then the margin in large (with how it is carried
                         // through a door; the picture shows how it lies elsewhere), then the sizes.
                         savePhoto(
-                            context, bitmap, answer, if (space != 0) marginCore else margin, listOf(objectLine, doorLine),
+                            context, bitmap, answer, if (elevator) margin + liftMargin else if (space != 0) marginCore else margin, listOf(objectLine, doorLine),
                             signature, color,
                             verdict = when {
                                 !verdict.fits -> CardVerdict.NO
@@ -301,7 +325,7 @@ fun DoorScreen(
                 )
                 when (result) {
                     is PhotoResult.Success -> sharePhoto(
-                        context, result.value, chooser, "$answer · $margin\n$objectLine · $doorLine\n${checkLink()}",
+                        context, result.value, chooser, "$answer · $margin$liftMargin\n$objectLine · $doorLine\n${checkLink()}",
                     )
                     is PhotoResult.Failure -> photoFailure = result.reason
                 }
@@ -338,18 +362,25 @@ fun DoorScreen(
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         ) {
             Column(Modifier.verticalScroll(rememberScrollState()).navigationBarsPadding().padding(top = 20.dp, bottom = 16.dp)) {
-                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 12.dp)) {
-                    listOf(R.string.space_door, R.string.space_boot, R.string.space_hall).forEachIndexed { i, label ->
+                // Allow large accessibility text to scroll; at 360 dp the compact labels fit together.
+                val windowWidth = LocalWindowInfo.current.containerSize.width
+                val compact = windowWidth <= with(density) { 400.dp.roundToPx() } || density.fontScale > 1f
+                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp).padding(bottom = 12.dp)) {
+                    listOf(R.string.space_door, if (compact) R.string.space_boot_short else R.string.space_boot, if (compact) R.string.space_hall_short else R.string.space_hall, R.string.space_lift).forEachIndexed { i, label ->
                         SegmentedButton(
                             selected = space == i,
                             onClick = {
                                 space = i
+                                prefs.liftSelected = i == 3
                                 prefs.carBoot = i == 1
                                 prefs.hallway = i == 2
                                 photoFailure = null
                             },
-                            shape = SegmentedButtonDefaults.itemShape(i, 3),
-                        ) { Text(stringResource(label), maxLines = 1) }
+                            shape = SegmentedButtonDefaults.itemShape(i, 4),
+                            icon = {},
+                            contentPadding = PaddingValues(horizontal = 8.dp),
+                            label = { Text(stringResource(label), maxLines = 1, style = MaterialTheme.typography.labelMedium) },
+                        )
                     }
                 }
                 Column(Modifier.padding(horizontal = 24.dp)) {
@@ -361,7 +392,7 @@ fun DoorScreen(
                     Spacer(Modifier.height(8.dp))
                     if (!fieldsValid) {
                         Text(
-                            stringResource(when (space) { 1 -> R.string.boot_enter; 2 -> R.string.hall_enter; else -> R.string.door_enter }),
+                            stringResource(when (space) { 3 -> R.string.lift_enter; 1 -> R.string.boot_enter; 2 -> R.string.hall_enter; else -> R.string.door_enter }),
                             style = MaterialTheme.typography.headlineSmall,
                         )
                     } else AnimatedContent(Triple(space, verdict.fits, verdict.isTight), label = "verdict") { (shown, fits, tight) ->
@@ -381,7 +412,7 @@ fun DoorScreen(
                     }
                     Spacer(Modifier.height(4.dp))
                     if (fieldsValid) Text(
-                        text = margin,
+                        text = margin + liftMargin,
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     if (space == 0 && fieldsValid && !verdict.fits && dims.shape == Shape.SOFA) {
@@ -400,7 +431,32 @@ fun DoorScreen(
                     }
                 }
                 Spacer(Modifier.height(16.dp))
-                if (hallway) key(space) {
+                if (elevator) key(space) {
+                    val updateLift: (Lift) -> Unit = { lift = it; prefs.lift = it; liftTyped = true }
+                    Text(stringResource(R.string.lift_opening), modifier = Modifier.padding(horizontal = 24.dp), style = MaterialTheme.typography.titleSmall)
+                    LengthFields(
+                        labels = listOf(stringResource(R.string.door_width), stringResource(R.string.door_height)),
+                        values = listOf(lift.doorWidthCm, lift.doorHeightCm), unit = unit,
+                        onChange = { i, cm -> updateLift(if (i == 0) lift.copy(doorWidthCm = cm) else lift.copy(doorHeightCm = cm)) },
+                        modifier = Modifier.padding(horizontal = 16.dp), onValidChange = { openingValid = it },
+                    )
+                    Text(stringResource(R.string.lift_inside), modifier = Modifier.padding(start = 24.dp, top = 8.dp), style = MaterialTheme.typography.titleSmall)
+                    LengthFields(
+                        labels = listOf(stringResource(R.string.boot_width), stringResource(R.string.lift_depth), stringResource(R.string.boot_height)),
+                        values = listOf(lift.cabinWidthCm, lift.cabinDepthCm, lift.cabinHeightCm), unit = unit,
+                        onChange = { i, cm -> updateLift(when (i) {
+                            0 -> lift.copy(cabinWidthCm = cm)
+                            1 -> lift.copy(cabinDepthCm = cm)
+                            else -> lift.copy(cabinHeightCm = cm)
+                        }) },
+                        modifier = Modifier.padding(horizontal = 16.dp), onValidChange = { insideValid = it },
+                    )
+                    Text(
+                        stringResource(R.string.lift_help) + if (!liftTyped) " " + stringResource(R.string.lift_example_help) else "",
+                        style = MaterialTheme.typography.bodySmall, color = scheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp),
+                    )
+                } else if (hallway) key(space) {
                     LengthFields(
                         labels = listOf(
                             stringResource(R.string.hall_width), stringResource(R.string.hall_turn), stringResource(R.string.hall_ceiling),
@@ -490,8 +546,16 @@ fun DoorScreen(
 
 private fun answerFor(space: Int, fits: Boolean, tight: Boolean): Int = when (space) {
     1 -> if (!fits) R.string.boot_no else if (tight) R.string.boot_tight else R.string.boot_yes
+    3 -> if (!fits) R.string.lift_no else if (tight) R.string.lift_tight else R.string.lift_yes
     2 -> if (!fits) R.string.hall_no else if (tight) R.string.hall_tight else R.string.hall_yes
     else -> if (!fits) R.string.door_no else if (tight) R.string.door_tight else R.string.door_yes
+}
+
+private fun LiftLimit.label(): Int = when (this) {
+    LiftLimit.DOOR_WIDTH -> R.string.lift_limit_door_width
+    LiftLimit.DOOR_HEIGHT -> R.string.lift_limit_door_height
+    LiftLimit.CABIN_FLOOR -> R.string.lift_limit_floor
+    LiftLimit.CABIN_HEIGHT -> R.string.lift_limit_height
 }
 
 private fun HallLimit.label(): Int = when (this) {

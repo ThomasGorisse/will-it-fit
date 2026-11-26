@@ -6,6 +6,19 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MovingDayTest {
+    @Test fun onlyMeasuredLiftCountsForGettingInAndOrdering() {
+        val obj = Dimensions(60f, 60f, 85f)
+        val measured = home.copy(lift = Lift(50f, 200f, 100f, 125f, 210f))
+        val unmeasured = movingDay(obj, home)
+        val blocked = movingDay(obj, measured)
+        assertTrue(unmeasured.getsIn)
+        assertEquals(null, unmeasured.lift)
+        assertFalse(blocked.getsIn)
+        assertEquals(listOf("blocked", "clear"), orderMovingDay(listOf("clear" to unmeasured, "blocked" to blocked), false).map { it.first })
+        val tight = unmeasured.copy(lift = Pass(true, true, 1f))
+        assertEquals(listOf("tight", "clear"), orderMovingDay(listOf("clear" to unmeasured, "tight" to tight), false).map { it.first })
+    }
+
     private val home = Home(Door(80f, 204f), Hall(90f, 90f, 240f), Boot.ESTATE)
 
     @Test fun eachSpaceGetsTheAnswerOfItsOwnCheck() {

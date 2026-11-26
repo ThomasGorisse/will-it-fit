@@ -10,6 +10,16 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MovingDayShareTest {
+    @Test fun measuredLiftAppearsInLocalizedChecklist() {
+        val measured = row.copy(lift = Pass(false, false, -5f))
+        val text = movingDayChecklist(listOf(Thing("Box", Dimensions(40f, 30f, 20f)) to measured), LengthUnit.CM,
+            "porte", "virage", "coffre", false, lift = "ascenseur")
+        assertTrue(text.contains("ascenseur ✗ −5 cm"))
+        val unmeasured = movingDayChecklist(listOf(Thing("Box", Dimensions(40f, 30f, 20f)) to row), LengthUnit.CM,
+            "porte", "virage", "coffre", false, lift = "ascenseur")
+        assertTrue(!unmeasured.contains("ascenseur"))
+    }
+
     private val row = MovingDayRow(Pass(true, false, 4f), Pass(false, false, -12f), Pass(true, false, 3f))
 
     @Test fun checklistIncludesNamesSizesSignedAnswersAndPlayLink() {
