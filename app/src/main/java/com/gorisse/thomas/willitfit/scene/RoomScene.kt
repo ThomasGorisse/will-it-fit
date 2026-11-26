@@ -182,7 +182,8 @@ fun RoomScene(
     val sun = rememberMainLightNode(engine) {
         intensity = if (palette.isNight) 12_000f else 80_000f
         // Evening light is the lamp's: warm, like the target's dark picture.
-        if (palette.isNight) color = io.github.sceneview.math.Color(1f, 0.85f, 0.68f, 1f)
+        // Set in both branches: a theme change keeps this light, so day must undo night's.
+        color = if (palette.isNight) io.github.sceneview.math.Color(1f, 0.85f, 0.68f, 1f) else io.github.sceneview.DEFAULT_MAIN_LIGHT_COLOR
         // Low afternoon sun from the window side: the object throws a real shadow sideways
         // onto the floor, as in the target picture, instead of straight down under itself.
         // It comes partly from the front too: grazing the fronts edge-on (z -0.18), it left
