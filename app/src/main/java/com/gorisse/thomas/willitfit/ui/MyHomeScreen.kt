@@ -110,13 +110,14 @@ fun MyHomeScreen(
 ) {
     val scheme = MaterialTheme.colorScheme
     val context = LocalContext.current
-    val rows = orderMovingDay(things.map { it to movingDay(it.dims, home) })
+    val rows = orderMovingDay(things.map { it to movingDay(it.dims, home) }, bootTyped = typed.boot)
     val shareLabel = stringResource(R.string.home_my_share)
     val checklist = movingDayChecklist(
         rows, unit,
         stringResource(R.string.home_my_share_door),
         stringResource(R.string.home_my_share_turn),
         stringResource(R.string.home_my_share_car),
+        bootTyped = typed.boot,
     )
     var editingName by rememberSaveable { mutableStateOf<String?>(null) }
     val editing = things.firstOrNull { it.name == editingName }
@@ -194,10 +195,10 @@ fun MyHomeScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     rows.forEach { (thing, row) ->
-                        ThingCard(thing, unit, listOf(
+                        ThingCard(thing, unit, listOfNotNull(
                             Triple(Icons.Outlined.DoorFront, stringResource(R.string.space_door), row.door),
                             Triple(Icons.Outlined.TurnRight, stringResource(R.string.space_hall), row.hall),
-                            Triple(Icons.Outlined.DirectionsCar, stringResource(R.string.space_boot), row.boot),
+                            if (typed.boot) Triple(Icons.Outlined.DirectionsCar, stringResource(R.string.space_boot), row.boot) else null,
                         ), onClick = { onPick(thing.dims) }, onRemove = { onRemove(thing) },
                             onLongClick = { editingName = thing.name })
                     }
