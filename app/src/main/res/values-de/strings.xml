@@ -149,4 +149,15 @@
     <string name="hall_over_ceiling">%1$s zu hoch für die Decke</string>
     <string name="photo_hall">Flur %1$s · Decke %2$s</string>
     <string name="carry_upright_hall">aufrecht, in Gehrichtung</string>
+    <string name="news_channel">Neuigkeiten und Tipps</string>
+    <string name="news_offer">Bescheid bekommen, wenn neue Prüfungen kommen?</string>
+    <string name="news_offer_body">Höchstens zweimal im Monat, nie an einem Tag, an dem du die App nutzt.</string>
+    <string name="news_yes">Ja</string>
+    <string name="news_no">Nein danke</string>
+    <string name="news_turn_off">Ausschalten</string>
+    <string name="settings_news_body">Neue Prüfungen und Tipps, höchstens zweimal im Monat.</string>
+    <string name="reminder_title">Ein neues Sofa im Blick?</string>
+    <string name="reminder_body">Prüfe vor der Lieferung, ob es durch die Tür passt.</string>
+    <string name="whats_new_title">Neu: die Flurecke</string>
+    <string name="whats_new_body">Kommt das Sofa um die Ecke? Flurmaße eingeben und sehen.</string>
 </resources>

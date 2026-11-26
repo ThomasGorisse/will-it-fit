@@ -1,15 +1,20 @@
 package com.gorisse.thomas.willitfit
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
@@ -19,10 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.ar.core.ArCoreApk
+import com.gorisse.thomas.willitfit.data.News
 import com.gorisse.thomas.willitfit.data.publishSizeShortcuts
 import com.gorisse.thomas.willitfit.data.shortcutDimensions
 import com.gorisse.thomas.willitfit.data.sizeShortcutId
@@ -69,6 +76,13 @@ class MainActivity : ComponentActivity() {
         // A check someone sent: its link opens the same check, once, before anything is read.
         val linked = if (savedInstanceState == null) intent.sharedCheck() else null
         linked?.let { prefs.takeCheck(it) }
+        // A note from the app (News): it opens the screen of what it speaks of.
+        val noted = if (savedInstanceState == null) intent.getStringExtra(News.EXTRA_OPEN) else null
+        when (noted) {
+            News.OPEN_DOOR, News.OPEN_TAPE -> { prefs.carBoot = false; prefs.hallway = false }
+            News.OPEN_BOOT -> { prefs.carBoot = true; prefs.hallway = false }
+            News.OPEN_HALL -> prefs.hallway = true
+        }
         if (linked == null && savedInstanceState == null && !prefs.referrerRead) readInstallReferrer(prefs)
         if (shortcut != null) {
             prefs.dimensions = shortcut
@@ -78,13 +92,24 @@ class MainActivity : ComponentActivity() {
         setContent {
             WillItFitTheme {
                 Surface(color = MaterialTheme.colorScheme.surface) {
-                    var route by rememberSaveable { mutableStateOf(if (shortcut != null || linked?.space != null) Route.DOOR else Route.HOME) }
+                    val context = LocalContext.current
+                    val arAvailable = remember {
+                        runCatching { !ArCoreApk.getInstance().checkAvailability(context).isUnsupported }.getOrDefault(false)
+                    }
+                    var route by rememberSaveable {
+                        mutableStateOf(
+                            when {
+                                noted == News.OPEN_TAPE && arAvailable -> Route.MEASURE
+                                shortcut != null || linked?.space != null || noted != null -> Route.DOOR
+                                else -> Route.HOME
+                            },
+                        )
+                    }
                     var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
                     var recentSizes by remember { mutableStateOf(prefs.recentSizes) }
                     var dims by remember { mutableStateOf(prefs.dimensions) }
                     var door by remember { mutableStateOf(prefs.door) }
                     var unit by remember { mutableStateOf(prefs.unit) }
-                    val context = LocalContext.current
                     LaunchedEffect(Unit) {
                         if (linked != null) Toast.makeText(this@MainActivity, R.string.link_opened, Toast.LENGTH_LONG).show()
                     }
@@ -112,9 +137,6 @@ class MainActivity : ComponentActivity() {
                         }
                         Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
                     }
-                    val arAvailable = remember {
-                        runCatching { !ArCoreApk.getInstance().checkAvailability(context).isUnsupported }.getOrDefault(false)
-                    }
                     // An answer is an AR photo taken or a door verdict seen. Back home after the
                     // second one is a pause after something that worked: Play's rating sheet is
                     // asked for then, and once more much later (ReviewPolicy).
@@ -139,8 +161,19 @@ class MainActivity : ComponentActivity() {
                         }
                         lastRoute = route
                     }
+                    // News and tips, as Settings shows it: on, and let through by Android.
+                    var newsOn by remember { mutableStateOf(News.allowed(this@MainActivity, prefs)) }
+                    val askNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+                        // Refused before: Android no longer asks, its settings are where it comes back.
+                        if (!granted) openNotificationSettings()
+                        newsOn = News.allowed(this@MainActivity, prefs)
+                    }
+                    LifecycleResumeEffect(Unit) {
+                        newsOn = News.allowed(this@MainActivity, prefs)
+                        onPauseOrDispose { }
+                    }
                     // The AR tape opens from home (the object) or from the door, and goes back there.
-                    var measureDoor by rememberSaveable { mutableStateOf(false) }
+                    var measureDoor by rememberSaveable { mutableStateOf(noted == News.OPEN_TAPE) }
                     BackHandler(enabled = route != Route.HOME) {
                         route = when {
                             route == Route.RESULT -> Route.AR
@@ -189,6 +222,23 @@ class MainActivity : ComponentActivity() {
                             )
                             Route.SETTINGS -> SettingsScreen(
                                 unit = unit,
+                                newsOn = newsOn,
+                                onNews = { on ->
+                                    if (!on) {
+                                        News.turnOff(this@MainActivity); newsOn = false
+                                    } else {
+                                        // The person's yes is kept; Android may still have to let
+                                        // the notes through. The switch shows on once it does
+                                        // (checked again on every return, Android's settings included).
+                                        News.turnOn(this@MainActivity)
+                                        when {
+                                            Build.VERSION.SDK_INT >= 33 && !notificationsGranted() ->
+                                                askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                            !News.allowed(this@MainActivity) -> openNotificationSettings()
+                                        }
+                                        newsOn = News.allowed(this@MainActivity)
+                                    }
+                                },
                                 onUnit = { new ->
                                     // A typical size and the typical door follow the unit, to the
                                     // whole inch or centimetre; what the person typed stays theirs.
@@ -207,6 +257,22 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Opened: no note today, and the week's reminder starts again from now.
+        News.onOpened(this)
+    }
+
+    private fun notificationsGranted(): Boolean = Build.VERSION.SDK_INT < 33 ||
+        checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+    /** Android's own page for the app's notifications: where a refusal is undone. */
+    private fun openNotificationSettings() {
+        runCatching {
+            startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName))
         }
     }
 

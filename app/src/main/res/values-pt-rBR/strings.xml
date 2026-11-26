@@ -149,4 +149,15 @@
     <string name="hall_over_ceiling">%1$s alto demais para o teto</string>
     <string name="photo_hall">Corredor %1$s · teto %2$s</string>
     <string name="carry_upright_hall">em pé, de frente</string>
+    <string name="news_channel">Novidades e dicas</string>
+    <string name="news_offer">Quer um aviso quando chegarem novas verificações?</string>
+    <string name="news_offer_body">No máximo duas vezes por mês, nunca num dia em que você usa o app.</string>
+    <string name="news_yes">Sim</string>
+    <string name="news_no">Não, obrigado</string>
+    <string name="news_turn_off">Desativar</string>
+    <string name="settings_news_body">Novas verificações e dicas, no máximo duas vezes por mês.</string>
+    <string name="reminder_title">De olho num sofá novo?</string>
+    <string name="reminder_body">Confira se ele passa pela porta antes da entrega.</string>
+    <string name="whats_new_title">Novo: a curva do corredor</string>
+    <string name="whats_new_body">O sofá faz a curva? Digite as medidas do corredor e confira.</string>
 </resources>

@@ -1,5 +1,12 @@
 package com.gorisse.thomas.willitfit.ui
 
+import com.gorisse.thomas.willitfit.data.News
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.foundation.layout.Arrangement
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.compose.rememberLauncherForActivityResult
+import android.os.Build
+import android.Manifest
 import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -144,6 +151,21 @@ fun DoorScreen(
     // A verdict on screen for a second counts as seen: an answer, for Play's rating sheet.
     LaunchedEffect(fieldsValid, space) {
         if (fieldsValid) { delay(1_000); onVerdictShown() }
+    }
+    // News and tips: offered once, after a first "yes", where Android asks for notifications (13+).
+    // Before 13 they are on from the start, and each note carries its Turn off.
+    var newsOffer by remember { mutableStateOf(false) }
+    LaunchedEffect(fieldsValid, space, verdict.fits) {
+        if (fieldsValid && verdict.fits && Build.VERSION.SDK_INT >= 33 && !prefs.newsOffered && !prefs.newsOn) {
+            delay(1_200)
+            prefs.newsOffered = true
+            newsOffer = true
+        }
+    }
+    val askNews = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        // A refusal is final: the card never comes back, and Android is not asked again.
+        if (granted) News.turnOn(context)
+        newsOffer = false
     }
     var holding by remember { mutableStateOf(false) }
     // The last share whose picture did not come out, and why: a card with Try again.
@@ -355,6 +377,12 @@ fun DoorScreen(
                             color = scheme.onSurfaceVariant,
                         )
                     }
+                    AnimatedVisibility(newsOffer) {
+                        NewsOfferCard(
+                            onYes = { askNews.launch(Manifest.permission.POST_NOTIFICATIONS) },
+                            onNo = { newsOffer = false },
+                        )
+                    }
                 }
                 Spacer(Modifier.height(16.dp))
                 if (hallway) key(space) {
@@ -477,4 +505,33 @@ private fun BootLimit.overLabel(): Int = when (this) {
     BootLimit.LENGTH -> R.string.boot_over_length
     BootLimit.WIDTH -> R.string.boot_over_width
     BootLimit.HEIGHT -> R.string.boot_over_height
+}
+
+/** "Get a note when new checks arrive?": shown once, under a first "yes". */
+@Composable
+private fun NewsOfferCard(onYes: () -> Unit, onNo: () -> Unit) {
+    val scheme = MaterialTheme.colorScheme
+    Surface(
+        color = scheme.secondaryContainer,
+        contentColor = scheme.onSecondaryContainer,
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+    ) {
+        Column(Modifier.padding(start = 16.dp, end = 8.dp, top = 14.dp, bottom = 4.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Outlined.Notifications, contentDescription = null, modifier = Modifier.size(20.dp))
+                Spacer(Modifier.width(12.dp))
+                Text(stringResource(R.string.news_offer), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(end = 8.dp))
+            }
+            Text(
+                stringResource(R.string.news_offer_body),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 32.dp, top = 2.dp, end = 8.dp),
+            )
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = onNo) { Text(stringResource(R.string.news_no)) }
+                TextButton(onClick = onYes) { Text(stringResource(R.string.news_yes)) }
+            }
+        }
+    }
 }
