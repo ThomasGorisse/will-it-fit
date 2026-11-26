@@ -1,6 +1,6 @@
 Novedades
+• Comparte la respuesta como imagen: la escena, el margen y las medidas en una tarjeta, lista para un chat o una historia.
+• Un aviso cuando llega una comprobación nueva, si quieres: dos al mes como mucho, nunca un día de uso. Se apaga en Ajustes.
 • ¿Gira la esquina? Introduce el ancho del pasillo y el espacio tras la esquina: la respuesta dice si el sofá pasa.
-• Envía una comprobación: el enlace abre las mismas medidas y la misma respuesta, en la app o en una página web.
-• ¿Cabe en el coche? Introduce la apertura y el interior del maletero: la respuesta dice qué medida bloquea.
-• Tus últimas medidas vuelven con un toque o manteniendo pulsado el icono.
+• Envía una comprobación: el enlace abre la misma respuesta.
 Gratis, sin anuncios ni cuenta, sin conexión.

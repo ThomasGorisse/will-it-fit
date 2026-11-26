@@ -1,6 +1,6 @@
 What's new
+• Share the answer as a picture: the scene, the margin and the sizes on one card, ready for a chat or a story.
+• A note when a new check arrives, if you want it: twice a month at most, never on a day you use the app. Off in Settings.
 • Will it make the turn? Enter the hallway's width and the space after the corner: the answer says if the sofa gets round.
-• Send a check: the link opens the same sizes and the same answer, in the app or on a web page.
-• Will it fit in the car? Enter the boot's opening and inside: the answer names the side that blocks.
-• Your last sizes come back with one tap, or with a long-press on the app icon.
+• Send a check: the link opens the same sizes and the same answer.
 Free, no ads, no account, offline.
