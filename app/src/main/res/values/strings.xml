@@ -93,6 +93,9 @@
 
     <string name="action_measure">Measure with AR</string>
     <string name="door_measure">Measure the door with AR</string>
+    <string name="boot_measure">Measure the boot with AR</string>
+    <string name="hall_measure">Measure the hallway with AR</string>
+    <string name="lift_measure">Measure the lift with AR</string>
     <string name="tape_title">AR tape</string>
     <string name="tape_searching">Move the phone slowly so it finds the surfaces</string>
     <string name="tape_aim_first">Aim the dot at one end, then tap +</string>

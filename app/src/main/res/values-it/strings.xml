@@ -84,6 +84,9 @@
 
     <string name="action_measure">Misura in AR</string>
     <string name="door_measure">Misura la porta in AR</string>
+    <string name="boot_measure">Misura il bagagliaio in AR</string>
+    <string name="hall_measure">Misura il corridoio in AR</string>
+    <string name="lift_measure">Misura l’ascensore in AR</string>
     <string name="tape_title">Metro AR</string>
     <string name="tape_searching">Muovi il telefono lentamente perché trovi le superfici</string>
     <string name="tape_aim_first">Punta il punto su un\'estremità, poi tocca +</string>

@@ -84,6 +84,9 @@
 
     <string name="action_measure">Mit AR messen</string>
     <string name="door_measure">Tür mit AR messen</string>
+    <string name="boot_measure">Kofferraum mit AR messen</string>
+    <string name="hall_measure">Flur mit AR messen</string>
+    <string name="lift_measure">Aufzug mit AR messen</string>
     <string name="tape_title">AR-Maßband</string>
     <string name="tape_searching">Bewege das Handy langsam, damit es die Flächen findet</string>
     <string name="tape_aim_first">Ziele mit dem Punkt auf ein Ende und tippe auf +</string>

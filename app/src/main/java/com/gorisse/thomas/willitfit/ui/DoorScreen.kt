@@ -545,7 +545,12 @@ fun DoorScreen(
                 ) {
                     Icon(Icons.Outlined.Straighten, null, Modifier.size(ButtonDefaults.IconSize))
                     Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                    Text(stringResource(R.string.door_measure))
+                    Text(stringResource(when (space) {
+                        1 -> R.string.boot_measure
+                        2 -> R.string.hall_measure
+                        3 -> R.string.lift_measure
+                        else -> R.string.door_measure
+                    }))
                 }
             }
         }

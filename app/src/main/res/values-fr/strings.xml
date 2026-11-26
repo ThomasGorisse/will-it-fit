@@ -84,6 +84,9 @@
 
     <string name="action_measure">Mesurer en AR</string>
     <string name="door_measure">Mesurer la porte en AR</string>
+    <string name="boot_measure">Mesurer le coffre en AR</string>
+    <string name="hall_measure">Mesurer le couloir en AR</string>
+    <string name="lift_measure">Mesurer l’ascenseur en AR</string>
     <string name="tape_title">Mètre AR</string>
     <string name="tape_searching">Bougez le téléphone lentement pour qu\'il trouve les surfaces</string>
     <string name="tape_aim_first">Visez un bout avec le point, puis touchez +</string>

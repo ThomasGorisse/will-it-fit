@@ -84,6 +84,9 @@
 
     <string name="action_measure">Medir com RA</string>
     <string name="door_measure">Medir a porta com RA</string>
+    <string name="boot_measure">Medir o porta-malas com RA</string>
+    <string name="hall_measure">Medir o corredor com RA</string>
+    <string name="lift_measure">Medir o elevador com RA</string>
     <string name="tape_title">Trena RA</string>
     <string name="tape_searching">Mova o celular devagar para ele encontrar as superfícies</string>
     <string name="tape_aim_first">Mire o ponto em uma ponta e toque em +</string>
