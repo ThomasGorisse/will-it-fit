@@ -95,7 +95,8 @@ fun LiftScene(
     SideEffect { environment.indirectLight?.intensity = if (palette.isNight) dayIbl * 0.6f else dayIbl }
     val sun = rememberMainLightNode(engine) {
         intensity = if (palette.isNight) 30_000f else 100_000f
-        if (palette.isNight) color = io.github.sceneview.math.Color(1f, 0.86f, 0.7f, 1f)
+        // Set in both branches: a theme change keeps this light, so day must undo night's.
+        color = if (palette.isNight) io.github.sceneview.math.Color(1f, 0.86f, 0.7f, 1f) else io.github.sceneview.DEFAULT_MAIN_LIGHT_COLOR
         lightDirection = Direction(-0.55f, -0.7f, -0.45f)
     }
     LaunchedEffect(sun) { sun.updateShadowOptions { mapSize = 2048; shadowFar = 12f; normalBias = 3f } }

@@ -3,6 +3,7 @@ package com.gorisse.thomas.willitfit
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -68,6 +69,17 @@ class MainActivity : ComponentActivity() {
 
     /** A check from Play's install referrer: it arrives a moment after the first launch. */
     private var referredCheck by mutableStateOf<SharedCheck?>(null)
+
+    /**
+     * Light or dark changes while the app is open (by hand, or at sunset): Compose recolours
+     * the screens and the room in place. Recreating the activity instead would tear down the 3D
+     * engine and leave the room black until a new one has loaded the object again. The bars'
+     * icons are chosen once by enableEdgeToEdge, so they are chosen again here.
+     */
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        enableEdgeToEdge()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
