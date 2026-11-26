@@ -158,8 +158,8 @@
     <string name="settings_news_body">Nouvelles vérifications et astuces, deux fois par mois au plus.</string>
     <string name="reminder_title">Un canapé en vue ?</string>
     <string name="reminder_body">Vérifiez qu\'il passe la porte avant la livraison.</string>
-    <string name="whats_new_title">Nouveau : votre déménagement</string>
-    <string name="whats_new_body">Nommez vos objets et voyez ce qui passe par la porte, le couloir et dans le coffre.</string>
+    <string name="whats_new_title">Nouveau : ça rentre dans l\'ascenseur ?</string>
+    <string name="whats_new_body">Mesurez l\'ascenseur une fois et voyez ce qui monte : debout, couché ou en diagonale.</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">Mon logement</string>

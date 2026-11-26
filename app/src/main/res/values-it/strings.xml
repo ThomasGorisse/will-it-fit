@@ -158,8 +158,8 @@
     <string name="settings_news_body">Nuove verifiche e consigli, al massimo due volte al mese.</string>
     <string name="reminder_title">Un divano nuovo in vista?</string>
     <string name="reminder_body">Verifica che passi dalla porta prima della consegna.</string>
-    <string name="whats_new_title">Novità: il tuo trasloco</string>
-    <string name="whats_new_body">Dai un nome alle tue cose e scopri se passano da porta e corridoio e se entrano nel bagagliaio.</string>
+    <string name="whats_new_title">Novità: entra in ascensore?</string>
+    <string name="whats_new_body">Misura l\'ascensore una volta e scopri cosa sale: in piedi, coricato o in diagonale.</string>
 
     <!-- My home and moving day -->
     <string name="home_my_title">Casa mia</string>
