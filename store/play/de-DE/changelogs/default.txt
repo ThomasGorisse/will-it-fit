@@ -1,6 +1,6 @@
 Neu
+• Teile die Antwort als Bild: Szene, Spielraum und Maße auf einer Karte, bereit für Chat oder Story.
+• Ein Hinweis, wenn eine neue Prüfung kommt, wenn du willst: höchstens zweimal im Monat, nie an einem Nutzungstag. Abschaltbar in den Einstellungen.
 • Kommt es um die Ecke? Gib Flurbreite und Platz nach der Ecke ein: Die Antwort sagt, ob das Sofa durchpasst.
-• Schick eine Prüfung: Der Link öffnet dieselben Maße und dieselbe Antwort, in der App oder auf einer Webseite.
-• Passt es ins Auto? Gib Öffnung und Innenmaße des Kofferraums ein: Die Antwort nennt das Maß, das blockiert.
-• Deine letzten Maße kommen mit einem Tipp zurück oder per Langdruck aufs Symbol.
+• Schick eine Prüfung: Der Link öffnet dieselbe Antwort.
 Kostenlos, ohne Werbung und Konto, offline.
