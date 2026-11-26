@@ -50,13 +50,17 @@ import com.gorisse.thomas.willitfit.ui.ArScreen
 import com.gorisse.thomas.willitfit.ui.DoorScreen
 import com.gorisse.thomas.willitfit.ui.HomeScreen
 import com.gorisse.thomas.willitfit.ui.MeasureScreen
+import com.gorisse.thomas.willitfit.ui.HomeTyped
+import com.gorisse.thomas.willitfit.ui.MyHomeScreen
+import com.gorisse.thomas.willitfit.data.MyThings
+import com.gorisse.thomas.willitfit.fit.Home
 import com.gorisse.thomas.willitfit.ui.ResultScreen
 import com.gorisse.thomas.willitfit.ui.SettingsScreen
 import com.gorisse.thomas.willitfit.ui.WillItFitTheme
 import java.io.File
 
 /** The screens. Home is the root; the others return to where they came from. */
-private enum class Route { HOME, AR, RESULT, DOOR, SETTINGS, MEASURE }
+private enum class Route { HOME, AR, RESULT, DOOR, SETTINGS, MEASURE, MY_HOME }
 
 class MainActivity : ComponentActivity() {
     /** A rating flow is running: going home again meanwhile does not start a second one. */
@@ -174,10 +178,13 @@ class MainActivity : ComponentActivity() {
                     }
                     // The AR tape opens from home (the object) or from the door, and goes back there.
                     var measureDoor by rememberSaveable { mutableStateOf(noted == News.OPEN_TAPE) }
+                    // A space opened from My home goes back there.
+                    var doorFromMyHome by rememberSaveable { mutableStateOf(false) }
                     BackHandler(enabled = route != Route.HOME) {
                         route = when {
                             route == Route.RESULT -> Route.AR
                             route == Route.MEASURE && measureDoor -> Route.DOOR
+                            route == Route.DOOR && doorFromMyHome -> Route.MY_HOME
                             else -> Route.HOME
                         }
                     }
@@ -188,8 +195,9 @@ class MainActivity : ComponentActivity() {
                                 dims = dims, unit = unit, arAvailable = arAvailable, recentSizes = recentSizes,
                                 onDims = { dims = it; if (it.isValid) prefs.dimensions = it },
                                 onAr = { route = Route.AR },
-                                onDoor = { doorVerdictSeen = false; route = Route.DOOR },
+                                onDoor = { doorVerdictSeen = false; doorFromMyHome = false; route = Route.DOOR },
                                 onSettings = { route = Route.SETTINGS },
+                                onMyHome = { route = Route.MY_HOME },
                                 onMeasure = { measureDoor = false; route = Route.MEASURE },
                             )
                             Route.AR -> ArScreen(
@@ -204,7 +212,7 @@ class MainActivity : ComponentActivity() {
                                 dims = dims, door = door, unit = unit,
                                 onDoor = { door = it; if (it.isValid) prefs.door = it },
                                 onVerdictShown = { doorVerdictSeen = true },
-                                onBack = { route = Route.HOME },
+                                onBack = { route = if (doorFromMyHome) Route.MY_HOME else Route.HOME },
                                 arAvailable = arAvailable,
                                 onMeasure = { measureDoor = true; route = Route.MEASURE },
                             )
@@ -220,6 +228,24 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onBack = { route = if (measureDoor) Route.DOOR else Route.HOME },
                             )
+                            Route.MY_HOME -> {
+                                var things by remember { mutableStateOf(prefs.myThings) }
+                                MyHomeScreen(
+                                    home = Home(door, prefs.hall, prefs.boot),
+                                    typed = HomeTyped(prefs.doorTyped, prefs.hallTyped, prefs.bootTyped),
+                                    things = things,
+                                    current = dims,
+                                    unit = unit,
+                                    onAdd = { things = MyThings.add(things, it); prefs.myThings = things },
+                                    onRemove = { things = MyThings.remove(things, it.name); prefs.myThings = things },
+                                    onPick = { dims = it; prefs.dimensions = it; route = Route.HOME },
+                                    onSpace = { space ->
+                                        prefs.carBoot = space == 1; prefs.hallway = space == 2
+                                        doorVerdictSeen = false; doorFromMyHome = true; route = Route.DOOR
+                                    },
+                                    onBack = { route = Route.HOME },
+                                )
+                            }
                             Route.SETTINGS -> SettingsScreen(
                                 unit = unit,
                                 newsOn = newsOn,

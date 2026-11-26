@@ -160,4 +160,23 @@
     <string name="reminder_body">Comprueba que pasa por la puerta antes de que llegue.</string>
     <string name="whats_new_title">Nuevo: la esquina del pasillo</string>
     <string name="whats_new_body">¿Gira el sofá la esquina? Introduce las medidas del pasillo y compruébalo.</string>
+
+    <!-- My home and moving day -->
+    <string name="home_my_title">Mi casa</string>
+    <string name="home_my_spaces">Tus pasos</string>
+    <string name="home_my_hall_sizes">%1$s de ancho, %2$s tras la esquina</string>
+    <string name="home_my_boot_sizes">Apertura %1$s</string>
+    <string name="home_my_moving_day">Día de la mudanza</string>
+    <string name="home_my_summary">Por la puerta y la esquina: %1$d de %2$d</string>
+    <string name="home_my_empty">Pon nombre a tus cosas una vez: el día de la mudanza, cada una tiene su respuesta para la puerta, el pasillo y el coche.</string>
+    <string name="home_my_not_measured">%1$s · típico, sin medir</string>
+    <string name="home_my_edit">Editar</string>
+    <string name="home_my_measure">Medir</string>
+    <string name="home_my_remove">Quitar %1$s</string>
+    <string name="home_my_pass_yes">%1$s: pasa, %2$s de margen</string>
+    <string name="home_my_pass_tight">%1$s: justo, %2$s de margen</string>
+    <string name="home_my_pass_no">%1$s: no pasa, %2$s de más</string>
+    <string name="home_my_add_title">Guardar este objeto (%1$s) para la mudanza</string>
+    <string name="home_my_name">Su nombre</string>
+    <string name="home_my_add">Guardar</string>
 </resources>

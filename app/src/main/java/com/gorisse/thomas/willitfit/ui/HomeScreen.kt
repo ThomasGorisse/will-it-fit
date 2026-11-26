@@ -33,6 +33,7 @@ import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.outlined.ViewInAr
 import androidx.compose.material.icons.outlined.DoorFront
 import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -95,6 +96,7 @@ fun HomeScreen(
     onDoor: () -> Unit,
     onSettings: () -> Unit,
     onMeasure: () -> Unit = {},
+    onMyHome: () -> Unit = {},
     recentSizes: List<Dimensions> = emptyList(),
 ) {
     val density = LocalDensity.current
@@ -166,6 +168,10 @@ fun HomeScreen(
                     // The AR tape: measure the object (or the space) and its sides fill in.
                     if (arAvailable) IconButton(onClick = onMeasure) {
                         Icon(Icons.Outlined.Straighten, contentDescription = stringResource(R.string.action_measure))
+                    }
+                    // My home: the person's door, hallway and car, and their things for moving day.
+                    IconButton(onClick = onMyHome) {
+                        Icon(Icons.Outlined.Home, contentDescription = stringResource(R.string.home_my_title))
                     }
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.settings_title))
