@@ -20,10 +20,7 @@ data class Lift(
         // Residential example, not an accessibility minimum: EN 81-70 type 2 is 110 × 140 cm.
         val TYPICAL = Lift(80f, 200f, 100f, 125f, 210f)
         // Common US passenger elevator dimensions, expressed in whole inches (36 × 84 opening).
-        val TYPICAL_INCH = Lift(36f, 84f, 51f, 80f, 96f).let {
-            Lift(it.doorWidthCm * 2.54f, it.doorHeightCm * 2.54f, it.cabinWidthCm * 2.54f,
-                it.cabinDepthCm * 2.54f, it.cabinHeightCm * 2.54f)
-        }
+        val TYPICAL_INCH = LengthUnit.CM_PER_INCH.let { i -> Lift(36 * i, 84 * i, 51 * i, 80 * i, 96 * i) }
         fun typicalFor(unit: LengthUnit): Lift = if (unit == LengthUnit.INCH) TYPICAL_INCH else TYPICAL
     }
 }
@@ -71,7 +68,7 @@ internal fun liftFloor(across: Float, along: Float, width: Float, depth: Float):
 
 /** A static placement after passing the opening; it does not simulate the entry manoeuvre. */
 fun checkLift(obj: Dimensions, lift: Lift): LiftVerdict {
-    require(obj.isValid && lift.isValid)
+    // No require(): the screen checks while the person types, and a check never crashes the app.
     val all = Carry.entries.map { carry ->
         val across = obj.side(carry.across)
         val up = obj.side(carry.up)

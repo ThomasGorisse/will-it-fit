@@ -64,7 +64,10 @@ class LiftCheckTest {
             assertFalse(t.copy(cabinDepthCm = bad).isValid)
             assertFalse(t.copy(cabinHeightCm = bad).isValid)
         }
-        assertThrows(IllegalArgumentException::class.java) { checkLift(Dimensions(0f, 1f, 1f), Lift.TYPICAL) }
+        // The screen checks while sizes are typed: half-typed values answer, never throw.
+        checkLift(Dimensions(0f, 1f, 1f), Lift.TYPICAL)
+        assertFalse(checkLift(Dimensions(60f, 60f, 85f), Lift.TYPICAL.copy(doorWidthCm = 0f)).fits)
+        assertFalse(checkLift(Dimensions(60f, 60f, 85f), Lift.TYPICAL.copy(cabinDepthCm = Float.NaN)).fits)
     }
 
     @Test fun missesNameTheLimitingSpace() {
