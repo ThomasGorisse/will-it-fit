@@ -17,7 +17,7 @@ sp = importlib.util.module_from_spec(spec); spec.loader.exec_module(sp)
 aab, fraction, commit = Path(sys.argv[1]), float(sys.argv[2]), sys.argv[3] == "commit"
 internal_only = "internal-only" in sys.argv
 pkg = "com.gorisse.thomas.willitfit"
-root = Path.home() / "Projects/will-it-fit/store/play"
+root = Path(__file__).resolve().parent  # this checkout's notes, whatever the main checkout is on
 notes = [{"language": l, "text": (root / l / "changelogs/default.txt").read_text().strip()}
          for l in ["en-US", "fr-FR", "de-DE", "es-ES", "it-IT", "pt-BR"]]
 api = sp.PlayApi()
