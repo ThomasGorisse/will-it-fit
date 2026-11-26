@@ -179,4 +179,13 @@
     <string name="home_my_add_title">Dieses Objekt (%1$s) für den Umzug behalten</string>
     <string name="home_my_name">Sein Name</string>
     <string name="home_my_add">Behalten</string>
+    <string name="home_my_manage">Umbenennen oder löschen</string>
+    <string name="home_my_rename">Umbenennen</string>
+    <string name="home_my_delete">Löschen</string>
+    <string name="home_my_cancel">Abbrechen</string>
+    <string name="home_my_name_taken">Ein Gegenstand heißt bereits so.</string>
+    <string name="home_my_share">Umzugscheck teilen</string>
+    <string name="home_my_share_door">Tür</string>
+    <string name="home_my_share_turn">Kurve</string>
+    <string name="home_my_share_car">Kofferraum</string>
 </resources>

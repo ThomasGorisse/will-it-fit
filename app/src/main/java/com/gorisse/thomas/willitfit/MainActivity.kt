@@ -149,7 +149,9 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(route) {
                         // Same route again: the activity was recreated (rotation), nothing happened.
                         if (route == lastRoute) return@LaunchedEffect
-                        if (route == Route.RESULT || (route == Route.HOME && lastRoute == Route.DOOR && doorVerdictSeen)) {
+                        // A verdict seen counts on the way back, whether to home or to My home that opened it.
+                        val backFromVerdict = (route == Route.HOME || route == Route.MY_HOME) && lastRoute == Route.DOOR && doorVerdictSeen
+                        if (route == Route.RESULT || backFromVerdict) {
                             prefs.answers += 1
                             recentSizes = RecentSizes.add(recentSizes, dims)
                             prefs.recentSizes = recentSizes
@@ -238,6 +240,9 @@ class MainActivity : ComponentActivity() {
                                     unit = unit,
                                     onAdd = { things = MyThings.add(things, it); prefs.myThings = things },
                                     onRemove = { things = MyThings.remove(things, it.name); prefs.myThings = things },
+                                    onRename = { thing, name ->
+                                        things = MyThings.rename(things, thing.name, name); prefs.myThings = things
+                                    },
                                     onPick = { dims = it; prefs.dimensions = it; route = Route.HOME },
                                     onSpace = { space ->
                                         prefs.carBoot = space == 1; prefs.hallway = space == 2

@@ -191,4 +191,13 @@
     <string name="home_my_add_title">Keep this object (%1$s) for moving day</string>
     <string name="home_my_name">Its name</string>
     <string name="home_my_add">Keep</string>
+    <string name="home_my_manage">Rename or delete</string>
+    <string name="home_my_rename">Rename</string>
+    <string name="home_my_delete">Delete</string>
+    <string name="home_my_cancel">Cancel</string>
+    <string name="home_my_name_taken">You already have a thing with this name.</string>
+    <string name="home_my_share">Share moving day</string>
+    <string name="home_my_share_door">door</string>
+    <string name="home_my_share_turn">turn</string>
+    <string name="home_my_share_car">car</string>
 </resources>

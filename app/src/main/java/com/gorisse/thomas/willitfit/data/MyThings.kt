@@ -30,6 +30,19 @@ object MyThings {
 
     fun remove(things: List<Thing>, name: String): List<Thing> = things.filterNot { it.name == name }
 
+    fun canName(things: List<Thing>, name: String, exceptName: String? = null): Boolean {
+        val cleaned = cleanName(name)
+        return cleaned.isNotEmpty() && things.none {
+            it.name != exceptName && it.name.equals(cleaned, ignoreCase = true)
+        }
+    }
+
+    /** Renaming keeps the dimensions and insertion position, without replacing another thing. */
+    fun rename(things: List<Thing>, oldName: String, name: String): List<Thing> {
+        if (!canName(things, name, exceptName = oldName)) return things
+        return things.map { if (it.name == oldName) it.copy(name = cleanName(name)) else it }
+    }
+
     fun encode(things: List<Thing>): String = things.joinToString("\n") { t ->
         val sides = listOfNotNull(t.dims.widthCm, t.dims.depthCm, t.dims.heightCm, t.dims.presetId).joinToString(",")
         URLEncoder.encode(t.name, "UTF-8") + "|" + sides

@@ -43,4 +43,30 @@ class MyThingsTest {
         val things = listOf(Thing("A", sofa), Thing("B", sofa))
         assertEquals(listOf("B"), MyThings.remove(things, "A").map { it.name })
     }
+
+    @Test fun renameKeepsPositionAndDimensionsAndSurvivesStorage() {
+        val things = listOf(Thing("Sofa", sofa), Thing("Box", Dimensions(20f, 30f, 40f)))
+        val renamed = MyThings.rename(things, "Sofa", "  Grandma's   sofa  ")
+        assertEquals(listOf("Grandma's sofa", "Box"), renamed.map { it.name })
+        assertEquals(sofa, renamed.first().dims)
+        assertEquals(renamed.map { it.name }, MyThings.decode(MyThings.encode(renamed)).map { it.name })
+    }
+
+    @Test fun renameRefusesBlankAndDuplicateNamesButAllowsChangingCase() {
+        val things = listOf(Thing("Sofa", sofa), Thing("Box", sofa))
+        assertEquals(things, MyThings.rename(things, "Sofa", "  "))
+        assertEquals(things, MyThings.rename(things, "Sofa", " box "))
+        assertEquals("SOFA", MyThings.rename(things, "Sofa", "SOFA").first().name)
+        assertEquals(things, MyThings.rename(things, "Missing", "New"))
+        assertTrue(!MyThings.canName(things, " sofa "))
+    }
+
+    @Test fun namesAreLimitedAfterCleaningForBothAddAndRename() {
+        val longName = "a".repeat(MyThings.MAX_NAME + 10)
+        val things = MyThings.add(emptyList(), Thing("Original", sofa))
+        val renamed = MyThings.rename(things, "Original", "  $longName  ")
+        assertEquals(MyThings.MAX_NAME, renamed.single().name.length)
+        assertEquals(renamed.single().name, MyThings.add(emptyList(), Thing(longName, sofa)).single().name)
+        assertTrue(!MyThings.canName(renamed, longName.uppercase()))
+    }
 }

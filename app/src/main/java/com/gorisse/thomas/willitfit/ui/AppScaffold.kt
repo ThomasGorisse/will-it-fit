@@ -1,6 +1,7 @@
 package com.gorisse.thomas.willitfit.ui
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,10 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.gorisse.thomas.willitfit.R
 
-/** The same top bar on every secondary screen: back arrow, title. Nothing else. */
+/** Shared top bar for secondary screens, with optional actions for the current screen. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppScaffold(title: String, onBack: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
+fun AppScaffold(
+    title: String,
+    onBack: () -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
+    content: @Composable (PaddingValues) -> Unit,
+) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
@@ -30,6 +36,7 @@ fun AppScaffold(title: String, onBack: () -> Unit, content: @Composable (Padding
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+                actions = actions,
             )
         },
         content = content,

@@ -179,4 +179,13 @@
     <string name="home_my_add_title">Guardar este objeto (%1$s) para la mudanza</string>
     <string name="home_my_name">Su nombre</string>
     <string name="home_my_add">Guardar</string>
+    <string name="home_my_manage">Cambiar nombre o eliminar</string>
+    <string name="home_my_rename">Cambiar nombre</string>
+    <string name="home_my_delete">Eliminar</string>
+    <string name="home_my_cancel">Cancelar</string>
+    <string name="home_my_name_taken">Ya tienes un objeto con este nombre.</string>
+    <string name="home_my_share">Compartir la mudanza</string>
+    <string name="home_my_share_door">puerta</string>
+    <string name="home_my_share_turn">giro</string>
+    <string name="home_my_share_car">maletero</string>
 </resources>

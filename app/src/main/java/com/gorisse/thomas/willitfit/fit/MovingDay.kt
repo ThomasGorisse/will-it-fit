@@ -17,3 +17,13 @@ fun movingDay(obj: Dimensions, home: Home): MovingDayRow = MovingDayRow(
     hall = checkHall(obj, home.hall).let { Pass(it.fits, it.isTight, it.marginCm) },
     boot = checkBoot(obj, home.boot).let { Pass(it.fits, it.isTight, it.marginCm) },
 )
+
+/** Stable groups keep the person's insertion order while bringing problems to the top. */
+fun <T> orderMovingDay(rows: List<Pair<T, MovingDayRow>>): List<Pair<T, MovingDayRow>> =
+    rows.sortedBy { (_, row) ->
+        when {
+            !row.getsIn -> 0
+            row.door.isTight || row.hall.isTight || row.boot.isTight -> 1
+            else -> 2
+        }
+    }

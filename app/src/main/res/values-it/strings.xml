@@ -179,4 +179,13 @@
     <string name="home_my_add_title">Tieni questo oggetto (%1$s) per il trasloco</string>
     <string name="home_my_name">Il suo nome</string>
     <string name="home_my_add">Tieni</string>
+    <string name="home_my_manage">Rinomina o elimina</string>
+    <string name="home_my_rename">Rinomina</string>
+    <string name="home_my_delete">Elimina</string>
+    <string name="home_my_cancel">Annulla</string>
+    <string name="home_my_name_taken">Hai già un oggetto con questo nome.</string>
+    <string name="home_my_share">Condividi il trasloco</string>
+    <string name="home_my_share_door">porta</string>
+    <string name="home_my_share_turn">svolta</string>
+    <string name="home_my_share_car">bagagliaio</string>
 </resources>
