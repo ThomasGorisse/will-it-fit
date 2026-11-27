@@ -17,7 +17,7 @@ enum class PremiumFeature { DOOR, HALL, BOOT, LIFT, TAPE, MY_HOME, ROOM, SHARE, 
  * that was updated since is an early user; a later install that only met an update before its
  * first opening is not.
  */
-const val PREMIUM_CUTOFF_MS = 1_796_169_600_000L // 2026-12-02T00:00:00Z
+const val PREMIUM_CUTOFF_MS = 1_795_910_400_000L // 2026-11-29T00:00:00Z, the day after premium reaches production
 
 /** The decision is made before this version writes any data, then kept for good. */
 fun grandfatherDecision(firstInstallTime: Long, lastUpdateTime: Long, answers: Int,

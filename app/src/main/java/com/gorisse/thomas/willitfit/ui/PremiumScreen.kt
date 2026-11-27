@@ -117,7 +117,9 @@ fun PremiumFeature.headline(): Int = when (this) {
 fun PaywallScreen(feature: PremiumFeature, plans: List<PremiumPlanUi>, available: Boolean,
     dims: Dimensions, unit: LengthUnit, hall: Hall? = null, boot: Boot? = null, lift: Lift? = null,
     onClose: () -> Unit, onBuy: (PremiumPlanUi) -> Unit) {
-    var selected by rememberSaveable { mutableStateOf("yearly") }
+    // The weekly plan leads (the smallest commitment to say yes to); the yearly one stays right
+    // under it as the anchor, with its per-week price and the trial when Play offers it.
+    var selected by rememberSaveable { mutableStateOf("weekly") }
     val plan = plans.firstOrNull { it.id == selected } ?: plans.firstOrNull()
     val scheme = MaterialTheme.colorScheme
     val dark = isSystemInDarkTheme()
@@ -167,7 +169,7 @@ fun PaywallScreen(feature: PremiumFeature, plans: List<PremiumPlanUi>, available
                             Text(stringResource(R.string.premium_unavailable), style = MaterialTheme.typography.bodyLarge)
                         } else {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                plans.sortedBy { when (it.billingPeriod) { "P1Y" -> 0; "P1M" -> 1; else -> 2 } }.forEach { item ->
+                                plans.sortedBy { when (it.billingPeriod) { "P1W" -> 0; "P1Y" -> 1; else -> 2 } }.forEach { item ->
                                     PlanCard(item, item.id == plan.id) { selected = item.id }
                                 }
                             }

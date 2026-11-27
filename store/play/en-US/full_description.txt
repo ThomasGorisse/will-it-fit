@@ -14,10 +14,10 @@ Take a photo with the dimensions written on it, then share it with a housemate, 
 WILL IT GO THROUGH THE DOOR?
 Enter the clear width and height inside the door frame. Get a verdict, see how much room is left or how much too big the object is, and watch the suggested carrying orientation in 3D.
 
-The check compares six orientations for a straight passage. It does not model diagonal tilting or turns in a hallway. Allow space for your hands and for maneuvering on either side.
+The check compares six orientations for a straight passage. It does not model diagonal tilting. Allow space for your hands and for maneuvering on either side.
 
-FREE AND OFFLINE
-Completely free, with no ads and no account. The app works offline. The 3D room and door check work on phones without AR support, too.
+FREE TO START, OFFLINE
+The door check, sizes, the 3D room, AR placement and sharing are free. Premium adds the hallway turn, car boot and lift checks, the AR tape and My home, with a weekly, monthly or yearly subscription. New subscribers get 3 days free on the yearly plan. Anyone who installed before 3.1.0 keeps everything free, for good. No ads, no account; works offline. The 3D room and door check work on phones without AR support, too.
 
 CHECK THE REAL MEASUREMENTS
 Typical sizes are a starting point, not the dimensions of a particular product. Check the seller's numbers, including frames, feet and handles, and enter your actual measurements.

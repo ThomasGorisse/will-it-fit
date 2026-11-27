@@ -1,6 +1,7 @@
 Nouveautés
-• Partagez la réponse en image : la scène, la marge et les tailles sur une carte, prête pour un message ou une story.
-• Une note quand une vérification arrive, si vous le voulez : deux par mois au plus, jamais un jour d'usage. À couper dans les Réglages.
-• Ça passe le virage ? Entrez la largeur du couloir et l'espace après l'angle : la réponse dit si le canapé tourne.
-• Envoyez une vérification : le lien ouvre la même réponse.
-Gratuit, sans pub ni compte, hors ligne.
+• Déjà là avant 3.1.0 ? Tout reste gratuit, pour toujours.
+• Mon logement : gardez vos espaces et vos objets. Partagez la liste du déménagement : ce qui passe, de justesse ou pas du tout.
+• Testez l'ascenseur : porte, cabine et diagonale au sol.
+• Mètre AR dans chaque espace.
+• Porte, dimensions, pièce 3D, placement AR et partage restent gratuits. Premium ajoute virage du couloir, coffre, ascenseur, mètre AR et Mon logement.
+Sans pub ni compte, hors ligne.

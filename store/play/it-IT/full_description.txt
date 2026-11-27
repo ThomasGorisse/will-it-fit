@@ -14,10 +14,10 @@ Scatta una foto con le misure scritte sopra e condividila con chi vive con te o 
 PASSA DALLA PORTA?
 Inserisci la larghezza e l'altezza libere dell'apertura, all'interno del telaio. Ottieni un responso con il margine disponibile o la misura in eccesso. Un'animazione 3D mostra la posizione di trasporto suggerita.
 
-Il calcolo confronta sei orientamenti per un passaggio dritto. Non simula inclinazioni in diagonale o svolte nei corridoi. Considera anche lo spazio per le mani e per fare manovra da entrambi i lati.
+Il calcolo confronta sei orientamenti per un passaggio dritto. Non simula inclinazioni in diagonale. Considera anche lo spazio per le mani e per fare manovra da entrambi i lati.
 
-GRATIS E OFFLINE
-L'app è completamente gratuita, senza pubblicità e senza account. Funziona offline. La stanza in 3D e la verifica del passaggio dalla porta funzionano anche sui telefoni senza AR.
+GRATIS PER INIZIARE, OFFLINE
+La verifica della porta, le misure, la stanza in 3D, il posizionamento AR e la condivisione sono gratis. Premium aggiunge la svolta nel corridoio, le verifiche di bagagliaio e ascensore, il metro AR e Casa mia, con un abbonamento settimanale, mensile o annuale. I nuovi abbonati hanno 3 giorni gratis con il piano annuale. Chi ha installato l'app prima di 3.1.0 mantiene tutto gratis per sempre. Senza pubblicità né account; funziona offline. La stanza in 3D e la verifica del passaggio dalla porta funzionano anche sui telefoni senza AR.
 
 CONTROLLA LE MISURE REALI
 Le misure predefinite sono un punto di partenza, non quelle di un prodotto specifico. Controlla le dimensioni indicate dal venditore, inclusi telaio, piedini e maniglie, e inserisci quelle del tuo mobile.

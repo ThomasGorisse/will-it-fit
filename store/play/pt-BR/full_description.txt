@@ -14,10 +14,10 @@ Tire uma foto com as medidas escritas nela e compartilhe com quem mora com você
 PASSA PELA PORTA?
 Informe a largura e a altura livres da abertura, por dentro do batente. Veja o resultado, com a folga disponível ou quanto falta para passar. Uma animação 3D mostra a posição de transporte sugerida.
 
-O cálculo compara seis posições para uma passagem em linha reta. Ele não simula inclinações na diagonal nem curvas em corredores. Reserve espaço para as mãos e para manobrar dos dois lados.
+O cálculo compara seis posições para uma passagem em linha reta. Ele não simula inclinações na diagonal. Reserve espaço para as mãos e para manobrar dos dois lados.
 
-GRÁTIS E OFFLINE
-O app é totalmente gratuito, sem anúncios e sem conta. Funciona offline. O ambiente 3D e a verificação da porta também funcionam em celulares sem RA.
+GRÁTIS PARA COMEÇAR, OFFLINE
+A verificação da porta, as medidas, o ambiente 3D, o posicionamento RA e o compartilhamento são grátis. O Premium inclui a curva no corredor, as verificações de porta-malas e elevador, a trena RA e Minha casa, por assinatura semanal, mensal ou anual. Novos assinantes têm 3 dias grátis no plano anual. Quem instalou o app antes da 3.1.0 mantém tudo grátis para sempre. Sem anúncios nem conta; funciona offline. O ambiente 3D e a verificação da porta também funcionam em celulares sem RA.
 
 CONFIRA AS MEDIDAS REAIS
 As medidas dos modelos são um ponto de partida, não as de um produto específico. Confira os números do vendedor, incluindo estrutura, pés e puxadores, e informe as medidas do seu móvel.

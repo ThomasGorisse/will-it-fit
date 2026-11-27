@@ -1,6 +1,7 @@
 Novidades
-• Compartilhe a resposta como imagem: a cena, a folga e as medidas num cartão, pronto para um chat ou um story.
-• Um aviso quando chega uma verificação nova, se quiser: no máximo dois por mês, nunca num dia de uso. Desligue nos Ajustes.
-• Faz a curva? Digite a largura do corredor e o espaço após a curva: a resposta diz se o sofá passa.
-• Envie uma verificação: o link abre a mesma resposta.
-Grátis, sem anúncios nem conta, offline.
+• Instalou antes da 3.1.0? Tudo continua grátis para sempre.
+• Minha casa: salve espaços e objetos. Compartilhe a lista da mudança: cabe, cabe justo ou não cabe.
+• Confira o elevador: porta, cabine e diagonal no chão.
+• Trena RA em cada espaço.
+• Porta, medidas, ambiente 3D, posicionamento RA e compartilhamento seguem grátis. Premium inclui curva no corredor, porta-malas, elevador, trena RA e Minha casa.
+Sem anúncios nem conta, offline.

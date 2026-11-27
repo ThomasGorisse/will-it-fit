@@ -14,10 +14,10 @@ Prenez une photo avec les dimensions inscrites dessus, puis partagez-la avec vos
 EST-CE QUE ÇA PASSE LA PORTE ?
 Saisissez la largeur et la hauteur de l'ouverture à l'intérieur du cadre. Vous obtenez un verdict, la marge disponible ou ce qui dépasse, et une animation 3D de la position de transport proposée.
 
-Le calcul compare six positions pour un passage droit. Il ne simule ni le basculement en diagonale ni les virages dans un couloir. Prévoyez de la place pour les mains et pour manœuvrer de chaque côté.
+Le calcul compare six positions pour un passage droit. Il ne simule pas le basculement en diagonale. Prévoyez de la place pour les mains et pour manœuvrer de chaque côté.
 
-GRATUIT ET HORS LIGNE
-L'application est entièrement gratuite, sans publicité ni compte. Elle fonctionne hors ligne. La pièce en 3D et le test de porte restent utilisables sur les téléphones sans AR.
+GRATUIT POUR COMMENCER, HORS LIGNE
+Le test de porte, les dimensions, la pièce 3D, le placement AR et le partage sont gratuits. Premium ajoute le virage du couloir, les tests de coffre et d'ascenseur, le mètre AR et Mon logement, par abonnement à la semaine, au mois ou à l'année. Les nouveaux abonnés bénéficient de 3 jours gratuits avec la formule annuelle. Toute personne ayant installé l'app avant 3.1.0 garde tout gratuitement, pour toujours. Sans publicité ni compte ; fonctionne hors ligne. La pièce en 3D et le test de porte restent utilisables sur les téléphones sans AR.
 
 VÉRIFIEZ LES MESURES RÉELLES
 Les dimensions proposées sont un point de départ, pas la fiche d'un produit précis. Vérifiez les mesures du vendeur, cadre, pieds et poignées compris, puis saisissez celles de votre meuble.

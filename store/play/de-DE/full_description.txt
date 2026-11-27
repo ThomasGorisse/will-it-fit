@@ -14,10 +14,10 @@ Mach ein Foto mit eingeblendeten Maßen und teile es mit deinen Mitbewohnern, Fr
 PASST ES DURCH DIE TÜR?
 Gib die lichte Breite und Höhe der Türöffnung ein, also den freien Durchgang innerhalb des Rahmens. Du erfährst, ob es passt und wie viel Luft bleibt oder wie viel zu groß der Gegenstand ist. Eine 3D-Animation zeigt die vorgeschlagene Trageposition.
 
-Der Check vergleicht sechs Ausrichtungen für einen geraden Durchgang. Diagonales Kippen und Kurven im Flur werden nicht berechnet. Plane auch Platz für Hände und zum Rangieren auf beiden Seiten ein.
+Der Check vergleicht sechs Ausrichtungen für einen geraden Durchgang. Diagonales Kippen wird nicht berechnet. Plane auch Platz für Hände und zum Rangieren auf beiden Seiten ein.
 
-KOSTENLOS UND OFFLINE
-Die App ist komplett kostenlos, ohne Werbung und ohne Konto. Sie funktioniert offline. Den 3D-Raum und den Türcheck kannst du auch auf Handys ohne AR nutzen.
+KOSTENLOS STARTEN, OFFLINE
+Türcheck, Maße, 3D-Raum, AR-Platzierung und Teilen sind kostenlos. Premium bietet die Flurkurve, Kofferraum- und Aufzugchecks, das AR-Maßband und Mein Zuhause im Wochen-, Monats- oder Jahresabo. Neue Abonnenten erhalten beim Jahresabo 3 Tage kostenlos. Wer die App vor 3.1.0 installiert hat, behält alles für immer kostenlos. Ohne Werbung und Konto; funktioniert offline. Den 3D-Raum und den Türcheck kannst du auch auf Handys ohne AR nutzen.
 
 DIE TATSÄCHLICHEN MASSE PRÜFEN
 Die vorgegebenen Größen dienen zur Orientierung und gehören zu keinem bestimmten Produkt. Prüfe die Maße beim Anbieter, einschließlich Rahmen, Füßen und Griffen, und trage die tatsächlichen Werte ein.

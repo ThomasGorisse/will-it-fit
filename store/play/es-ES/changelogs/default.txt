@@ -1,6 +1,7 @@
 Novedades
-• Comparte la respuesta como imagen: la escena, el margen y las medidas en una tarjeta, lista para un chat o una historia.
-• Un aviso cuando llega una comprobación nueva, si quieres: dos al mes como mucho, nunca un día de uso. Se apaga en Ajustes.
-• ¿Gira la esquina? Introduce el ancho del pasillo y el espacio tras la esquina: la respuesta dice si el sofá pasa.
-• Envía una comprobación: el enlace abre la misma respuesta.
-Gratis, sin anuncios ni cuenta, sin conexión.
+• ¿Instalaste antes de 3.1.0? Todo sigue gratis para siempre.
+• Mi casa: guarda espacios y objetos. Comparte la lista de la mudanza: cabe, cabe justo o no cabe.
+• Comprueba el ascensor: puerta, cabina y diagonal del suelo.
+• Cinta RA en cada espacio.
+• Puerta, medidas, sala 3D, colocación RA y compartir siguen gratis. Premium añade giro del pasillo, maletero, ascensor, cinta RA y Mi casa.
+Sin anuncios ni cuenta, sin conexión.
