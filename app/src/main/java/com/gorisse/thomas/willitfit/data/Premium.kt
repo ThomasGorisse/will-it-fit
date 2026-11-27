@@ -47,7 +47,14 @@ class Billing(context: Context, private val prefs: Prefs, grandfathered: Boolean
     private val context = context.applicationContext
     private val handler = Handler(Looper.getMainLooper())
     private val early = grandfathered.also { if (it && qaState == null) prefs.hadPremium = true }
-    private val _state = MutableStateFlow(qaState ?: if (early) PremiumState.GRANDFATHERED else PremiumState.UNKNOWN)
+    /**
+     * A subscription Play confirmed in the last [VERIFIED_FOR_MS] survives a store that does not
+     * answer at start: a subscriber offline in a stairwell keeps the hallway check. Only a
+     * successful read that finds no purchase takes it away.
+     */
+    private val verified = System.currentTimeMillis() - prefs.premiumVerifiedAt < VERIFIED_FOR_MS
+    private val _state = MutableStateFlow(qaState ?: if (early) PremiumState.GRANDFATHERED
+        else if (verified) PremiumState.PURCHASED else PremiumState.UNKNOWN)
     val state = _state.asStateFlow()
     private val _plans = MutableStateFlow<List<PremiumPlan>>(emptyList())
     val plans = _plans.asStateFlow()
@@ -138,6 +145,7 @@ class Billing(context: Context, private val prefs: Prefs, grandfathered: Boolean
                     if (result.responseCode != BillingClient.BillingResponseCode.OK) { failed(); return@post }
                     val owned = purchases.filter { PRODUCT_ID in it.products && it.purchaseState == Purchase.PurchaseState.PURCHASED }
                     setState(if (owned.isEmpty()) PremiumState.FREE else PremiumState.PURCHASED)
+                    prefs.premiumVerifiedAt = if (owned.isEmpty()) 0L else System.currentTimeMillis()
                     if (owned.isEmpty()) {
                         TrialReminder.cancel(context)
                         prefs.trialToken = null
@@ -204,6 +212,9 @@ class Billing(context: Context, private val prefs: Prefs, grandfathered: Boolean
 
     companion object {
         const val PRODUCT_ID = "wif_premium"
+
+        /** A week rides out a store outage; a lapsed plan goes at the first read that succeeds. */
+        const val VERIFIED_FOR_MS = 7L * 24 * 60 * 60 * 1000
 
         /** Ignore other offers: only the specified three-day yearly offer may advertise a trial. */
         fun plansFrom(details: ProductDetails): List<PremiumPlan> = listOf("yearly", "monthly", "weekly").mapNotNull { id ->

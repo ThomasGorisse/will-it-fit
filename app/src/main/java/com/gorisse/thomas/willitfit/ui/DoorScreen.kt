@@ -139,7 +139,14 @@ fun DoorScreen(
     val context = LocalContext.current
     val prefs = remember(context) { Prefs(context) }
     // Keep the persisted space indices: door 0, boot 1, hallway 2, lift 3.
-    var space by remember { mutableIntStateOf(if (!canUse(PremiumFeature.HALL, premiumState, openedReadOnly)) 0 else if (prefs.liftSelected) 3 else if (prefs.hallway) 2 else if (prefs.carBoot) 1 else 0) }
+    val savedSpace = { if (prefs.liftSelected) 3 else if (prefs.hallway) 2 else if (prefs.carBoot) 1 else 0 }
+    var space by remember { mutableIntStateOf(if (!canUse(PremiumFeature.HALL, premiumState, openedReadOnly)) 0 else savedSpace()) }
+    // Play confirms a subscription a moment after the screen opens: until the person picks a
+    // segment, the space they were on comes back as soon as access is known.
+    var spacePicked by remember { mutableStateOf(false) }
+    LaunchedEffect(premiumState) {
+        if (!spacePicked && space == 0 && canUse(PremiumFeature.HALL, premiumState, openedReadOnly)) space = savedSpace()
+    }
     val readOnly = (openedReadOnly || space != 0) && !canUse(PremiumFeature.MY_HOME, premiumState)
     val elevator = space == 3
     var lift by remember { mutableStateOf(prefs.lift) }
@@ -384,7 +391,7 @@ fun DoorScreen(
                                     return@SegmentedButton
                                 }
                                 onSegmentChanged()
-                                space = i
+                                space = i; spacePicked = true
                                 prefs.liftSelected = i == 3
                                 prefs.carBoot = i == 1
                                 prefs.hallway = i == 2

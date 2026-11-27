@@ -215,6 +215,11 @@ class Prefs(context: Context) {
         get() = p.getBoolean("had_premium", false)
         set(value) = p.edit { putBoolean("had_premium", value) }
 
+    /** When Play last confirmed the subscription, in epoch milliseconds; 0 once it found none. */
+    var premiumVerifiedAt: Long
+        get() = p.getLong("premium_verified_at", 0)
+        set(value) = p.edit { putLong("premium_verified_at", value) }
+
     var trialLaunchAt: Long
         get() = p.getLong("trial_launch_at", 0)
         set(value) = p.edit { putLong("trial_launch_at", value) }
