@@ -1,6 +1,7 @@
 Neu
-• Teile die Antwort als Bild: Szene, Spielraum und Maße auf einer Karte, bereit für Chat oder Story.
-• Ein Hinweis, wenn eine neue Prüfung kommt, wenn du willst: höchstens zweimal im Monat, nie an einem Nutzungstag. Abschaltbar in den Einstellungen.
-• Kommt es um die Ecke? Gib Flurbreite und Platz nach der Ecke ein: Die Antwort sagt, ob das Sofa durchpasst.
-• Schick eine Prüfung: Der Link öffnet dieselbe Antwort.
-Kostenlos, ohne Werbung und Konto, offline.
+• Vor 3.1.0 installiert? Alles bleibt für immer kostenlos.
+• Mein Zuhause: Räume und Dinge speichern. Umzugsliste teilen: passt, passt knapp oder passt nicht.
+• Aufzug prüfen: Tür, Kabine und Bodendiagonale.
+• AR-Maßband in jedem Raum.
+• Türcheck, Maße, 3D-Raum, AR-Platzierung und Teilen bleiben kostenlos. Premium bietet Flurkurve, Kofferraum, Aufzug, AR-Maßband und Mein Zuhause.
+Ohne Werbung und Konto, offline.

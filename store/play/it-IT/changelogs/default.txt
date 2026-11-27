@@ -1,6 +1,7 @@
 Novità
-• Condividi la risposta come immagine: la scena, il margine e le misure su una scheda, pronta per una chat o una storia.
-• Un avviso quando arriva una nuova verifica, se vuoi: al massimo due al mese, mai in un giorno d'uso. Si spegne nelle Impostazioni.
-• Gira l'angolo? Inserisci la larghezza del corridoio e lo spazio dopo l'angolo: la risposta dice se il divano passa.
-• Invia una verifica: il link apre la stessa risposta.
-Gratis, senza pubblicità né account, offline.
+• Hai installato prima di 3.1.0? Tutto resta gratis per sempre.
+• Casa mia: salva spazi e oggetti. Condividi la lista del trasloco: passa, passa a fatica o non passa.
+• Verifica l'ascensore: porta, cabina e diagonale a terra.
+• Metro AR in ogni spazio.
+• Porta, misure, stanza 3D, posizionamento AR e condivisione restano gratis. Premium aggiunge svolta nel corridoio, bagagliaio, ascensore, metro AR e Casa mia.
+Senza pubblicità né account, offline.

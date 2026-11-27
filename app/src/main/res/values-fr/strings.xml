@@ -234,7 +234,7 @@
     <string name="premium_headline_home">Votre maison, prête pour le déménagement</string>
     <string name="premium_benefit_spaces">Tous les passages étroits : virages, coffres et ascenseurs</string>
     <string name="premium_benefit_tape">Mesurez avec votre caméra : le mètre en AR</string>
-    <string name="premium_benefit_home">Ma maison : vos espaces et vos objets, prêts pour le déménagement</string>
+    <string name="premium_benefit_home">Mon logement : vos espaces et vos objets, prêts pour le déménagement</string>
     <string name="premium_unavailable">Premium n’est pas disponible pour le moment. Vous pouvez toujours vérifier une porte.</string>
     <string name="premium_yearly">Annuel</string>
     <string name="premium_monthly">Mensuel</string>

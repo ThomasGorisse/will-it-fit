@@ -1,6 +1,7 @@
 What's new
-• Share the answer as a picture: the scene, the margin and the sizes on one card, ready for a chat or a story.
-• A note when a new check arrives, if you want it: twice a month at most, never on a day you use the app. Off in Settings.
-• Will it make the turn? Enter the hallway's width and the space after the corner: the answer says if the sofa gets round.
-• Send a check: the link opens the same sizes and the same answer.
-Free, no ads, no account, offline.
+• Installed before 3.1.0? Everything stays free, for good.
+• My home: save spaces and named things. Share a moving-day list of what fits, barely fits or won't fit.
+• Check the lift: door, cabin and floor diagonal.
+• AR tape in every space.
+• Door check, sizes, 3D room, AR placement and sharing stay free. Premium adds hallway, car boot and lift checks, AR tape and My home.
+No ads, no account, offline.

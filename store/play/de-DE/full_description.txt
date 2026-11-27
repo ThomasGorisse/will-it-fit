@@ -11,15 +11,29 @@ Richte das Handy auf den Boden: Augmented Reality platziert den Gegenstand dort 
 
 Mach ein Foto mit eingeblendeten Maßen und teile es mit deinen Mitbewohnern, Freunden oder Umzugshelfern.
 
+MIT DEM AR-MASSBAND MESSEN
+Markiere mit dem AR-Maßband zwei Punkte auf einer Fläche. Übernimm den gemessenen Abstand als Breite, Tiefe oder Höhe des Gegenstands oder als Türbreite oder Türhöhe.
+
 PASST ES DURCH DIE TÜR?
-Gib die lichte Breite und Höhe der Türöffnung ein, also den freien Durchgang innerhalb des Rahmens. Du erfährst, ob es passt und wie viel Luft bleibt oder wie viel zu groß der Gegenstand ist. Eine 3D-Animation zeigt die vorgeschlagene Trageposition.
+Gib die lichte Breite und Höhe der Türöffnung innerhalb des Rahmens ein. Du erfährst, ob es passt und wie viel Luft bleibt oder wie viel zu groß der Gegenstand ist. Eine 3D-Animation zeigt die vorgeschlagene Trageposition.
 
-Der Check vergleicht sechs Ausrichtungen für einen geraden Durchgang. Diagonales Kippen und Kurven im Flur werden nicht berechnet. Plane auch Platz für Hände und zum Rangieren auf beiden Seiten ein.
+Der Türcheck vergleicht sechs Ausrichtungen für einen geraden Durchgang, ohne diagonales Kippen. Plane Platz für Hände und zum Rangieren auf beiden Seiten ein.
 
-KOSTENLOS UND OFFLINE
-Die App ist komplett kostenlos, ohne Werbung und ohne Konto. Sie funktioniert offline. Den 3D-Raum und den Türcheck kannst du auch auf Handys ohne AR nutzen.
+KOMMT ES IM FLUR UM DIE ECKE?
+Gib die Flurbreite vor und nach der Ecke sowie die Deckenhöhe ein. Du erfährst, ob der Gegenstand ohne Kippen um eine rechtwinklige Ecke passt.
+
+PASST ES IN DEN KOFFERRAUM?
+Gib Breite und Höhe der Öffnung sowie nutzbare Länge, Breite und Höhe im Kofferraum ein. Der Check vergleicht sechs Ausrichtungen für gerades Einladen, ohne diagonales Kippen.
+
+PRÜFUNGEN TEILEN UND MASSE WIEDERVERWENDEN
+Teile eine Prüfung für Tür, Flur oder Kofferraum über einen Link, der sie in der installierten App mit denselben Objekt- und Raummaßen öffnet.
+
+Rufe bis zu drei zuletzt verwendete eigene Maße erneut auf, ohne die Maße neu einzugeben. Bei unterstützten Launchern öffnet ein langer Druck auf das App-Symbol die Verknüpfungen zu diesen Maßen.
+
+KOSTENLOS STARTEN, OFFLINE
+Türcheck, Maße, 3D-Raum, AR-Platzierung und Teilen sind kostenlos. Premium bietet die Flurkurve, Kofferraum- und Aufzugchecks, das AR-Maßband und Mein Zuhause im Wochen-, Monats- oder Jahresabo. Neue Abonnenten erhalten beim Jahresabo 3 Tage kostenlos. Wer die App vor 3.1.0 installiert hat, behält alles für immer kostenlos. Ohne Werbung und Konto; funktioniert offline. Den 3D-Raum und den Türcheck kannst du auch auf Handys ohne AR nutzen.
 
 DIE TATSÄCHLICHEN MASSE PRÜFEN
 Die vorgegebenen Größen dienen zur Orientierung und gehören zu keinem bestimmten Produkt. Prüfe die Maße beim Anbieter, einschließlich Rahmen, Füßen und Griffen, und trage die tatsächlichen Werte ein.
 
-AR liefert eine Vorschau. Wenn es eng wird, miss mit einem Maßband nach. Für AR brauchst du ein kompatibles Handy und Google Play-Dienste für AR, die gegebenenfalls zuerst installiert werden müssen. Ein gut beleuchteter Boden mit erkennbarer Struktur erleichtert die Platzierung.
+AR liefert eine Vorschau, und das AR-Maßband kann um einige Zentimeter abweichen. Wenn es eng wird, miss mit einem Maßband nach. Für AR brauchst du ein kompatibles Handy und Google Play-Dienste für AR, die gegebenenfalls zuerst installiert werden müssen. Ein gut beleuchteter Boden mit erkennbarer Struktur erleichtert die Platzierung.

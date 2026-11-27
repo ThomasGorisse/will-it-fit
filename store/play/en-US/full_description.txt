@@ -11,15 +11,29 @@ Point your phone at the floor and let the object settle into place at real size 
 
 Take a photo with the dimensions written on it, then share it with a housemate, a friend or whoever is helping you move.
 
+MEASURE WITH AR
+Use the AR tape to mark two points on a surface. Apply the measured distance to the object's width, depth or height, or to the door's width or height.
+
 WILL IT GO THROUGH THE DOOR?
 Enter the clear width and height inside the door frame. Get a verdict, see how much room is left or how much too big the object is, and watch the suggested carrying orientation in 3D.
 
-The check compares six orientations for a straight passage. It does not model diagonal tilting or turns in a hallway. Allow space for your hands and for maneuvering on either side.
+The door check compares six orientations for a straight passage, without diagonal tilting. Allow space for your hands and for maneuvering on either side.
 
-FREE AND OFFLINE
-Completely free, with no ads and no account. The app works offline. The 3D room and door check work on phones without AR support, too.
+WILL IT MAKE THE TURN IN THE HALLWAY?
+Enter the hallway widths before and after the turn and the ceiling height. Get a verdict for a right-angle turn with the object carried level.
+
+WILL IT FIT IN THE TRUNK (CAR BOOT)?
+Enter the opening width and height and the usable length, width and height inside. The check compares six orientations for straight loading, without diagonal tilting.
+
+SHARE A CHECK AND REUSE SIZES
+Share a door, hallway or car boot check with a link that reopens it in the installed app, with the same object and space dimensions.
+
+Reuse up to three recent custom sizes without typing them again. On supported launchers, long-press the app icon to open shortcuts to those sizes.
+
+FREE TO START, OFFLINE
+The door check, sizes, the 3D room, AR placement and sharing are free. Premium adds the hallway turn, car boot and lift checks, the AR tape and My home, with a weekly, monthly or yearly subscription. New subscribers get 3 days free on the yearly plan. Anyone who installed before 3.1.0 keeps everything free, for good. No ads, no account; works offline. The 3D room and door check work on phones without AR support, too.
 
 CHECK THE REAL MEASUREMENTS
 Typical sizes are a starting point, not the dimensions of a particular product. Check the seller's numbers, including frames, feet and handles, and enter your actual measurements.
 
-AR is a preview. For a tight fit, confirm with a tape measure. AR needs a compatible phone and Google Play Services for AR, which may need to be installed first. A well-lit floor with visible texture helps placement.
+AR is a preview, and the AR tape can be a few centimeters off. For a tight fit, confirm with a tape measure. AR needs a compatible phone and Google Play Services for AR, which may need to be installed first. A well-lit floor with visible texture helps placement.

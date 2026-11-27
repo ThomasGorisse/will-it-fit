@@ -1,25 +1,39 @@
-Ce canapé rentre dans le salon ? Et le frigo, il passe la porte ? Will It Fit vous aide à voir la place qu'un meuble va prendre, pour aménager une pièce ou préparer un déménagement.
+Ce canapé rentre dans le salon ? Et le frigo, il passe par la porte ? Will It Fit vous aide à voir la place qu'un meuble va prendre, pour aménager une pièce ou préparer un déménagement.
 
 PARTEZ DES BONNES DIMENSIONS
 Choisissez un canapé 2 ou 3 places, un lit pour matelas de 140 ou 160 cm, une armoire, un frigo, un lave-linge, une TV 55 ou 65 pouces, un vélo ou une poussette. Chaque modèle a des dimensions courantes déjà renseignées. Vous pouvez aussi saisir la largeur, la profondeur et la hauteur en centimètres ou en pouces.
 
 VISUALISEZ DANS UNE PIÈCE EN 3D
-Une pièce en 3D affiche une représentation simple de votre objet aux dimensions indiquées, avec les cotes tracées au sol. Modifiez une mesure : le modèle s'adapte sous vos yeux. Faites tourner la vue pour mieux apprécier ses proportions.
+Une pièce en 3D affiche une représentation simple de votre objet aux dimensions indiquées, avec les cotes tracées au sol. Modifiez une mesure : le modèle s'adapte sous vos yeux. Faites tourner la vue pour mieux apprécier ses proportions.
 
 ESSAYEZ CHEZ VOUS EN RÉALITÉ AUGMENTÉE
-Pointez le téléphone vers le sol : l'objet s'y place en taille réelle. Déplacez-le et tournez-le pour essayer plusieurs emplacements. L'échelle reste verrouillée sur les dimensions saisies.
+Pointez le téléphone vers le sol : l'objet s'y place en taille réelle. Déplacez-le et tournez-le pour essayer plusieurs emplacements. L'échelle reste verrouillée sur les dimensions saisies.
 
 Prenez une photo avec les dimensions inscrites dessus, puis partagez-la avec vos proches ou les personnes qui vous aident à déménager.
 
-EST-CE QUE ÇA PASSE LA PORTE ?
+MESUREZ AVEC LE MÈTRE AR
+Avec le Mètre AR, marquez deux points sur une surface. Utilisez la distance mesurée comme largeur, profondeur ou hauteur de l'objet, ou comme largeur ou hauteur de la porte.
+
+EST-CE QUE ÇA PASSE PAR LA PORTE ?
 Saisissez la largeur et la hauteur de l'ouverture à l'intérieur du cadre. Vous obtenez un verdict, la marge disponible ou ce qui dépasse, et une animation 3D de la position de transport proposée.
 
-Le calcul compare six positions pour un passage droit. Il ne simule ni le basculement en diagonale ni les virages dans un couloir. Prévoyez de la place pour les mains et pour manœuvrer de chaque côté.
+Le test de porte compare six positions pour un passage droit, sans basculement en diagonale. Prévoyez de la place pour les mains et pour manœuvrer de chaque côté.
 
-GRATUIT ET HORS LIGNE
-L'application est entièrement gratuite, sans publicité ni compte. Elle fonctionne hors ligne. La pièce en 3D et le test de porte restent utilisables sur les téléphones sans AR.
+EST-CE QUE ÇA PASSE DANS LE VIRAGE DU COULOIR ?
+Saisissez la largeur du couloir avant et après le virage et la hauteur sous plafond. Obtenez un verdict pour un virage à angle droit, sans incliner l'objet.
+
+EST-CE QUE ÇA RENTRE DANS LE COFFRE ?
+Saisissez la largeur et la hauteur de l'ouverture, puis la longueur, la largeur et la hauteur utiles à l'intérieur. Le test compare six positions pour un chargement droit, sans basculement en diagonale.
+
+PARTAGEZ UNE VÉRIFICATION ET RÉUTILISEZ VOS COTES
+Partagez une vérification de porte, de couloir ou de coffre avec un lien qui la rouvre dans l'application installée, avec les mêmes dimensions de l'objet et de l'espace.
+
+Retrouvez jusqu'à trois jeux de cotes personnalisées récents sans les ressaisir. Sur les lanceurs compatibles, un appui long sur l'icône de l'application affiche les raccourcis vers ces cotes.
+
+GRATUIT POUR COMMENCER, HORS LIGNE
+Le test de porte, les dimensions, la pièce 3D, le placement AR et le partage sont gratuits. Premium ajoute le virage du couloir, les tests de coffre et d'ascenseur, le mètre AR et Mon logement, par abonnement à la semaine, au mois ou à l'année. Les nouveaux abonnés bénéficient de 3 jours gratuits avec la formule annuelle. Toute personne ayant installé l'app avant 3.1.0 garde tout gratuitement, pour toujours. Sans publicité ni compte ; fonctionne hors ligne. La pièce en 3D et le test de porte restent utilisables sur les téléphones sans AR.
 
 VÉRIFIEZ LES MESURES RÉELLES
 Les dimensions proposées sont un point de départ, pas la fiche d'un produit précis. Vérifiez les mesures du vendeur, cadre, pieds et poignées compris, puis saisissez celles de votre meuble.
 
-La réalité augmentée donne un aperçu. Si la place est juste, confirmez au mètre ruban. L'AR nécessite un téléphone compatible et les Services Google Play pour la RA, à installer au préalable si nécessaire. Un sol bien éclairé et texturé facilite le placement.
+L'AR donne un aperçu, et le Mètre AR peut se tromper de quelques centimètres. Si la place est juste, confirmez au mètre ruban. L'AR nécessite un téléphone compatible et les Services Google Play pour la RA, à installer au préalable si nécessaire. Un sol bien éclairé et texturé facilite le placement.
