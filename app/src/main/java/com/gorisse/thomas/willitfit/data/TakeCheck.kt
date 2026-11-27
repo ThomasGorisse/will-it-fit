@@ -8,7 +8,7 @@ import com.gorisse.thomas.willitfit.fit.Lift
 import com.gorisse.thomas.willitfit.fit.SharedCheck
 import com.gorisse.thomas.willitfit.fit.Space
 
-/** What opening a check can touch: the object, the saved spaces, and which space is open. */
+/** What opening a check sees: the object, the saved spaces, and which space is open. */
 interface CheckStore {
     var dimensions: Dimensions
     var door: Door
@@ -20,15 +20,18 @@ interface CheckStore {
     var hallway: Boolean
 }
 
-/** Takes a check as the person's own: the object, and the space it was checked against. */
+/**
+ * Opens a check: its object becomes the one on screen, and the space it was checked against is
+ * the one open. The sender's door, boot, hallway or lift is only shown, from the check itself:
+ * the home the person saved stays theirs until they edit it.
+ */
 fun CheckStore.takeCheck(check: SharedCheck) {
     dimensions = check.dims
-    if (check.space != null) liftSelected = check.space == Space.LIFT
     when (check.space) {
-        Space.DOOR -> { check.door?.let { door = it }; carBoot = false; hallway = false }
-        Space.BOOT -> { check.boot?.let { boot = it }; carBoot = true; hallway = false }
-        Space.LIFT -> { check.lift?.let { lift = it }; liftSelected = true }
-        Space.HALL -> { check.hall?.let { hall = it }; hallway = true }
+        Space.DOOR -> { liftSelected = false; carBoot = false; hallway = false }
+        Space.BOOT -> { liftSelected = false; carBoot = true; hallway = false }
+        Space.LIFT -> liftSelected = true
+        Space.HALL -> { liftSelected = false; hallway = true }
         null -> Unit
     }
 }

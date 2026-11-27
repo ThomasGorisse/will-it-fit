@@ -43,6 +43,7 @@ import com.gorisse.thomas.willitfit.data.PremiumFeature
 import com.gorisse.thomas.willitfit.data.samplePremiumPlans
 import com.gorisse.thomas.willitfit.data.toUi
 import com.gorisse.thomas.willitfit.data.canUseTape
+import com.gorisse.thomas.willitfit.data.PREMIUM_ON
 import com.gorisse.thomas.willitfit.data.PremiumState
 import com.gorisse.thomas.willitfit.data.TrialReminder
 import com.gorisse.thomas.willitfit.data.takeCheck
@@ -108,10 +109,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val prefs = Prefs(applicationContext)
         val qa = if (BuildConfig.DEBUG) intent.getStringExtra("qa_premium") else null
-        if (BuildConfig.DEBUG && qa == "fresh" && savedInstanceState == null) { prefs.resetPremiumWelcome(); prefs.decideFreshForQa() }
+        if (PREMIUM_ON && BuildConfig.DEBUG && qa == "fresh" && savedInstanceState == null) { prefs.resetPremiumWelcome(); prefs.decideFreshForQa() }
         val installed = packageManager.getPackageInfo(packageName, 0)
-        val early = prefs.decideGrandfathered(installed.firstInstallTime, installed.lastUpdateTime)
-        val qaState = if (BuildConfig.DEBUG) when (qa) {
+        val early = prefs.decideGrandfathered(installed.firstInstallTime, installed.lastUpdateTime, keep = PREMIUM_ON)
+        val qaState = if (!PREMIUM_ON) PremiumState.GRANDFATHERED else if (BuildConfig.DEBUG) when (qa) {
             "on" -> PremiumState.PURCHASED
             "off", "fresh" -> PremiumState.FREE
             else -> null
@@ -119,7 +120,7 @@ class MainActivity : ComponentActivity() {
         billing = Billing(applicationContext, prefs, early, qaState)
         // The sample offer is offline and cannot enter Billing, even with a ready Play store.
         val qaPlans = BuildConfig.DEBUG && intent.getStringExtra("qa_plans") == "sample"
-        if (!qaPlans) lifecycle.addObserver(billing)
+        if (PREMIUM_ON && !qaPlans) lifecycle.addObserver(billing)
         // Text from a listing, shared or selected in another app. Read once: not again when the
         // activity is recreated.
         val incoming = if (savedInstanceState == null) intent.sharedText() else null
@@ -187,7 +188,11 @@ class MainActivity : ComponentActivity() {
                     var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
                     var recentSizes by remember { mutableStateOf(prefs.recentSizes) }
                     var dims by remember { mutableStateOf(prefs.dimensions) }
-                    var door by remember { mutableStateOf(prefs.door) }
+                    // A shared check shows the sender's space until the person leaves it; the
+                    // query survives a recreation, the saved home is never written from it.
+                    var sharedQuery by rememberSaveable { mutableStateOf(linked?.query()) }
+                    val shared = remember(sharedQuery) { sharedQuery?.let { SharedCheck.parse(it) } }
+                    var door by remember { mutableStateOf(shared?.door ?: prefs.door) }
                     var unit by remember { mutableStateOf(prefs.unit) }
                     LaunchedEffect(Unit) {
                         if (linked != null) Toast.makeText(this@MainActivity, R.string.link_opened, Toast.LENGTH_LONG).show()
@@ -202,7 +207,8 @@ class MainActivity : ComponentActivity() {
                         paywall = null
                         readOnlyCheck = true
                         prefs.takeCheck(check)
-                        dims = prefs.dimensions; door = prefs.door
+                        sharedQuery = check.query()
+                        dims = prefs.dimensions; door = check.door ?: prefs.door
                         route = if (check.space != null) Route.DOOR else Route.HOME
                         Toast.makeText(this@MainActivity, R.string.link_opened, Toast.LENGTH_LONG).show()
                     }
@@ -317,6 +323,11 @@ class MainActivity : ComponentActivity() {
                         }
                         if (feature != null) requireFeature(feature)
                     }
+                    LaunchedEffect(route) {
+                        if (sharedQuery != null && route != Route.DOOR && route != Route.MEASURE) {
+                            sharedQuery = null; door = prefs.door
+                        }
+                    }
                     BackHandler(enabled = route != Route.HOME && paywall == null) {
                         if (route == Route.ONBOARD_OBJECT || route == Route.ONBOARD_SPACES || route == Route.START) {
                             if (route == Route.ONBOARD_SPACES) route = Route.ONBOARD_OBJECT else finishWelcome()
@@ -393,7 +404,7 @@ class MainActivity : ComponentActivity() {
                                     if (canUseTape(measureSet, premiumState)) openFeature(PremiumFeature.TAPE)
                                     else requireFeature(PremiumFeature.TAPE)
                                 },
-                                premiumState = premiumState, openedReadOnly = readOnlyCheck,
+                                premiumState = premiumState, openedReadOnly = readOnlyCheck, shared = shared,
                                 onRequirePremium = { requireFeature(it) },
                                 onSegmentChanged = { readOnlyCheck = false },
                             ) }
@@ -415,13 +426,15 @@ class MainActivity : ComponentActivity() {
                                     }
                                     when (measureSet) {
                                         TapeSet.DOOR -> { door = door.withTape(target, cm); prefs.door = door }
-                                        TapeSet.BOOT -> prefs.boot = prefs.boot.withTape(target, cm)
-                                        TapeSet.HALL -> prefs.hall = prefs.hall.withTape(target, cm)
-                                        TapeSet.LIFT -> prefs.lift = prefs.lift.withTape(target, cm)
+                                        TapeSet.BOOT -> prefs.boot = (shared?.boot ?: prefs.boot).withTape(target, cm)
+                                        TapeSet.HALL -> prefs.hall = (shared?.hall ?: prefs.hall).withTape(target, cm)
+                                        TapeSet.LIFT -> prefs.lift = (shared?.lift ?: prefs.lift).withTape(target, cm)
                                         TapeSet.OBJECT -> {
                                             dims = dims.withTape(target, cm); if (dims.isValid) prefs.dimensions = dims
                                         }
                                     }
+                                    // Measuring a shown space is making it one's own.
+                                    if (measureSet != TapeSet.OBJECT) sharedQuery = null
                                 },
                                 onBack = { route = if (measureSet != TapeSet.OBJECT) Route.DOOR else Route.HOME },
                             )

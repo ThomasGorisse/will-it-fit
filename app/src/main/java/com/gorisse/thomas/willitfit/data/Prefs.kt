@@ -185,12 +185,12 @@ class Prefs(context: Context) : CheckStore {
             .apply()
 
     /** Kept synchronously: a process death must never make an early user decide twice. */
-    fun decideGrandfathered(firstInstall: Long, lastUpdate: Long): Boolean {
+    fun decideGrandfathered(firstInstall: Long, lastUpdate: Long, keep: Boolean = true): Boolean {
         val existing = if (p.contains("premium_grandfathered")) p.getBoolean("premium_grandfathered", false) else null
         val early = grandfatherDecision(firstInstall, lastUpdate, answers, myThings.isNotEmpty(),
             p.getInt(KEY_REVIEW_REQUESTS, 0).coerceAtLeast(if (p.getBoolean(KEY_LEGACY_REVIEW_ASKED, false)) 1 else 0),
             recentSizes.isNotEmpty(), existing)
-        if (existing == null) p.edit(commit = true) { putBoolean("premium_grandfathered", early) }
+        if (existing == null && keep) p.edit(commit = true) { putBoolean("premium_grandfathered", early) }
         return early
     }
 
