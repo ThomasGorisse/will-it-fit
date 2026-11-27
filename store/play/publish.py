@@ -1,5 +1,6 @@
 """Send a Will It Fit build to Play: production (staged) + internal, release notes, the listing
-text (title, short and full description) and framed phone screenshots (frames/out/<locale>/1..5.jpg) from this folder, in one edit.
+text (title, short and full description), framed phone screenshots (frames/out/<locale>/1..5.jpg)
+and the 512 px icon (icon-512.png) from this folder, in one edit.
 
 Uses the PlayApi client of ~/Projects/ar-model-viewer/store/scripts/sync-play.py (its own
 `upload` refuses an AAB without Firebase, and reads ARMV's notes).
@@ -70,7 +71,15 @@ try:
             r.add_header("Authorization", f"Bearer {api.token}"); r.add_header("Content-Type", "image/jpeg")
             with urllib.request.urlopen(r) as resp: resp.read()
         got = api.call("GET", base).get("images", [])
-        print(f"{l}: {text['title']!r}, {len(got)} phone screenshots in the edit")
+        # The 512 px icon of the listing (icon-512.png, the same art as the launcher icon).
+        icon = root / "icon-512.png"
+        if icon.exists():
+            ibase = f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}/listings/{l}/icon"
+            api.call("DELETE", ibase)
+            r = urllib.request.Request(f"{sp.ANDROIDPUBLISHER_BASE}/upload{ibase}?uploadType=media", data=icon.read_bytes(), method="POST")
+            r.add_header("Authorization", f"Bearer {api.token}"); r.add_header("Content-Type", "image/png")
+            with urllib.request.urlopen(r) as resp: resp.read()
+        print(f"{l}: {text['title']!r}, {len(got)} phone screenshots" + (", icon" if icon.exists() else "") + " in the edit")
     if commit:
         api.call("POST", f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}:commit"); ok = True
         print(f"COMMITTED vc{vc}: " + ("internal only" if internal_only else f"production {fraction:.0%}, internal 100%, screenshots"))
