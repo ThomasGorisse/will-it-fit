@@ -242,7 +242,7 @@
     <string name="premium_year">año</string>
     <string name="premium_month">mes</string>
     <string name="premium_week">semana</string>
-    <string name="premium_per_week">Equivale a %1$s/semana</string>
+    <string name="premium_per_week">%1$s/semana</string>
     <string name="premium_trial_badge">3 días gratis</string>
     <string name="premium_start_trial">Empezar 3 días gratis, después %1$s/año</string>
     <string name="premium_continue_price">Continuar — %1$s/%2$s</string>

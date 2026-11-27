@@ -254,7 +254,7 @@
     <string name="premium_year">year</string>
     <string name="premium_month">month</string>
     <string name="premium_week">week</string>
-    <string name="premium_per_week">Equivalent to %1$s/week</string>
+    <string name="premium_per_week">%1$s/week</string>
     <string name="premium_trial_badge">3 days free</string>
     <string name="premium_start_trial">Start 3 days free, then %1$s/year</string>
     <string name="premium_continue_price">Continue — %1$s/%2$s</string>

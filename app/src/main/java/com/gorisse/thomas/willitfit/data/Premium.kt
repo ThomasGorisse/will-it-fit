@@ -16,12 +16,27 @@ import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
+import java.text.NumberFormat
+import java.util.Currency
+import java.util.Locale
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /** A plan returned by Play, with its own eligible offer token and recurring price. */
 data class PremiumPlan(val id: String, val details: ProductDetails, val offerToken: String,
     val price: ProductDetails.PricingPhase, val trial: Boolean)
+
+/** Keep Play's price verbatim and compute only the explicitly labelled yearly comparison. */
+fun PremiumPlan.toUi(locale: Locale): PremiumPlanUi {
+    val priceCurrency = Currency.getInstance(price.priceCurrencyCode)
+    val formatter = NumberFormat.getCurrencyInstance(locale).apply {
+        currency = priceCurrency
+        maximumFractionDigits = priceCurrency.defaultFractionDigits.coerceAtLeast(0)
+        minimumFractionDigits = maximumFractionDigits
+    }
+    return PremiumPlanUi(id, price.formattedPrice, price.billingPeriod, trial,
+        if (price.billingPeriod == "P1Y") formatter.format(yearlyPricePerWeek(price.priceAmountMicros)) else null)
+}
 
 /**
  * Play owns purchases and eligibility. This connection lives only while the activity is started;

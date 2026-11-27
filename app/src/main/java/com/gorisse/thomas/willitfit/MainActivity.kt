@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.android.installreferrer.api.InstallReferrerClient
@@ -39,6 +40,8 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.ar.core.ArCoreApk
 import com.gorisse.thomas.willitfit.data.Billing
 import com.gorisse.thomas.willitfit.data.PremiumFeature
+import com.gorisse.thomas.willitfit.data.samplePremiumPlans
+import com.gorisse.thomas.willitfit.data.toUi
 import com.gorisse.thomas.willitfit.data.PremiumState
 import com.gorisse.thomas.willitfit.data.TrialReminder
 import com.gorisse.thomas.willitfit.data.canUse
@@ -112,7 +115,9 @@ class MainActivity : ComponentActivity() {
             else -> null
         } else null
         billing = Billing(applicationContext, prefs, early, qaState)
-        lifecycle.addObserver(billing)
+        // The sample offer is offline and cannot enter Billing, even with a ready Play store.
+        val qaPlans = BuildConfig.DEBUG && intent.getStringExtra("qa_plans") == "sample"
+        if (!qaPlans) lifecycle.addObserver(billing)
         // Text from a listing, shared or selected in another app. Read once: not again when the
         // activity is recreated.
         val incoming = if (savedInstanceState == null) intent.sharedText() else null
@@ -161,6 +166,9 @@ class MainActivity : ComponentActivity() {
                     val premiumState by billing.state.collectAsStateWithLifecycle()
                     val plans by billing.plans.collectAsStateWithLifecycle()
                     val billingAvailable by billing.available.collectAsStateWithLifecycle()
+                    val locale = LocalConfiguration.current.locales[0]
+                    val offerPlans = if (BuildConfig.DEBUG && qaPlans) samplePremiumPlans(locale)
+                        else plans.map { it.toUi(locale) }
                     val premium = canUse(PremiumFeature.MY_HOME, premiumState)
                     var paywall by rememberSaveable { mutableStateOf<PremiumFeature?>(null) }
                     var onboardingOffer by rememberSaveable { mutableStateOf(false) }
@@ -305,7 +313,7 @@ class MainActivity : ComponentActivity() {
                     }
                     BackHandler(enabled = route != Route.HOME && paywall == null) {
                         if (route == Route.ONBOARD_OBJECT || route == Route.ONBOARD_SPACES || route == Route.START) {
-                            finishWelcome()
+                            if (route == Route.ONBOARD_SPACES) route = Route.ONBOARD_OBJECT else finishWelcome()
                             return@BackHandler
                         }
                         route = when {
@@ -316,7 +324,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     // No cross-fade: two scenes (or a scene and the AR camera) never run at once.
-                    run {
+                    if (paywall == null) run {
                         when (route) {
                             Route.START -> Unit
                             Route.ONBOARD_OBJECT, Route.ONBOARD_SPACES -> OnboardingScreen(
@@ -338,6 +346,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 },
                                 onSkip = { finishWelcome() },
+                                onBack = { if (route == Route.ONBOARD_SPACES) route = Route.ONBOARD_OBJECT else finishWelcome() },
                             )
                             Route.HOME -> HomeScreen(
                                 dims = dims, unit = unit, arAvailable = arAvailable, recentSizes = recentSizes, premium = premium,
@@ -474,8 +483,15 @@ class MainActivity : ComponentActivity() {
                         Dialog(onDismissRequest = { closeOffer() }, properties = DialogProperties(
                             usePlatformDefaultWidth = false, decorFitsSystemWindows = false,
                         )) {
-                            PaywallScreen(feature, plans, billingAvailable, onClose = { closeOffer() },
-                                onBuy = { billing.purchase(this@MainActivity, it) })
+                            PaywallScreen(feature, offerPlans, billingAvailable || (BuildConfig.DEBUG && qaPlans),
+                                dims = dims, unit = unit, hall = prefs.hall, boot = prefs.boot, lift = prefs.lift,
+                                onClose = { closeOffer() }, onBuy = { chosen ->
+                                    if (BuildConfig.DEBUG && qaPlans) {
+                                        Toast.makeText(this@MainActivity, "QA: no purchase", Toast.LENGTH_SHORT).show()
+                                    } else plans.firstOrNull { it.id == chosen.id }?.let {
+                                        billing.purchase(this@MainActivity, it)
+                                    }
+                                })
                         }
                     }
                 }

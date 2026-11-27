@@ -341,20 +341,23 @@ private fun PresetRow(
     }
 }
 
+/** Shared with welcome so the same thumbnail always stands for the same object. */
 @Composable
-private fun PresetCard(
+internal fun PresetCard(
     compact: Boolean,
     selected: Boolean,
     label: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     description: String? = null,
+    wrapLabel: Boolean = false,
     image: @Composable () -> Unit,
 ) {
     val scheme = MaterialTheme.colorScheme
     Card(
         onClick = onClick,
         // As wide as its name needs ("Canapé 3 places", "Waschmaschine"), never cut with an ellipsis.
-        modifier = Modifier.widthIn(min = if (compact) 80.dp else 88.dp).semantics {
+        modifier = modifier.widthIn(min = if (compact) 80.dp else 88.dp).semantics {
             this.selected = selected
             role = Role.RadioButton
             if (description != null) contentDescription = description
@@ -375,7 +378,9 @@ private fun PresetCard(
             Text(
                 label,
                 style = MaterialTheme.typography.labelMedium,
-                maxLines = 1, softWrap = false,
+                modifier = if (wrapLabel) Modifier.heightIn(min = 32.dp) else Modifier,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                maxLines = if (wrapLabel) Int.MAX_VALUE else 1, softWrap = wrapLabel,
             )
         }
     }
