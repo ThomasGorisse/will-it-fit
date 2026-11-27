@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -52,6 +52,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -149,12 +150,14 @@ fun PaywallScreen(feature: PremiumFeature, plans: List<PremiumPlanUi>, available
             }
         }
     }) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
-            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
+            val sheetMinHeight = (maxHeight - heroHeight + 28.dp).coerceAtLeast(0.dp)
+            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy((-28).dp)) {
                 PaywallHero(feature, dims, unit, hall, boot, lift,
-                    Modifier.fillMaxWidth().height(heroHeight))
+                    Modifier.fillMaxWidth().height(heroHeight).clipToBounds())
                 // The sheet overlaps the scene, so its rounded corners read like Home's sheet.
-                Surface(modifier = Modifier.offset(y = (-28).dp), color = scheme.surface,
+                Surface(modifier = Modifier.fillMaxWidth().heightIn(min = sheetMinHeight), color = scheme.surface,
                     shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)) {
                     Column(Modifier.formWidth().fillMaxWidth().padding(horizontal = 24.dp, vertical = 20.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
