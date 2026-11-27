@@ -170,6 +170,7 @@ class Billing(context: Context, private val prefs: Prefs, grandfathered: Boolean
     private fun accept(purchase: Purchase) {
         if (purchase.purchaseState != Purchase.PurchaseState.PURCHASED) return
         setState(PremiumState.PURCHASED)
+        prefs.premiumVerifiedAt = System.currentTimeMillis()
         if (prefs.trialLaunchAt > 0 && purchase.purchaseTime >= prefs.trialLaunchAt && prefs.trialPrice != null) {
             prefs.trialToken = purchase.purchaseToken
             prefs.trialLaunchAt = 0

@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.gorisse.thomas.willitfit.MainActivity
@@ -24,6 +23,17 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.concurrent.TimeUnit
+import androidx.work.CoroutineWorker
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingClientStateListener
+import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.PendingPurchasesParams
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.QueryPurchasesParams
+import com.android.billingclient.api.queryPurchasesAsync
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.coroutines.resume
 
 /** One account note, independent of news, with no request for notification permission. */
 object TrialReminder {
@@ -80,12 +90,43 @@ object TrialReminder {
 fun localizedDate(at: Long): String = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
     .withLocale(java.util.Locale.getDefault()).format(Instant.ofEpochMilli(at).atZone(ZoneId.systemDefault()))
 
-/** WorkManager wakes locally; the token must still be the trial we last read from Play. */
-class TrialReminderWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
-    override fun doWork(): Result {
+/**
+ * WorkManager wakes locally; the token must still be the trial we last read from Play. Someone may
+ * have cancelled in Play without opening the app since: Play is asked again, and the note says
+ * the plan continues only if that trial still renews. No answer from Play means no note.
+ */
+class TrialReminderWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+    override suspend fun doWork(): Result {
         val token = inputData.getString("token") ?: return Result.success()
         val price = inputData.getString("price") ?: return Result.success()
-        TrialReminder.post(applicationContext, token, inputData.getLong("end", 0), price)
+        if (stillRenews(applicationContext, token)) TrialReminder.post(applicationContext, token, inputData.getLong("end", 0), price)
         return Result.success()
+    }
+}
+
+/** True only when Play answers and lists this purchase, bought and set to renew. */
+private suspend fun stillRenews(context: Context, token: String): Boolean {
+    val client = BillingClient.newBuilder(context).setListener { _, _ -> }
+        .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build()).build()
+    return try {
+        withTimeoutOrNull(15_000L) {
+            val ready = suspendCancellableCoroutine { cont ->
+                client.startConnection(object : BillingClientStateListener {
+                    override fun onBillingSetupFinished(result: BillingResult) {
+                        if (cont.isActive) cont.resume(result.responseCode == BillingClient.BillingResponseCode.OK)
+                    }
+                    override fun onBillingServiceDisconnected() { if (cont.isActive) cont.resume(false) }
+                })
+            }
+            if (!ready) return@withTimeoutOrNull false
+            val read = client.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build())
+            read.billingResult.responseCode == BillingClient.BillingResponseCode.OK && read.purchasesList.any {
+                it.purchaseToken == token && it.purchaseState == Purchase.PurchaseState.PURCHASED && it.isAutoRenewing
+            }
+        } ?: false
+    } catch (e: Exception) {
+        false
+    } finally {
+        runCatching { client.endConnection() }
     }
 }

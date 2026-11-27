@@ -15,6 +15,9 @@ class PremiumPolicyTest {
         assertTrue(grandfatherDecision(1, 1, 0, false, 1, false))
         assertTrue(grandfatherDecision(1, 1, 0, false, 0, true))
         assertFalse(grandfatherDecision(1, 1, 0, false, 0, false))
+        // After the cutoff, an update before the first opening is not an early user; data still is.
+        assertFalse(grandfatherDecision(PREMIUM_CUTOFF_MS + 1, PREMIUM_CUTOFF_MS + 999_999, 0, false, 0, false))
+        assertTrue(grandfatherDecision(PREMIUM_CUTOFF_MS + 1, PREMIUM_CUTOFF_MS + 1, 3, false, 0, false))
     }
 
     @Test fun aSavedDecisionWinsOverLaterUsageOrInstallChanges() {
