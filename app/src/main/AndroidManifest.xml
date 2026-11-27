@@ -10,6 +10,10 @@
     <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
     <!-- News and tips, posted on the phone (see data/News.kt); asked once, after a first "yes". -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Premium is off (PREMIUM_ON = false in data/PremiumPolicy.kt): Play Billing is never
+         asked, so the permission merged from the billing library is dropped. Delete this line
+         in the same change that turns premium on. -->
+    <uses-permission android:name="com.android.vending.BILLING" tools:node="remove" />
 
     <application
         android:allowBackup="true"
