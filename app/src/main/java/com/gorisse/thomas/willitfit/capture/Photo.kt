@@ -206,7 +206,7 @@ private fun drawMark(c: Canvas, r: RectF, verdict: CardVerdict, color: Int) {
     c.drawPath(path, stroke)
 }
 
-/** The launcher icon as a launcher draws it: the middle two thirds of the adaptive foreground on its teal. */
+/** The launcher icon as a launcher draws it: the middle two thirds of the adaptive foreground on its orange. */
 private fun drawAppIcon(context: Context, c: Canvas, icon: RectF) {
     val foreground = BitmapFactory.decodeResource(
         context.resources, R.mipmap.ic_launcher_foreground, BitmapFactory.Options().apply { inScaled = false },
