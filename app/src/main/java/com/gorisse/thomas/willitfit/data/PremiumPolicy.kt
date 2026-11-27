@@ -9,6 +9,7 @@ import java.time.ZoneId
 /**
  * Off: every feature is free, as in 3.0.x. Play Billing is never asked, no offer shows, and no
  * early-user decision is kept, so turning it on later starts from a clean slate.
+ * Turning it on also means deleting the BILLING `tools:node="remove"` line in AndroidManifest.xml.
  */
 const val PREMIUM_ON = false
 
