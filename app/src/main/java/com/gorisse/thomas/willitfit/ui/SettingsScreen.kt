@@ -18,6 +18,7 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.outlined.ViewInAr
 import androidx.compose.material3.TextButton
+import com.gorisse.thomas.willitfit.data.PREMIUM_ON
 import com.gorisse.thomas.willitfit.data.PremiumState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -79,7 +80,7 @@ fun SettingsScreen(
                         }
                     },
                 )
-                ListItem(
+                if (PREMIUM_ON) ListItem(
                     leadingContent = { Icon(Icons.Outlined.Lock, null) },
                     headlineContent = { Text(stringResource(R.string.premium_title)) },
                     supportingContent = {
@@ -113,7 +114,7 @@ fun SettingsScreen(
                         val uriHandler = LocalUriHandler.current
                         Column {
                             Text(stringResource(R.string.settings_privacy))
-                            Text(stringResource(R.string.premium_privacy))
+                            if (PREMIUM_ON) Text(stringResource(R.string.premium_privacy))
                             Text(
                                 linkText(stringResource(R.string.settings_privacy_policy), PRIVACY_POLICY_URL, MaterialTheme.colorScheme.primary) { url ->
                                     runCatching { uriHandler.openUri(url) }

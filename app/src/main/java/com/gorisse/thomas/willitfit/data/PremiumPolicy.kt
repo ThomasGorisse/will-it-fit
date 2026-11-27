@@ -6,6 +6,12 @@ import java.math.RoundingMode
 import java.time.Instant
 import java.time.ZoneId
 
+/**
+ * Off: every feature is free, as in 3.0.x. Play Billing is never asked, no offer shows, and no
+ * early-user decision is kept, so turning it on later starts from a clean slate.
+ */
+const val PREMIUM_ON = false
+
 /** Loading never opens an offer by itself; Play's answer replaces it when it arrives. */
 enum class PremiumState { FREE, PURCHASED, GRANDFATHERED, UNKNOWN }
 

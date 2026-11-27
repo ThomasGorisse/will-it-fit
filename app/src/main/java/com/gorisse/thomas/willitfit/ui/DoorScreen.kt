@@ -133,6 +133,7 @@ fun DoorScreen(
     onMeasure: (TapeSet) -> Unit = {},
     premiumState: PremiumState = PremiumState.FREE,
     openedReadOnly: Boolean = false,
+    shared: SharedCheck? = null,
     onRequirePremium: (PremiumFeature) -> Unit = {},
     onSegmentChanged: () -> Unit = {},
 ) {
@@ -149,15 +150,15 @@ fun DoorScreen(
     }
     val readOnly = (openedReadOnly || space != 0) && !canUse(PremiumFeature.MY_HOME, premiumState)
     val elevator = space == 3
-    var lift by remember { mutableStateOf(prefs.lift) }
-    var liftTyped by remember { mutableStateOf(prefs.liftTyped) }
+    var lift by remember { mutableStateOf(shared?.lift ?: prefs.lift) }
+    var liftTyped by remember { mutableStateOf(shared?.lift != null || prefs.liftTyped) }
     val liftVerdict = remember(dims, lift) { checkLift(dims, lift) }
     val carBoot = space == 1
     val hallway = space == 2
-    var hall by remember { mutableStateOf(prefs.hall) }
+    var hall by remember { mutableStateOf(shared?.hall ?: prefs.hall) }
     var hallValid by remember(space) { mutableStateOf(true) }
-    var boot by remember { mutableStateOf(prefs.boot) }
-    var bootTyped by remember { mutableStateOf(prefs.bootTyped) }
+    var boot by remember { mutableStateOf(shared?.boot ?: prefs.boot) }
+    var bootTyped by remember { mutableStateOf(shared?.boot != null || prefs.bootTyped) }
     var bootFieldsRevision by remember { mutableIntStateOf(0) }
     var openingValid by remember(space) { mutableStateOf(true) }
     var insideValid by remember(space) { mutableStateOf(true) }
