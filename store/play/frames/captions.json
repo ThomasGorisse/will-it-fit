@@ -4,7 +4,7 @@
     "2-bed": {"headline": "Real sizes.\nReady to go.", "subline": "Typical sizes you can adjust."},
     "3-wardrobe": {"headline": "Your measurements,\nin 3D.", "subline": "Enter width, depth and height."},
     "4-door": {"headline": "Will it go through\nthe door?", "subline": "Check the opening before you move."},
-    "5-dark": {"headline": "Light or dark,\nlike your phone.", "subline": "Follows your phone's theme."},
+    "5-dark": {"headline": "Day or night,\nit fits.", "subline": "A calm view, even after dark."},
     "6-free": {"headline": "Free. Offline.\nNo account.", "subline": "No ads. Just room for your ideas."}
   },
   "fr-FR": {
@@ -12,7 +12,7 @@
     "2-bed": {"headline": "Vos meubles,\nà taille réelle.", "subline": "Des dimensions courantes, modifiables."},
     "3-wardrobe": {"headline": "Vos mesures,\nen 3D.", "subline": "Saisissez largeur, profondeur, hauteur."},
     "4-door": {"headline": "Ça passe\nla porte ?", "subline": "Vérifiez avant de tout déplacer."},
-    "5-dark": {"headline": "Thème clair\nou sombre.", "subline": "Il suit celui de votre téléphone."},
+    "5-dark": {"headline": "Le jour comme\nle soir.", "subline": "Une vue agréable, même dans le noir."},
     "6-free": {"headline": "Gratuit.\nHors ligne.", "subline": "Sans compte. Sans publicité."}
   },
   "de-DE": {
@@ -20,7 +20,7 @@
     "2-bed": {"headline": "Maße drin.\nDirekt loslegen.", "subline": "Übliche Größen, die du anpassen kannst."},
     "3-wardrobe": {"headline": "Deine Maße.\nDein 3D-Modell.", "subline": "Breite, Tiefe und Höhe selbst eingeben."},
     "4-door": {"headline": "Passt es durch\ndie Tür?", "subline": "Prüfe den Durchgang vor dem Umzug."},
-    "5-dark": {"headline": "Helles oder\ndunkles Design.", "subline": "Folgt der Einstellung deines Handys."},
+    "5-dark": {"headline": "Passt am Tag.\nUnd am Abend.", "subline": "Auch im Dunkeln alles im Blick."},
     "6-free": {"headline": "Kostenlos.\nAuch offline.", "subline": "Ohne Konto. Ohne Werbung."}
   },
   "es-ES": {
@@ -28,7 +28,7 @@
     "2-bed": {"headline": "Medidas listas\npara empezar.", "subline": "Tamaños habituales que puedes ajustar."},
     "3-wardrobe": {"headline": "Tus medidas,\nen 3D.", "subline": "Introduce ancho, fondo y alto."},
     "4-door": {"headline": "¿Pasa por\nla puerta?", "subline": "Comprueba el paso antes de moverlo."},
-    "5-dark": {"headline": "Claro u oscuro,\ncomo tu móvil.", "subline": "Sigue el tema de tu móvil."},
+    "5-dark": {"headline": "De día.\nY de noche.", "subline": "Una vista cómoda, incluso a oscuras."},
     "6-free": {"headline": "Gratis.\nSin conexión.", "subline": "Sin cuenta ni anuncios."}
   },
   "it-IT": {
@@ -36,7 +36,7 @@
     "2-bed": {"headline": "Misure già pronte.\nSi parte.", "subline": "Dimensioni tipiche da personalizzare."},
     "3-wardrobe": {"headline": "Le tue misure,\nin 3D.", "subline": "Inserisci larghezza, profondità e altezza."},
     "4-door": {"headline": "Passa dalla\nporta?", "subline": "Verifica il passaggio prima del trasloco."},
-    "5-dark": {"headline": "Tema chiaro\no scuro.", "subline": "Segue quello del telefono."},
+    "5-dark": {"headline": "Di giorno.\nAnche di sera.", "subline": "Una vista piacevole anche al buio."},
     "6-free": {"headline": "Gratis.\nAnche offline.", "subline": "Senza account. Senza pubblicità."}
   },
   "pt-BR": {
@@ -44,7 +44,7 @@
     "2-bed": {"headline": "Medidas prontas.\nVamos lá.", "subline": "Tamanhos comuns que você pode ajustar."},
     "3-wardrobe": {"headline": "Suas medidas,\nem 3D.", "subline": "Digite largura, profundidade e altura."},
     "4-door": {"headline": "Passa pela\nporta?", "subline": "Confira a passagem antes de mudar."},
-    "5-dark": {"headline": "Claro ou escuro,\ncomo o celular.", "subline": "Segue o tema do seu celular."},
+    "5-dark": {"headline": "De dia.\nOu à noite.", "subline": "Uma visão tranquila, mesmo no escuro."},
     "6-free": {"headline": "Grátis. Offline.\nSem conta.", "subline": "Sem anúncios. Só novas ideias."}
   }
 }
