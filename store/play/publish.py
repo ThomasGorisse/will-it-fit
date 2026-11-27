@@ -1,6 +1,7 @@
 """Send a Will It Fit build to Play: production (staged) + internal, release notes, the listing
-text (title, short and full description), framed phone screenshots (frames/out/<locale>/1..5.jpg)
-and the 512 px icon (icon-512.png) from this folder, in one edit.
+text (title, short and full description), plus framed phone screenshots and the 512 px icon
+(icon-512.png) for locales with a frames/out/<locale>/ folder, in one edit. Text-only locales
+use the default language graphics.
 
 Uses the PlayApi client of ~/Projects/ar-model-viewer/store/scripts/sync-play.py (its own
 `upload` refuses an AAB without Firebase, and reads ARMV's notes).
@@ -19,8 +20,9 @@ aab, fraction, commit = Path(sys.argv[1]), float(sys.argv[2]), sys.argv[3] == "c
 internal_only = "internal-only" in sys.argv
 pkg = "com.gorisse.thomas.willitfit"
 root = Path(__file__).resolve().parent  # this checkout's notes, whatever the main checkout is on
+locales = json.loads((root / "locales.json").read_text())
 notes = [{"language": l, "text": (root / l / "changelogs/default.txt").read_text().strip()}
-         for l in ["en-US", "fr-FR", "de-DE", "es-ES", "it-IT", "pt-BR"]]
+         for l in locales if (root / l / "changelogs/default.txt").is_file()]
 api = sp.PlayApi()
 edit_id = api.call("POST", f"/androidpublisher/v3/applications/{pkg}/edits")["id"]
 ok = False
@@ -50,7 +52,7 @@ try:
         api.call("PUT", f"{tracks}/internal", body={"releases": [sp._release_body([vc], notes, None)]})
     # Phone screenshots: the framed, captioned slides 1-5 of each locale replace the raw captures.
     frames = root / "frames/out"
-    for l in ([] if internal_only else ["en-US", "fr-FR", "de-DE", "es-ES", "it-IT", "pt-BR"]):
+    for l in ([] if internal_only else locales):
         # The listing text: title, short and full description, as in <locale>/*.txt.
         text = {k: (root / l / f).read_text().strip() for k, f in
                 (("title", "title.txt"), ("shortDescription", "short_description.txt"),
@@ -63,6 +65,10 @@ try:
         if video:
             text["video"] = video
         api.call("PUT", listing, body={"language": l, **text})
+        if not (frames / l).is_dir():
+            # Leave localized graphics unset so Play uses the default language's assets.
+            print(f"{l}: {text['title']!r}, text only (default language graphics) in the edit")
+            continue
         base = f"/androidpublisher/v3/applications/{pkg}/edits/{edit_id}/listings/{l}/phoneScreenshots"
         api.call("DELETE", base)
         for i in range(1, 6):

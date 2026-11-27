@@ -1,0 +1,41 @@
+Får soffan plats i vardagsrummet? Går kylskåpet genom dörren? Will It Fit hjälper dig att se hur mycket plats möbler tar, hemma eller inför flytten.
+
+BÖRJA MED MÅTTEN
+Välj en två- eller tresitssoffa, en säng för en madrass på 140 eller 160 cm, en garderob, ett kylskåp, en tvättmaskin, en tv på 55 eller 65 tum, en cykel eller en barnvagn. Alla har vanliga mått ifyllda. Du kan också ange egen bredd, eget djup och egen höjd i centimeter eller tum.
+
+SE FÖREMÅLET I ETT 3D-RUM
+Ett interaktivt 3D-rum visar en enkel modell av föremålet med de mått du angett och måttlinjer på golvet. Ändra ett mått och se modellen ändra storlek direkt. Vrid vyn för att få en känsla för proportionerna.
+
+PROVA HEMMA MED AR
+Rikta telefonen mot golvet och placera föremålet i verklig storlek med förstärkt verklighet. Flytta och vrid det för att prova olika platser. Skalan är låst till dina mått.
+
+Ta en bild med måtten på och dela den med någon du bor med, en vän eller den som hjälper dig att flytta.
+
+MÄT MED AR-MÅTTBANDET
+Markera två punkter på en yta med AR-måttbandet. Använd det uppmätta avståndet som föremålets bredd, djup eller höjd, eller som dörrens bredd eller höjd.
+
+GÅR DET GENOM DÖRREN?
+Ange öppningens fria bredd och höjd innanför dörrkarmen. Få ett besked, se hur mycket utrymme som finns kvar eller hur mycket för stort föremålet är, och se det föreslagna bärläget i 3D.
+
+Dörrkontrollen jämför sex lägen för en rak passage, utan att luta föremålet diagonalt. Lämna plats för händerna och för att manövrera på båda sidor.
+
+KLARAR DET SVÄNGEN I HALLEN?
+Ange hallens bredd före och efter svängen samt takhöjden. Få ett besked för en rätvinklig sväng när föremålet bärs vågrätt.
+
+FÅR DET PLATS I BAGAGEUTRYMMET?
+Ange öppningens bredd och höjd samt den användbara längden, bredden och höjden inuti. Kontrollen jämför sex lägen för rak inlastning, utan diagonal lutning.
+
+DELA EN KONTROLL OCH ÅTERANVÄND MÅTT
+Dela en kontroll av dörr, hall eller bilens bagageutrymme via en länk som öppnar den i den installerade appen med samma mått för föremålet och utrymmet.
+
+Återanvänd upp till tre av dina senaste egna måttuppsättningar utan att skriva in dem igen. På startskärmsappar som stöder det kan du hålla ned appikonen för att öppna genvägar till måtten.
+
+GRATIS OCH OFFLINE
+Helt gratis, utan annonser eller konto. Appen fungerar offline. 3D-rummet och dörrkontrollen fungerar även på telefoner utan AR-stöd.
+
+Appens gränssnitt finns på engelska, franska, tyska, spanska, italienska och portugisiska.
+
+KONTROLLERA DE VERKLIGA MÅTTEN
+Vanliga mått är en utgångspunkt, inte måtten på en viss produkt. Kontrollera säljarens uppgifter, inklusive ramar, fötter och handtag, och ange dina faktiska mått.
+
+AR ger en förhandsvisning och AR-måttbandet kan visa några centimeter fel. Om det är trångt, kontrollmät med ett måttband. AR kräver en kompatibel telefon och Google Play-tjänster för AR, som kan behöva installeras först. Ett väl upplyst golv med synlig struktur gör placeringen enklare.
