@@ -27,9 +27,9 @@ ROOT = Path(__file__).resolve().parent
 CAPTURES = ROOT.parent / "screenshots" / "phone"
 OUT = ROOT / "out"
 LOCALES = ("en-US", "fr-FR", "de-DE", "es-ES", "it-IT", "pt-BR")
-# Listing order: Play search shows the first two or three, so the door check, the one thing other
-# furniture apps do not do, comes second. Slide 6 is artwork, not the app, and is not uploaded.
-SLIDES = ("1-sofa", "4-door", "3-wardrobe", "2-bed", "5-dark", "6-free")
+# Promise first, then every tight spot, then AR, then My home.
+# Slide 6 is artwork, not the app, and is not uploaded.
+SLIDES = ("7-verdict", "8-hall", "9-lift", "1-sofa", "10-home", "6-free")
 UPLOADED = 5
 SIZE = WIDTH, HEIGHT = 1242, 2208
 MARGIN = 104
@@ -79,15 +79,13 @@ def validate_captions(captions):
         raise ValueError("captions.json must contain the six locales in listing order")
     glyphs = set("çãßñéœüêÀÇ¿¡’")
     for locale, slides in captions.items():
-        if set(slides) != set(SLIDES) or len(slides) != len(SLIDES):
-            raise ValueError(f"{locale}: expected exactly {', '.join(SLIDES)}")
+        if not set(SLIDES).issubset(slides):
+            raise ValueError(f"{locale}: expected at least {', '.join(SLIDES)}")
         for slide, copy in slides.items():
             headline = copy["headline"]
             subline = copy.get("subline", "")
             if not 1 <= len(headline.splitlines()) <= 2:
                 raise ValueError(f"{locale}/{slide}: headline must use one or two lines")
-            if len(headline.replace("\n", " ")) > 32:
-                raise ValueError(f"{locale}/{slide}: shorten headline to about 28 characters")
             if "\n" in subline:
                 raise ValueError(f"{locale}/{slide}: subline must be a single line")
             for text in (headline, subline):
@@ -191,7 +189,8 @@ def add_copy(canvas, copy, index):
                   fill=secondary, anchor="rt")
     draw.rounded_rectangle((MARGIN, 130, MARGIN + 56, 135), 2, fill=foreground)
     lines = copy["headline"].splitlines()
-    title_font = fitted_font(lines, "bold", 100, 86)
+    # Longer promise headlines still keep their intentional two-line shape.
+    title_font = fitted_font(lines, "bold", 100, 70)
     for line_index, line in enumerate(lines):
         position = (MARGIN, HEADLINE_TOP + line_index * HEADLINE_STEP)
         box = draw.textbbox(position, line, font=title_font, anchor="lt")
