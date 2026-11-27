@@ -11,10 +11,24 @@ Aponte o celular para o chão e o objeto será posicionado em tamanho real. Mova
 
 Tire uma foto com as medidas escritas nela e compartilhe com quem mora com você ou vai ajudar na mudança.
 
-PASSA PELA PORTA?
-Informe a largura e a altura livres da abertura, por dentro do batente. Veja o resultado, com a folga disponível ou quanto falta para passar. Uma animação 3D mostra a posição de transporte sugerida.
+MEÇA COM A TRENA RA
+Marque dois pontos em uma superfície com a Trena RA. Use a distância medida como largura, profundidade ou altura do objeto, ou como largura ou altura da porta.
 
-O cálculo compara seis posições para uma passagem em linha reta. Ele não simula inclinações na diagonal. Reserve espaço para as mãos e para manobrar dos dois lados.
+PASSA PELA PORTA?
+Informe a largura e a altura livres da abertura, por dentro do batente. Veja o resultado, com a folga disponível ou quanto o objeto excede o espaço. Uma animação 3D mostra a posição de transporte sugerida.
+
+A verificação da porta compara seis posições para uma passagem em linha reta, sem inclinações na diagonal. Reserve espaço para as mãos e para manobrar dos dois lados.
+
+FAZ A CURVA NO CORREDOR?
+Informe a largura do corredor antes e depois da curva e a altura do teto. Veja o resultado para uma curva em ângulo reto, sem inclinar o objeto.
+
+CABE NO PORTA-MALAS?
+Informe a largura e a altura da abertura e o comprimento, a largura e a altura úteis do interior. A verificação compara seis posições para colocar o objeto em linha reta, sem inclinações na diagonal.
+
+COMPARTILHE UMA VERIFICAÇÃO E REUTILIZE MEDIDAS
+Compartilhe uma verificação de porta, corredor ou porta-malas com um link que a reabre no app instalado, com as mesmas medidas do objeto e do espaço.
+
+Reutilize até três conjuntos de medidas recentes personalizadas sem digitar tudo de novo. Nos launchers compatíveis, mantenha o ícone do app pressionado para ver os atalhos para essas medidas.
 
 GRÁTIS PARA COMEÇAR, OFFLINE
 A verificação da porta, as medidas, o ambiente 3D, o posicionamento RA e o compartilhamento são grátis. O Premium inclui a curva no corredor, as verificações de porta-malas e elevador, a trena RA e Minha casa, por assinatura semanal, mensal ou anual. Novos assinantes têm 3 dias grátis no plano anual. Quem instalou o app antes da 3.1.0 mantém tudo grátis para sempre. Sem anúncios nem conta; funciona offline. O ambiente 3D e a verificação da porta também funcionam em celulares sem RA.
@@ -22,4 +36,4 @@ A verificação da porta, as medidas, o ambiente 3D, o posicionamento RA e o com
 CONFIRA AS MEDIDAS REAIS
 As medidas dos modelos são um ponto de partida, não as de um produto específico. Confira os números do vendedor, incluindo estrutura, pés e puxadores, e informe as medidas do seu móvel.
 
-A realidade aumentada oferece uma prévia. Se o espaço for apertado, confirme com uma trena. A RA exige um celular compatível e o Google Play Services para RA, que pode precisar ser instalado antes. Um piso bem iluminado e com textura visível facilita o posicionamento.
+A RA oferece uma prévia e a Trena RA pode errar por alguns centímetros. Se o espaço for apertado, confirme com uma trena. A RA exige um celular compatível e o Google Play Services para RA, que pode precisar ser instalado antes. Um piso bem iluminado e com textura visível facilita o posicionamento.
