@@ -384,9 +384,12 @@ class MainActivity : ComponentActivity() {
                                 onSegmentChanged = { readOnlyCheck = false },
                             ) }
                             Route.MEASURE -> if (!premium) {
+                                // Play answers a moment after a recreation: a subscriber back on the tape
+                                // waits for that answer here, and only a confirmed free state leaves.
                                 LaunchedEffect(premiumState) {
+                                    if (premiumState != PremiumState.FREE) return@LaunchedEffect
                                     route = Route.HOME
-                                    if (premiumState == PremiumState.FREE) requireFeature(PremiumFeature.TAPE)
+                                    requireFeature(PremiumFeature.TAPE)
                                 }
                             } else MeasureScreen(
                                 unit = unit,

@@ -179,11 +179,14 @@ class Billing(context: Context, private val prefs: Prefs, grandfathered: Boolean
         }.onFailure { acknowledging.remove(purchase.purchaseToken) }
     }
 
-    /** Only a trial selected on this phone has a known price and start time. */
+    /**
+     * Only a trial selected on this phone has a known price and start time. A trial cancelled in
+     * Play keeps its access until it ends, but nothing will renew: its reminder would be untrue.
+     */
     private fun remind(purchase: Purchase) {
-        if (prefs.trialToken == purchase.purchaseToken) prefs.trialPrice?.let {
-            TrialReminder.schedule(context, purchase.purchaseToken, purchase.purchaseTime, it)
-        }
+        if (prefs.trialToken != purchase.purchaseToken) return
+        if (!purchase.isAutoRenewing) { TrialReminder.cancel(context); return }
+        prefs.trialPrice?.let { TrialReminder.schedule(context, purchase.purchaseToken, purchase.purchaseTime, it) }
     }
 
     /** The button passes Play's exact offer token; no locally invented trial can be purchased. */
