@@ -3,6 +3,9 @@ package com.gorisse.thomas.willitfit
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import androidx.core.net.toUri
+import android.os.Handler
+import android.os.Looper
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -19,17 +22,31 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.ar.core.ArCoreApk
+import com.gorisse.thomas.willitfit.data.Billing
+import com.gorisse.thomas.willitfit.data.PremiumFeature
+import com.gorisse.thomas.willitfit.data.samplePremiumPlans
+import com.gorisse.thomas.willitfit.data.toUi
+import com.gorisse.thomas.willitfit.data.PremiumState
+import com.gorisse.thomas.willitfit.data.TrialReminder
+import com.gorisse.thomas.willitfit.data.canUse
+import com.gorisse.thomas.willitfit.ui.OnboardingScreen
+import com.gorisse.thomas.willitfit.ui.PaywallScreen
 import com.gorisse.thomas.willitfit.data.News
 import com.gorisse.thomas.willitfit.data.publishSizeShortcuts
 import com.gorisse.thomas.willitfit.data.shortcutDimensions
@@ -61,9 +78,12 @@ import com.gorisse.thomas.willitfit.ui.WillItFitTheme
 import java.io.File
 
 /** The screens. Home is the root; the others return to where they came from. */
-private enum class Route { HOME, AR, RESULT, DOOR, SETTINGS, MEASURE, MY_HOME }
+private enum class Route { HOME, AR, RESULT, DOOR, SETTINGS, MEASURE, MY_HOME, START, ONBOARD_OBJECT, ONBOARD_SPACES }
 
 class MainActivity : ComponentActivity() {
+    private lateinit var billing: Billing
+    private var referrerPending by mutableStateOf(false)
+
     /** A rating flow is running: going home again meanwhile does not start a second one. */
     private var reviewInFlight = false
 
@@ -85,6 +105,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val prefs = Prefs(applicationContext)
+        val qa = if (BuildConfig.DEBUG) intent.getStringExtra("qa_premium") else null
+        if (BuildConfig.DEBUG && qa == "fresh" && savedInstanceState == null) { prefs.resetPremiumWelcome(); prefs.decideFreshForQa() }
+        val installed = packageManager.getPackageInfo(packageName, 0)
+        val early = prefs.decideGrandfathered(installed.firstInstallTime, installed.lastUpdateTime)
+        val qaState = if (BuildConfig.DEBUG) when (qa) {
+            "on" -> PremiumState.PURCHASED
+            "off", "fresh" -> PremiumState.FREE
+            else -> null
+        } else null
+        billing = Billing(applicationContext, prefs, early, qaState)
+        // The sample offer is offline and cannot enter Billing, even with a ready Play store.
+        val qaPlans = BuildConfig.DEBUG && intent.getStringExtra("qa_plans") == "sample"
+        if (!qaPlans) lifecycle.addObserver(billing)
         // Text from a listing, shared or selected in another app. Read once: not again when the
         // activity is recreated.
         val incoming = if (savedInstanceState == null) intent.sharedText() else null
@@ -94,13 +127,19 @@ class MainActivity : ComponentActivity() {
         linked?.let { prefs.takeCheck(it) }
         // A note from the app (News): it opens the screen of what it speaks of.
         val noted = if (savedInstanceState == null) intent.getStringExtra(News.EXTRA_OPEN) else null
+        if (linked != null || shortcut != null || incoming != null || noted != null) prefs.onboardingDone = true
         when (noted) {
             News.OPEN_DOOR, News.OPEN_TAPE -> { prefs.liftSelected = false; prefs.carBoot = false; prefs.hallway = false }
             News.OPEN_BOOT -> { prefs.liftSelected = false; prefs.carBoot = true; prefs.hallway = false }
             News.OPEN_HALL -> { prefs.liftSelected = false; prefs.hallway = true }
             News.OPEN_LIFT -> prefs.liftSelected = true
         }
-        if (linked == null && savedInstanceState == null && !prefs.referrerRead) readInstallReferrer(prefs)
+        if (linked == null && !prefs.referrerRead) {
+            referrerPending = true
+            readInstallReferrer(prefs)
+            // A missing store never holds up the app. A late shared check still replaces welcome.
+            Handler(Looper.getMainLooper()).postDelayed({ referrerPending = false }, 2_000)
+        }
         if (shortcut != null) {
             prefs.dimensions = shortcut
             intent.sizeShortcutId()?.let { ShortcutManagerCompat.reportShortcutUsed(this, it) }
@@ -116,12 +155,32 @@ class MainActivity : ComponentActivity() {
                     var route by rememberSaveable {
                         mutableStateOf(
                             when {
-                                noted == News.OPEN_MY_HOME -> Route.MY_HOME
-                                noted == News.OPEN_TAPE && arAvailable -> Route.MEASURE
-                                shortcut != null || linked?.space != null || noted != null -> Route.DOOR
+                                noted == TrialReminder.OPEN_SETTINGS -> Route.SETTINGS
+                                shortcut != null || linked?.space != null || noted == News.OPEN_DOOR -> Route.DOOR
+                                linked != null || incoming != null || noted != null -> Route.HOME
+                                !prefs.onboardingDone && !early -> Route.START
                                 else -> Route.HOME
                             },
                         )
+                    }
+                    val premiumState by billing.state.collectAsStateWithLifecycle()
+                    val plans by billing.plans.collectAsStateWithLifecycle()
+                    val billingAvailable by billing.available.collectAsStateWithLifecycle()
+                    val locale = LocalConfiguration.current.locales[0]
+                    val offerPlans = if (BuildConfig.DEBUG && qaPlans) samplePremiumPlans(locale)
+                        else plans.map { it.toUi(locale) }
+                    val premium = canUse(PremiumFeature.MY_HOME, premiumState)
+                    var paywall by rememberSaveable { mutableStateOf<PremiumFeature?>(null) }
+                    var onboardingOffer by rememberSaveable { mutableStateOf(false) }
+                    var readOnlyCheck by rememberSaveable { mutableStateOf(linked != null) }
+                    var doorRevision by rememberSaveable { mutableStateOf(0) }
+                    var selectedPreset by rememberSaveable { mutableStateOf(prefs.dimensions.presetId) }
+                    var chosenSpaces by rememberSaveable { mutableStateOf(prefs.onboardingSpaces.ifEmpty { setOf("DOOR") }.toList()) }
+                    LaunchedEffect(referrerPending) {
+                        if (route == Route.START && !referrerPending && referredCheck == null) {
+                            prefs.onboardingDone = true
+                            route = Route.ONBOARD_OBJECT
+                        }
                     }
                     var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
                     var recentSizes by remember { mutableStateOf(prefs.recentSizes) }
@@ -136,10 +195,13 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(referredCheck) {
                         val check = referredCheck ?: return@LaunchedEffect
                         referredCheck = null
-                        if (route != Route.HOME) return@LaunchedEffect
+                        if (route !in setOf(Route.HOME, Route.START, Route.ONBOARD_OBJECT, Route.ONBOARD_SPACES)) return@LaunchedEffect
+                        prefs.onboardingDone = true
+                        paywall = null
+                        readOnlyCheck = true
                         prefs.takeCheck(check)
                         dims = prefs.dimensions; door = prefs.door
-                        if (check.space != null) route = Route.DOOR
+                        route = if (check.space != null) Route.DOOR else Route.HOME
                         Toast.makeText(this@MainActivity, R.string.link_opened, Toast.LENGTH_LONG).show()
                     }
                     LaunchedEffect(Unit) {
@@ -196,7 +258,64 @@ class MainActivity : ComponentActivity() {
                     var measureSet by rememberSaveable { mutableStateOf(if (noted == News.OPEN_TAPE) TapeSet.DOOR else TapeSet.OBJECT) }
                     // A space opened from My home goes back there.
                     var doorFromMyHome by rememberSaveable { mutableStateOf(false) }
-                    BackHandler(enabled = route != Route.HOME) {
+                    /** Space indices stay in Prefs so the check and tape agree. */
+                    fun selectSpace(feature: PremiumFeature) {
+                        prefs.liftSelected = feature == PremiumFeature.LIFT
+                        prefs.hallway = feature == PremiumFeature.HALL
+                        prefs.carBoot = feature == PremiumFeature.BOOT
+                    }
+                    /** A purchase continues the feature that opened the offer. */
+                    fun openFeature(feature: PremiumFeature) {
+                        when (feature) {
+                            PremiumFeature.TAPE -> route = if (arAvailable) Route.MEASURE else Route.HOME
+                            PremiumFeature.MY_HOME -> route = Route.MY_HOME
+                            else -> {
+                                selectSpace(feature); doorRevision++; readOnlyCheck = false
+                                doorVerdictSeen = false; route = Route.DOOR
+                            }
+                        }
+                    }
+                    /** Only a deliberate premium action opens an offer after welcome. */
+                    fun requireFeature(feature: PremiumFeature) {
+                        if (canUse(feature, premiumState)) openFeature(feature) else {
+                            onboardingOffer = false; paywall = feature
+                        }
+                    }
+                    /** Closing or skipping welcome always gives the door answer first. */
+                    fun finishWelcome() {
+                        prefs.onboardingDone = true
+                        selectSpace(PremiumFeature.DOOR)
+                        readOnlyCheck = false; doorFromMyHome = false; doorRevision++
+                        route = Route.DOOR
+                    }
+                    /** Back and the visible close button do exactly the same thing. */
+                    fun closeOffer() {
+                        paywall = null
+                        if (onboardingOffer) { onboardingOffer = false; finishWelcome() }
+                    }
+                    LaunchedEffect(premiumState) {
+                        if (premium && paywall != null) {
+                            val feature = paywall ?: return@LaunchedEffect
+                            paywall = null; onboardingOffer = false; prefs.onboardingDone = true
+                            openFeature(feature)
+                        }
+                    }
+                    LaunchedEffect(Unit) {
+                        val feature = when (noted) {
+                            News.OPEN_HALL -> PremiumFeature.HALL
+                            News.OPEN_BOOT -> PremiumFeature.BOOT
+                            News.OPEN_LIFT -> PremiumFeature.LIFT
+                            News.OPEN_TAPE -> PremiumFeature.TAPE
+                            News.OPEN_MY_HOME -> PremiumFeature.MY_HOME
+                            else -> null
+                        }
+                        if (feature != null) requireFeature(feature)
+                    }
+                    BackHandler(enabled = route != Route.HOME && paywall == null) {
+                        if (route == Route.ONBOARD_OBJECT || route == Route.ONBOARD_SPACES || route == Route.START) {
+                            if (route == Route.ONBOARD_SPACES) route = Route.ONBOARD_OBJECT else finishWelcome()
+                            return@BackHandler
+                        }
                         route = when {
                             route == Route.RESULT -> Route.AR
                             route == Route.MEASURE && measureSet != TapeSet.OBJECT -> Route.DOOR
@@ -205,16 +324,45 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     // No cross-fade: two scenes (or a scene and the AR camera) never run at once.
-                    run {
+                    if (paywall == null) run {
                         when (route) {
+                            Route.START -> Unit
+                            Route.ONBOARD_OBJECT, Route.ONBOARD_SPACES -> OnboardingScreen(
+                                step = if (route == Route.ONBOARD_OBJECT) 1 else 2,
+                                selectedPreset = selectedPreset, spaces = chosenSpaces.toSet(),
+                                onPreset = { preset ->
+                                    selectedPreset = preset?.id
+                                    dims = preset?.dimensionsIn(unit) ?: dims.copy(source = DimensionSource.TYPED, presetId = null)
+                                    prefs.dimensions = dims
+                                },
+                                onSpaces = { chosenSpaces = it.toList(); prefs.onboardingSpaces = it },
+                                onNext = {
+                                    if (route == Route.ONBOARD_OBJECT) route = Route.ONBOARD_SPACES else {
+                                        prefs.onboardingDone = true
+                                        val feature = chosenSpaces.firstNotNullOfOrNull { name ->
+                                            PremiumFeature.entries.firstOrNull { it.name == name && it != PremiumFeature.DOOR }
+                                        } ?: PremiumFeature.DOOR
+                                        if (premium) openFeature(feature) else { onboardingOffer = true; paywall = feature }
+                                    }
+                                },
+                                onSkip = { finishWelcome() },
+                                onBack = { if (route == Route.ONBOARD_SPACES) route = Route.ONBOARD_OBJECT else finishWelcome() },
+                            )
                             Route.HOME -> HomeScreen(
-                                dims = dims, unit = unit, arAvailable = arAvailable, recentSizes = recentSizes,
+                                dims = dims, unit = unit, arAvailable = arAvailable, recentSizes = recentSizes, premium = premium,
                                 onDims = { dims = it; if (it.isValid) prefs.dimensions = it },
                                 onAr = { route = Route.AR },
-                                onDoor = { doorVerdictSeen = false; doorFromMyHome = false; route = Route.DOOR },
+                                onDoor = {
+                                    readOnlyCheck = false; doorVerdictSeen = false; doorFromMyHome = false
+                                    if (!premium) selectSpace(PremiumFeature.DOOR)
+                                    route = Route.DOOR
+                                },
                                 onSettings = { route = Route.SETTINGS },
-                                onMyHome = { route = Route.MY_HOME },
-                                onMeasure = { measureSet = TapeSet.OBJECT; route = Route.MEASURE },
+                                onMyHome = {
+                                    if (premium || prefs.hadPremium || prefs.myThings.isNotEmpty()) route = Route.MY_HOME
+                                    else requireFeature(PremiumFeature.MY_HOME)
+                                },
+                                onMeasure = { measureSet = TapeSet.OBJECT; requireFeature(PremiumFeature.TAPE) },
                             )
                             Route.AR -> ArScreen(
                                 dims = dims, unit = unit,
@@ -224,18 +372,30 @@ class MainActivity : ComponentActivity() {
                             Route.RESULT -> photoPath?.let { File(it) }?.takeIf { it.exists() }?.let { file ->
                                 ResultScreen(file, dims, unit, onBack = { route = Route.HOME }, onRetake = { route = Route.AR })
                             } ?: LaunchedEffect(Unit) { route = Route.HOME }
-                            Route.DOOR -> DoorScreen(
+                            Route.DOOR -> key(doorRevision) { DoorScreen(
                                 dims = dims, door = door, unit = unit,
                                 onDoor = { door = it; if (it.isValid) prefs.door = it },
                                 onVerdictShown = { doorVerdictSeen = true },
                                 onBack = { route = if (doorFromMyHome) Route.MY_HOME else Route.HOME },
                                 arAvailable = arAvailable,
-                                onMeasure = { measureSet = it; route = Route.MEASURE },
-                            )
-                            Route.MEASURE -> MeasureScreen(
+                                onMeasure = { measureSet = it; requireFeature(PremiumFeature.TAPE) },
+                                premiumState = premiumState, openedReadOnly = readOnlyCheck,
+                                onRequirePremium = { requireFeature(it) },
+                                onSegmentChanged = { readOnlyCheck = false },
+                            ) }
+                            Route.MEASURE -> if (!premium) {
+                                // Play answers a moment after a recreation: a subscriber back on the tape
+                                // waits for that answer here, and only a confirmed free state leaves.
+                                LaunchedEffect(premiumState) {
+                                    if (premiumState != PremiumState.FREE) return@LaunchedEffect
+                                    route = Route.HOME
+                                    requireFeature(PremiumFeature.TAPE)
+                                }
+                            } else MeasureScreen(
                                 unit = unit,
                                 targets = measureSet.targets,
                                 onUse = { target, cm ->
+                                    if (!premium) { requireFeature(PremiumFeature.TAPE); return@MeasureScreen }
                                     when (measureSet) {
                                         TapeSet.DOOR -> { door = door.withTape(target, cm); prefs.door = door }
                                         TapeSet.BOOT -> prefs.boot = prefs.boot.withTape(target, cm)
@@ -256,14 +416,26 @@ class MainActivity : ComponentActivity() {
                                     things = things,
                                     current = dims,
                                     unit = unit,
-                                    onAdd = { things = MyThings.add(things, it); prefs.myThings = things },
-                                    onRemove = { things = MyThings.remove(things, it.name); prefs.myThings = things },
+                                    premium = premium,
+                                    onRequirePremium = { requireFeature(PremiumFeature.MY_HOME) },
+                                    onAdd = { if (premium) { things = MyThings.add(things, it); prefs.myThings = things } },
+                                    onRemove = { if (premium) { things = MyThings.remove(things, it.name); prefs.myThings = things } },
                                     onRename = { thing, name ->
-                                        things = MyThings.rename(things, thing.name, name); prefs.myThings = things
+                                        if (premium) { things = MyThings.rename(things, thing.name, name); prefs.myThings = things }
                                     },
-                                    onPick = { dims = it; prefs.dimensions = it; route = Route.HOME },
+                                    onPick = {
+                                        dims = it; prefs.dimensions = it
+                                        if (premium) route = Route.HOME else {
+                                            selectSpace(PremiumFeature.DOOR); readOnlyCheck = true
+                                            doorFromMyHome = true; doorVerdictSeen = false; route = Route.DOOR
+                                        }
+                                    },
                                     onSpace = { space ->
+                                        val saved = when (space) { 1 -> prefs.bootTyped; 2 -> prefs.hallTyped; 3 -> prefs.liftTyped; else -> prefs.doorTyped }
+                                        val feature = when (space) { 1 -> PremiumFeature.BOOT; 2 -> PremiumFeature.HALL; 3 -> PremiumFeature.LIFT; else -> PremiumFeature.DOOR }
+                                        if (!premium && !saved && space != 0) { requireFeature(feature); return@MyHomeScreen }
                                         prefs.liftSelected = space == 3; prefs.carBoot = space == 1; prefs.hallway = space == 2
+                                        readOnlyCheck = !premium && saved
                                         doorVerdictSeen = false; doorFromMyHome = true; route = Route.DOOR
                                     },
                                     onBack = { route = Route.HOME },
@@ -271,6 +443,12 @@ class MainActivity : ComponentActivity() {
                             }
                             Route.SETTINGS -> SettingsScreen(
                                 unit = unit,
+                                premiumState = premiumState,
+                                onPremium = { onboardingOffer = false; paywall = PremiumFeature.DOOR },
+                                onManagePremium = {
+                                    runCatching { startActivity(Intent(Intent.ACTION_VIEW,
+                                        "https://play.google.com/store/account/subscriptions?sku=${Billing.PRODUCT_ID}&package=$packageName".toUri())) }
+                                },
                                 newsOn = newsOn,
                                 onNews = { on ->
                                     if (!on) {
@@ -304,6 +482,21 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
+                    paywall?.let { feature ->
+                        Dialog(onDismissRequest = { closeOffer() }, properties = DialogProperties(
+                            usePlatformDefaultWidth = false, decorFitsSystemWindows = false,
+                        )) {
+                            PaywallScreen(feature, offerPlans, billingAvailable || (BuildConfig.DEBUG && qaPlans),
+                                dims = dims, unit = unit, hall = prefs.hall, boot = prefs.boot, lift = prefs.lift,
+                                onClose = { closeOffer() }, onBuy = { chosen ->
+                                    if (BuildConfig.DEBUG && qaPlans) {
+                                        Toast.makeText(this@MainActivity, "QA: no purchase", Toast.LENGTH_SHORT).show()
+                                    } else plans.firstOrNull { it.id == chosen.id }?.let {
+                                        billing.purchase(this@MainActivity, it)
+                                    }
+                                })
+                        }
+                    }
                 }
             }
         }
@@ -331,7 +524,8 @@ class MainActivity : ComponentActivity() {
      * nothing happens. Read on the phone from Play; nothing is sent.
      */
     private fun readInstallReferrer(prefs: Prefs) {
-        val client = runCatching { InstallReferrerClient.newBuilder(this).build() }.getOrNull() ?: return
+        val client = runCatching { InstallReferrerClient.newBuilder(this).build() }.getOrNull()
+            ?: run { referrerPending = false; return }
         runCatching {
             client.startConnection(object : InstallReferrerStateListener {
                 override fun onInstallReferrerSetupFinished(code: Int) {
@@ -347,11 +541,12 @@ class MainActivity : ComponentActivity() {
                         else -> Unit // Play busy or away: the next launch asks again.
                     }
                     runCatching { client.endConnection() }
+                    runOnUiThread { referrerPending = false }
                 }
 
-                override fun onInstallReferrerServiceDisconnected() = Unit
+                override fun onInstallReferrerServiceDisconnected() { runOnUiThread { referrerPending = false } }
             })
-        }
+        }.onFailure { referrerPending = false; runCatching { client.endConnection() } }
     }
 }
 

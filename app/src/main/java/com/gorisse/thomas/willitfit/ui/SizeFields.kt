@@ -1,5 +1,7 @@
 package com.gorisse.thomas.willitfit.ui
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +34,8 @@ fun LengthFields(
     onChange: (index: Int, cm: Float) -> Unit,
     modifier: Modifier = Modifier,
     onValidChange: (Boolean) -> Unit = {},
+    readOnly: Boolean = false,
+    onReadOnlyClick: () -> Unit = {},
 ) {
     val valid = remember { mutableStateMapOf<Int, Boolean>() }
     val allValid = labels.indices.all { valid[it] != false }
@@ -50,23 +54,27 @@ fun LengthFields(
             // Out of range ("0.1", "5000") is an error too: the answer would be about no real object.
             val error = parseUsableLength(text, unit) == null
             LaunchedEffect(error) { valid[i] = !error }
-            OutlinedTextField(
-                value = text,
-                onValueChange = { t ->
-                    text = t
-                    parseUsableLength(t, unit)?.let { onChange(i, it) }
-                },
-                label = { Text(label, maxLines = 1) },
-                suffix = { Text(unit.symbol) },
-                singleLine = true,
-                isError = error,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Decimal,
-                    imeAction = if (i == labels.lastIndex) ImeAction.Done else ImeAction.Next,
-                ),
-                keyboardActions = KeyboardActions(onDone = { focus.clearFocus() }),
-                modifier = Modifier.weight(1f),
-            )
+            Box(Modifier.weight(1f)) {
+                OutlinedTextField(
+                    readOnly = readOnly,
+                    value = text,
+                    onValueChange = { t ->
+                        text = t
+                        parseUsableLength(t, unit)?.let { onChange(i, it) }
+                    },
+                    label = { Text(label, maxLines = 1) },
+                    suffix = { Text(unit.symbol) },
+                    singleLine = true,
+                    isError = error,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = if (i == labels.lastIndex) ImeAction.Done else ImeAction.Next,
+                    ),
+                    keyboardActions = KeyboardActions(onDone = { focus.clearFocus() }),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                if (readOnly) Box(Modifier.matchParentSize().clickable(onClick = onReadOnlyClick))
+            }
         }
     }
 }

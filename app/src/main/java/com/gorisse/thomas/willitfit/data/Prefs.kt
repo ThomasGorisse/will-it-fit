@@ -184,6 +184,55 @@ class Prefs(context: Context) {
             .remove(KEY_LEGACY_REVIEW_ASKED)
             .apply()
 
+    /** Kept synchronously: a process death must never make an early user decide twice. */
+    fun decideGrandfathered(firstInstall: Long, lastUpdate: Long): Boolean {
+        val existing = if (p.contains("premium_grandfathered")) p.getBoolean("premium_grandfathered", false) else null
+        val early = grandfatherDecision(firstInstall, lastUpdate, answers, myThings.isNotEmpty(),
+            p.getInt(KEY_REVIEW_REQUESTS, 0).coerceAtLeast(if (p.getBoolean(KEY_LEGACY_REVIEW_ASKED, false)) 1 else 0),
+            recentSizes.isNotEmpty(), existing)
+        if (existing == null) p.edit(commit = true) { putBoolean("premium_grandfathered", early) }
+        return early
+    }
+
+    /** Debug screenshots start at the welcome screens without erasing the person's objects. */
+    fun resetPremiumWelcome() {
+        p.edit(commit = true) { remove("premium_grandfathered"); remove("onboarding_done"); remove("onboarding_spaces") }
+    }
+
+    /** A fresh QA install must not inherit the real install's early-user decision. */
+    fun decideFreshForQa() { p.edit(commit = true) { putBoolean("premium_grandfathered", false) } }
+
+    var onboardingDone: Boolean
+        get() = p.getBoolean("onboarding_done", false)
+        set(value) = p.edit { putBoolean("onboarding_done", value) }
+
+    var onboardingSpaces: Set<String>
+        get() = p.getString("onboarding_spaces", null)?.split(',')?.filter { it.isNotBlank() }?.toSet() ?: emptySet()
+        set(value) = p.edit { putString("onboarding_spaces", value.joinToString(",")) }
+
+    /** An expired subscription still leaves the saved home available to read. */
+    var hadPremium: Boolean
+        get() = p.getBoolean("had_premium", false)
+        set(value) = p.edit { putBoolean("had_premium", value) }
+
+    /** When Play last confirmed the subscription, in epoch milliseconds; 0 once it found none. */
+    var premiumVerifiedAt: Long
+        get() = p.getLong("premium_verified_at", 0)
+        set(value) = p.edit { putLong("premium_verified_at", value) }
+
+    var trialLaunchAt: Long
+        get() = p.getLong("trial_launch_at", 0)
+        set(value) = p.edit { putLong("trial_launch_at", value) }
+    var trialToken: String?
+        get() = p.getString("trial_token", null)
+        set(value) = p.edit { putString("trial_token", value) }
+    var trialPrice: String?
+        get() = p.getString("trial_price", null)
+        set(value) = p.edit { putString("trial_price", value) }
+    var trialRemindedToken: String?
+        get() = p.getString("trial_reminded_token", null)
+        set(value) = p.edit { putString("trial_reminded_token", value) }
+
     private companion object {
         const val KEY_RECENT_SIZES = "recent_sizes_v1"
         const val KEY_MY_THINGS = "my_things_v1"

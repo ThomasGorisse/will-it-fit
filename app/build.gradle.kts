@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.play.review)
+    implementation(libs.play.billing)
     implementation(libs.install.referrer)
     implementation(libs.androidx.work.runtime)
     debugImplementation(libs.compose.ui.tooling)

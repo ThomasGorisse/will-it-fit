@@ -80,7 +80,7 @@
     <string name="settings_licenses">Licences open source</string>
     <string name="settings_licenses_body">Construit avec SceneView, Google Filament, Jetpack Compose et Material 3 (Apache 2.0), et ARCore (conditions d\'utilisation des API Google).</string>
     <string name="settings_about">À propos</string>
-    <string name="settings_version">Version %1$s · gratuit, sans achat</string>
+    <string name="settings_version">Version %1$s</string>
 
     <string name="action_measure">Mesurer en AR</string>
     <string name="door_measure">Mesurer la porte en AR</string>
@@ -221,4 +221,47 @@
     <string name="lift_limit_height">hauteur de cabine</string>
     <string name="lift_diagonally">en diagonale</string>
     <string name="photo_lift">Ascenseur %1$s · cabine %2$s</string>
+
+    <!-- Premium: Play supplies prices and eligibility; these are only the labels. -->
+    <string name="premium_title">Premium</string>
+    <string name="premium_locked">Fonction Premium verrouillée</string>
+    <string name="premium_close">Fermer</string>
+    <string name="premium_headline">Pour tous les passages étroits</string>
+    <string name="premium_headline_hall">Ça tourne dans le couloir ?</string>
+    <string name="premium_headline_boot">Ça rentre dans le coffre ?</string>
+    <string name="premium_headline_lift">Ça rentre dans l’ascenseur ?</string>
+    <string name="premium_headline_tape">Mesurez avec votre caméra</string>
+    <string name="premium_headline_home">Votre maison, prête pour le déménagement</string>
+    <string name="premium_benefit_spaces">Tous les passages étroits : virages, coffres et ascenseurs</string>
+    <string name="premium_benefit_tape">Mesurez avec votre caméra : le mètre en AR</string>
+    <string name="premium_benefit_home">Ma maison : vos espaces et vos objets, prêts pour le déménagement</string>
+    <string name="premium_unavailable">Premium n’est pas disponible pour le moment. Vous pouvez toujours vérifier une porte.</string>
+    <string name="premium_yearly">Annuel</string>
+    <string name="premium_monthly">Mensuel</string>
+    <string name="premium_weekly">Hebdomadaire</string>
+    <string name="premium_year">an</string>
+    <string name="premium_month">mois</string>
+    <string name="premium_week">semaine</string>
+    <string name="premium_per_week">%1$s/semaine</string>
+    <string name="premium_trial_badge">3 jours offerts</string>
+    <string name="premium_start_trial">Commencer 3 jours offerts, puis %1$s/an</string>
+    <string name="premium_continue_price">Continuer — %1$s/%2$s</string>
+    <string name="premium_first_charge">Premier prélèvement le %1$s. Annulez à tout moment dans Google Play.</string>
+    <string name="premium_returns">Déjà acheté ? Votre achat revient tout seul.</string>
+    <string name="premium_active">Actif</string>
+    <string name="premium_early">Inclus : vous étiez là au début</string>
+    <string name="premium_inactive">Non actif</string>
+    <string name="premium_checking">Vérification dans Google Play</string>
+    <string name="premium_manage">Gérer dans Google Play</string>
+    <string name="premium_see_offer">Voir l’offre</string>
+    <string name="premium_privacy">Les achats sont gérés par Google Play. L’application n’envoie toujours rien.</string>
+    <string name="premium_account_channel">Compte</string>
+    <string name="premium_trial_reminder_title">Votre essai se termine demain</string>
+    <string name="premium_trial_reminder_body">Premium continue à %1$s/an à partir du %2$s. Annulez dans Google Play si vous ne souhaitez pas continuer.</string>
+    <string name="onboarding_skip">Passer</string>
+    <string name="onboarding_object">Que déplacez-vous ?</string>
+    <string name="onboarding_spaces">Par où faut-il passer ?</string>
+    <string name="onboarding_other">Autre chose</string>
+    <string name="onboarding_hall">Couloir avec un virage</string>
+    <string name="onboarding_next">Continuer</string>
 </resources>

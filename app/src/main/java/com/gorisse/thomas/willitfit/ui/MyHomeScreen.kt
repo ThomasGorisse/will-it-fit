@@ -109,6 +109,8 @@ fun MyHomeScreen(
     onPick: (Dimensions) -> Unit,
     onSpace: (Int) -> Unit,
     onBack: () -> Unit,
+    premium: Boolean = false,
+    onRequirePremium: () -> Unit = {},
 ) {
     val scheme = MaterialTheme.colorScheme
     val context = LocalContext.current
@@ -210,10 +212,10 @@ fun MyHomeScreen(
                             row.lift?.let { Triple(Icons.Outlined.Elevator, stringResource(R.string.space_lift), it) },
                             if (typed.boot) Triple(Icons.Outlined.DirectionsCar, stringResource(R.string.space_boot), row.boot) else null,
                         ), onClick = { onPick(thing.dims) }, onRemove = { onRemove(thing) },
-                            onLongClick = { editingName = thing.name })
+                            onLongClick = { editingName = thing.name }, editable = premium)
                     }
                 }
-                AddThing(current, unit, things, onAdd = onAdd)
+                AddThing(current, unit, things, onAdd = onAdd, premium = premium, onRequirePremium = onRequirePremium)
                 Spacer(Modifier.height(16.dp))
             }
         }
@@ -258,6 +260,7 @@ private fun ThingCard(
     onClick: () -> Unit,
     onRemove: () -> Unit,
     onLongClick: () -> Unit,
+    editable: Boolean,
 ) {
     val scheme = MaterialTheme.colorScheme
     Card(
@@ -265,8 +268,8 @@ private fun ThingCard(
         colors = CardDefaults.cardColors(containerColor = scheme.surfaceContainerHigh),
         modifier = Modifier.fillMaxWidth().combinedClickable(
             onClick = onClick,
-            onLongClick = onLongClick,
-            onLongClickLabel = stringResource(R.string.home_my_manage),
+            onLongClick = onLongClick.takeIf { editable },
+            onLongClickLabel = if (editable) stringResource(R.string.home_my_manage) else null,
         ),
     ) {
         Row(Modifier.padding(start = 12.dp, top = 12.dp, bottom = 12.dp), verticalAlignment = Alignment.Top) {
@@ -294,7 +297,7 @@ private fun ThingCard(
                     passes.forEach { (icon, name, pass) -> PassChip(icon, name, pass, unit) }
                 }
             }
-            IconButton(onClick = onRemove) {
+            if (editable) IconButton(onClick = onRemove) {
                 Icon(Icons.Outlined.Close, stringResource(R.string.home_my_remove, thing.name), tint = scheme.onSurfaceVariant)
             }
         }
@@ -326,7 +329,7 @@ private fun PassChip(icon: ImageVector, name: String, pass: Pass, unit: LengthUn
 }
 
 @Composable
-private fun AddThing(current: Dimensions, unit: LengthUnit, things: List<Thing>, onAdd: (Thing) -> Unit) {
+private fun AddThing(current: Dimensions, unit: LengthUnit, things: List<Thing>, onAdd: (Thing) -> Unit, premium: Boolean, onRequirePremium: () -> Unit) {
     val suggested = objectName(current)
     var name by rememberSaveable(current.widthCm, current.depthCm, current.heightCm) { mutableStateOf("") }
     val full = things.size >= MyThings.MAX
@@ -341,7 +344,7 @@ private fun AddThing(current: Dimensions, unit: LengthUnit, things: List<Thing>,
         if (focused) bringIntoView.bringIntoView()
     }
     val add = {
-        if (canAdd) { onAdd(Thing(cleaned, current)); name = "" }
+        if (!premium) onRequirePremium() else if (canAdd) { onAdd(Thing(cleaned, current)); name = "" }
     }
     Text(
         stringResource(R.string.home_my_add_title, formatDimensions(current, unit)),
@@ -367,6 +370,7 @@ private fun AddThing(current: Dimensions, unit: LengthUnit, things: List<Thing>,
         )
         Spacer(Modifier.width(8.dp))
         FilledTonalButton(onClick = add, enabled = canAdd) {
+            if (!premium) PremiumLock()
             Text(stringResource(R.string.home_my_add))
         }
     }
