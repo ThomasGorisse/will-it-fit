@@ -1,0 +1,5 @@
+Novedades
+• Mi hogar: guarda espacios y objetos con nombre. Comparte una lista para la mudanza: cabe, cabe justo o no cabe.
+• Revisa el elevador: puerta, cabina y diagonal del piso.
+• Cinta AR en cada espacio.
+Todo es gratis. Sin anuncios ni cuenta, sin conexión.

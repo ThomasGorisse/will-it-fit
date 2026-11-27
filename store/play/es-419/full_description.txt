@@ -1,0 +1,39 @@
+¿Ese sofá cabe en la sala? ¿El refrigerador pasa por la puerta? Will It Fit te ayuda a visualizar el espacio que ocupa un mueble, en tu departamento o antes de una mudanza.
+
+EMPIEZA POR LAS MEDIDAS
+Elige un sofá de 2 o 3 asientos, una cama para colchón de 140 o 160 cm, un clóset, un refrigerador, una lavadora, una TV de 55 o 65 pulgadas, una bicicleta o una carriola. Cada modelo incluye medidas habituales. También puedes ingresar tu propio ancho, profundidad y altura en centímetros o pulgadas.
+
+VISUALÍZALO EN UN CUARTO EN 3D
+Un cuarto en 3D muestra un modelo sencillo del objeto con las medidas que ingresaste y las cotas en el piso. Cambia una medida y verás cómo se ajusta el modelo al instante. Gira la vista para apreciar sus proporciones.
+
+PRUÉBALO EN TU ESPACIO CON AR
+Apunta el celular al piso y coloca el objeto a tamaño real con realidad aumentada. Muévelo y gíralo para probar distintas ubicaciones. La escala se mantiene fija según las medidas que ingresaste.
+
+Toma una foto con las medidas indicadas y compártela con alguien que viva contigo, un amigo o quien te ayude con la mudanza.
+
+MIDE CON LA CINTA MÉTRICA AR
+Marca dos puntos sobre una superficie con la cinta AR. Usa la distancia medida como ancho, profundidad o altura del objeto, o como ancho o altura de la puerta.
+
+¿PASA POR LA PUERTA?
+Ingresa el ancho y la altura libres de la abertura, por dentro del marco. Obtén un resultado, ve cuánto espacio sobra o cuánto excede el objeto y mira en 3D la posición de transporte sugerida.
+
+La comprobación de puertas compara seis posiciones para un paso en línea recta, sin inclinar en diagonal. Deja espacio para las manos y para maniobrar a ambos lados.
+
+¿PUEDE DAR LA VUELTA EN EL PASILLO?
+Ingresa el ancho del pasillo antes y después de la esquina y la altura del techo. Obtén un resultado para una vuelta en ángulo recto, manteniendo el objeto nivelado.
+
+¿CABE EN LA CAJUELA DEL AUTO?
+Ingresa el ancho y la altura de la abertura, y el largo, ancho y alto útiles del interior. La comprobación compara seis posiciones para cargar en línea recta, sin inclinar en diagonal.
+
+COMPARTE UNA COMPROBACIÓN Y REUTILIZA MEDIDAS
+Comparte una comprobación de puerta, pasillo o cajuela con un enlace que la vuelve a abrir en la app instalada, con las mismas medidas del objeto y del espacio.
+
+Reutiliza hasta tres conjuntos recientes de medidas personalizadas sin volver a escribirlos. En los lanzadores compatibles, mantén presionado el ícono de la app para abrir los accesos directos a esas medidas.
+
+GRATIS Y SIN CONEXIÓN
+La app es completamente gratuita, sin anuncios ni cuenta. Funciona sin conexión. El cuarto en 3D y la comprobación de puertas también funcionan en celulares sin soporte para AR.
+
+VERIFICA LAS MEDIDAS REALES
+Las medidas habituales son un punto de partida, no las de un producto específico. Revisa las medidas del vendedor, incluidos marcos, patas y manijas, e ingresa tus medidas reales.
+
+La AR ofrece una vista previa y la cinta AR puede desviarse unos centímetros. Si el espacio es justo, confirma con una cinta métrica. La AR requiere un celular compatible y Servicios de Google Play para RA, que quizá debas instalar primero. Un piso bien iluminado y con textura visible facilita la colocación.

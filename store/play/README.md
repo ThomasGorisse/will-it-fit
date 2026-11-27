@@ -1,7 +1,8 @@
 Google Play listing assets for Will It Fit 3.x. On Play since 2026-11-15 (3.0.0); 3.0.1 and the framed
 slides 1-5 of each locale sent on 2026-11-16 with `publish.py` (see its docstring; `get_apk.py` fetches
 the Play-signed APK to test before production).
-Locales: en-US, fr-FR, de-DE, es-ES, it-IT and pt-BR; see locales.json.
+Locales: all 16 codes in locales.json; en-US, fr-FR, de-DE, es-ES, it-IT and pt-BR have localized graphics.
+Text-only locales (no frames/out/<locale>/ folder) upload listing text and release notes without screenshots or an icon; Play uses the default language graphics.
 Each locale contains a title, short description, plain-text full description and changelogs/default.txt.
 Run python3 store/play/check.py: character limits checked at 30 / 80 / 4000 / 500, including line breaks.
 feature-graphic.png is 1024×500 RGB: since 2026-11-25 a crop of the real en-US capture `screenshots/phone/en-US/1-sofa.jpg` (crop 1280×624 from y 400, scaled with lanczos), the app's own 3D room with its dimension tags, no text to translate. It replaces a generated sofa photo that could pass for an AR capture. video.txt is empty on purpose: the trailer was a generated landscape clip (1 view), and publish.py clears the Play video when the file is empty.

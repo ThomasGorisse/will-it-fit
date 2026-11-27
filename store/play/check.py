@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check the six Play listings and feature graphic using only the standard library."""
+"""Check every configured Play listing and the feature graphic using only the standard library."""
 
 import json
 from pathlib import Path
@@ -9,7 +9,10 @@ import unicodedata
 
 
 ROOT = Path(__file__).resolve().parent
-EXPECTED = ["en-US", "fr-FR", "de-DE", "es-ES", "it-IT", "pt-BR"]
+REQUIRED = [
+    "en-US", "fr-FR", "de-DE", "es-ES", "it-IT", "pt-BR",
+    "en-GB", "es-419", "nl-NL", "pl-PL", "sv-SE", "tr-TR", "ja-JP", "ko-KR", "id", "ru-RU",
+]
 LIMITS = {
     "title.txt": 30,
     "short_description.txt": 80,
@@ -25,12 +28,18 @@ def main():
     except (OSError, ValueError) as exc:
         print(f"FAIL locales.json: {exc}")
         return 1
-    if locales != EXPECTED:
-        errors.append("locales.json must list exactly the six expected locales in order")
+    if not isinstance(locales, list) or not all(isinstance(locale, str) and locale for locale in locales):
+        print("FAIL locales.json: expected a list of non-empty locale codes")
+        return 1
+    if len(locales) != len(set(locales)):
+        errors.append("locales.json must not contain duplicate locales")
+    missing = [locale for locale in REQUIRED if locale not in locales]
+    if missing:
+        errors.append(f"locales.json is missing required locales: {', '.join(missing)}")
 
     print("Characters (title / short / full / what's new; limits 30 / 80 / 4000 / 500):")
     checked = 0
-    for locale in EXPECTED:
+    for locale in locales:
         counts = []
         for name, limit in LIMITS.items():
             path = ROOT / locale / name
@@ -77,7 +86,7 @@ def main():
         for error in errors:
             print(f"FAIL {error}")
         return 1
-    print(f"PASS: {checked} text files across {len(EXPECTED)} locales; all character limits checked.")
+    print(f"PASS: {checked} text files across {len(locales)} locales; all character limits checked.")
     return 0
 
 

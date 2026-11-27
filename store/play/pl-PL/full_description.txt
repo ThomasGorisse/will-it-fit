@@ -1,0 +1,41 @@
+Czy ta sofa zmieści się w salonie? Czy lodówka przejdzie przez drzwi? Will It Fit pomaga zobaczyć, ile miejsca zajmują meble, gdy urządzasz mieszkanie lub planujesz przeprowadzkę.
+
+ZACZNIJ OD WYMIARÓW
+Wybierz sofę dwu- lub trzyosobową, łóżko na materac 140 lub 160 cm, szafę, lodówkę, pralkę, telewizor 55 lub 65 cali, rower albo wózek dziecięcy. Każdy model ma już wpisane typowe wymiary. Możesz też podać własną szerokość, głębokość i wysokość w centymetrach lub calach.
+
+ZOBACZ PRZEDMIOT W POKOJU 3D
+Interaktywny pokój 3D pokazuje prosty model przedmiotu o podanych wymiarach, z liniami wymiarowymi na podłodze. Zmień wymiar, a model od razu dopasuje rozmiar. Obróć widok, aby lepiej ocenić proporcje.
+
+WYPRÓBUJ U SIEBIE Z AR
+Skieruj telefon na podłogę i umieść przedmiot w rzeczywistej wielkości dzięki rozszerzonej rzeczywistości. Przesuwaj i obracaj go, by sprawdzić różne miejsca. Skala pozostaje zgodna z wpisanymi wymiarami.
+
+Zrób zdjęcie z naniesionymi wymiarami i udostępnij je współlokatorowi, znajomemu lub osobie pomagającej w przeprowadzce.
+
+MIERZ MIARKĄ AR
+Zaznacz miarką AR dwa punkty na powierzchni. Użyj zmierzonej odległości jako szerokości, głębokości lub wysokości przedmiotu albo szerokości lub wysokości drzwi.
+
+CZY PRZEJDZIE PRZEZ DRZWI?
+Wpisz szerokość i wysokość wolnego otworu wewnątrz ościeżnicy. Otrzymasz wynik, zobaczysz pozostały luz lub brakujące centymetry oraz sugerowaną pozycję przenoszenia w 3D.
+
+Test drzwi porównuje sześć ustawień przy przejściu na wprost, bez przechylania po przekątnej. Zostaw miejsce na dłonie i manewrowanie po obu stronach.
+
+CZY SKRĘCI W KORYTARZU?
+Wpisz szerokość korytarza przed i za zakrętem oraz wysokość sufitu. Otrzymasz wynik dla zakrętu pod kątem prostym przy przenoszeniu przedmiotu w poziomie.
+
+CZY ZMIEŚCI SIĘ W BAGAŻNIKU?
+Wpisz szerokość i wysokość otworu oraz dostępną długość, szerokość i wysokość wnętrza. Test porównuje sześć ustawień przy wsuwaniu na wprost, bez przechylania po przekątnej.
+
+UDOSTĘPNIAJ TESTY I KORZYSTAJ PONOWNIE Z WYMIARÓW
+Udostępnij test drzwi, korytarza lub bagażnika linkiem, który otworzy go w zainstalowanej aplikacji z tymi samymi wymiarami przedmiotu i przestrzeni.
+
+Wykorzystaj ponownie do trzech ostatnich własnych zestawów wymiarów bez ich przepisywania. W obsługiwanych programach uruchamiających przytrzymaj ikonę aplikacji, by otworzyć skróty do tych wymiarów.
+
+BEZPŁATNIE I OFFLINE
+Aplikacja jest całkowicie bezpłatna, bez reklam i konta. Działa offline. Pokój 3D i test drzwi działają również na telefonach bez obsługi AR.
+
+Interfejs aplikacji jest dostępny w języku angielskim, francuskim, niemieckim, hiszpańskim, włoskim i portugalskim.
+
+SPRAWDŹ RZECZYWISTE WYMIARY
+Typowe wymiary to punkt wyjścia, a nie wymiary konkretnego produktu. Sprawdź dane sprzedawcy, uwzględniając ramy, nóżki i uchwyty, i wpisz rzeczywiste wymiary.
+
+AR daje podgląd, a miarka AR może pomylić się o kilka centymetrów. Gdy miejsca jest mało, potwierdź pomiar taśmą mierniczą. AR wymaga zgodnego telefonu i Usług Google Play dla AR, które może trzeba będzie najpierw zainstalować. Dobrze oświetlona podłoga z widoczną fakturą ułatwia ustawienie przedmiotu.
