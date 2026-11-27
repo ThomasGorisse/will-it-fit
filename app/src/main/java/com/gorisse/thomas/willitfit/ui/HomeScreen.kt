@@ -98,6 +98,7 @@ fun HomeScreen(
     onMeasure: () -> Unit = {},
     onMyHome: () -> Unit = {},
     recentSizes: List<Dimensions> = emptyList(),
+    premium: Boolean = false,
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -167,11 +168,17 @@ fun HomeScreen(
                     }
                     // The AR tape: measure the object (or the space) and its sides fill in.
                     if (arAvailable) IconButton(onClick = onMeasure) {
-                        Icon(Icons.Outlined.Straighten, contentDescription = stringResource(R.string.action_measure))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Outlined.Straighten, contentDescription = stringResource(R.string.action_measure))
+                            if (!premium) PremiumLock()
+                        }
                     }
                     // My home: the person's door, hallway and car, and their things for moving day.
                     IconButton(onClick = onMyHome) {
-                        Icon(Icons.Outlined.Home, contentDescription = stringResource(R.string.home_my_title))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Outlined.Home, contentDescription = stringResource(R.string.home_my_title))
+                            if (!premium) PremiumLock()
+                        }
                     }
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.settings_title))

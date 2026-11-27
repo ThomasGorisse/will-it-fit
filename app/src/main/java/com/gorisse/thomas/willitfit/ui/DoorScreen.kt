@@ -112,6 +112,9 @@ import com.gorisse.thomas.willitfit.fit.formatMargin
 import com.gorisse.thomas.willitfit.fit.formatNumber
 import com.gorisse.thomas.willitfit.fit.shape
 import com.gorisse.thomas.willitfit.scene.DoorScene
+import com.gorisse.thomas.willitfit.data.PremiumFeature
+import com.gorisse.thomas.willitfit.data.PremiumState
+import com.gorisse.thomas.willitfit.data.canUse
 import com.gorisse.thomas.willitfit.scene.RoomPalette
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -128,11 +131,16 @@ fun DoorScreen(
     onVerdictShown: () -> Unit = {},
     arAvailable: Boolean = false,
     onMeasure: (TapeSet) -> Unit = {},
+    premiumState: PremiumState = PremiumState.FREE,
+    openedReadOnly: Boolean = false,
+    onRequirePremium: (PremiumFeature) -> Unit = {},
+    onSegmentChanged: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val prefs = remember(context) { Prefs(context) }
     // Keep the persisted space indices: door 0, boot 1, hallway 2, lift 3.
-    var space by remember { mutableIntStateOf(if (prefs.liftSelected) 3 else if (prefs.hallway) 2 else if (prefs.carBoot) 1 else 0) }
+    var space by remember { mutableIntStateOf(if (!canUse(PremiumFeature.HALL, premiumState, openedReadOnly)) 0 else if (prefs.liftSelected) 3 else if (prefs.hallway) 2 else if (prefs.carBoot) 1 else 0) }
+    val readOnly = (openedReadOnly || space != 0) && !canUse(PremiumFeature.MY_HOME, premiumState)
     val elevator = space == 3
     var lift by remember { mutableStateOf(prefs.lift) }
     var liftTyped by remember { mutableStateOf(prefs.liftTyped) }
@@ -371,6 +379,11 @@ fun DoorScreen(
                         SegmentedButton(
                             selected = space == i,
                             onClick = {
+                                if (i != 0 && !canUse(spaceFeature(i), premiumState)) {
+                                    onRequirePremium(spaceFeature(i))
+                                    return@SegmentedButton
+                                }
+                                onSegmentChanged()
                                 space = i
                                 prefs.liftSelected = i == 3
                                 prefs.carBoot = i == 1
@@ -378,7 +391,7 @@ fun DoorScreen(
                                 photoFailure = null
                             },
                             shape = SegmentedButtonDefaults.itemShape(i, 4),
-                            icon = {},
+                            icon = { if (i != 0 && !canUse(spaceFeature(i), premiumState)) PremiumLock() },
                             contentPadding = PaddingValues(horizontal = 8.dp),
                             label = { Text(stringResource(label), maxLines = 1, style = MaterialTheme.typography.labelMedium) },
                         )
@@ -436,6 +449,8 @@ fun DoorScreen(
                     val updateLift: (Lift) -> Unit = { lift = it; prefs.lift = it; liftTyped = true }
                     Text(stringResource(R.string.lift_opening), modifier = Modifier.padding(horizontal = 24.dp), style = MaterialTheme.typography.titleSmall)
                     LengthFields(
+                        readOnly = readOnly,
+                        onReadOnlyClick = { onRequirePremium(if (space == 0) PremiumFeature.MY_HOME else spaceFeature(space)) },
                         labels = listOf(stringResource(R.string.door_width), stringResource(R.string.door_height)),
                         values = listOf(lift.doorWidthCm, lift.doorHeightCm), unit = unit,
                         onChange = { i, cm -> updateLift(if (i == 0) lift.copy(doorWidthCm = cm) else lift.copy(doorHeightCm = cm)) },
@@ -443,6 +458,8 @@ fun DoorScreen(
                     )
                     Text(stringResource(R.string.lift_inside), modifier = Modifier.padding(start = 24.dp, top = 8.dp), style = MaterialTheme.typography.titleSmall)
                     LengthFields(
+                        readOnly = readOnly,
+                        onReadOnlyClick = { onRequirePremium(if (space == 0) PremiumFeature.MY_HOME else spaceFeature(space)) },
                         labels = listOf(stringResource(R.string.boot_width), stringResource(R.string.lift_depth), stringResource(R.string.boot_height)),
                         values = listOf(lift.cabinWidthCm, lift.cabinDepthCm, lift.cabinHeightCm), unit = unit,
                         onChange = { i, cm -> updateLift(when (i) {
@@ -459,6 +476,8 @@ fun DoorScreen(
                     )
                 } else if (hallway) key(space) {
                     LengthFields(
+                        readOnly = readOnly,
+                        onReadOnlyClick = { onRequirePremium(if (space == 0) PremiumFeature.MY_HOME else spaceFeature(space)) },
                         labels = listOf(
                             stringResource(R.string.hall_width), stringResource(R.string.hall_turn), stringResource(R.string.hall_ceiling),
                         ),
@@ -485,6 +504,8 @@ fun DoorScreen(
                     val updateBoot: (Boot) -> Unit = { boot = it; prefs.boot = it; bootTyped = true }
                     Text(stringResource(R.string.boot_opening), modifier = Modifier.padding(horizontal = 24.dp), style = MaterialTheme.typography.titleSmall)
                     LengthFields(
+                        readOnly = readOnly,
+                        onReadOnlyClick = { onRequirePremium(if (space == 0) PremiumFeature.MY_HOME else spaceFeature(space)) },
                         labels = listOf(stringResource(R.string.boot_width), stringResource(R.string.boot_height)),
                         values = listOf(boot.openingWidthCm, boot.openingHeightCm), unit = unit,
                         onChange = { i, cm -> updateBoot(if (i == 0) boot.copy(openingWidthCm = cm) else boot.copy(openingHeightCm = cm)) },
@@ -492,6 +513,8 @@ fun DoorScreen(
                     )
                     Text(stringResource(R.string.boot_inside), modifier = Modifier.padding(start = 24.dp, top = 8.dp), style = MaterialTheme.typography.titleSmall)
                     LengthFields(
+                        readOnly = readOnly,
+                        onReadOnlyClick = { onRequirePremium(if (space == 0) PremiumFeature.MY_HOME else spaceFeature(space)) },
                         labels = listOf(stringResource(R.string.boot_length), stringResource(R.string.boot_width), stringResource(R.string.boot_height)),
                         values = listOf(boot.lengthCm, boot.widthCm, boot.heightCm), unit = unit,
                         onChange = { i, cm -> updateBoot(when (i) {
@@ -507,6 +530,7 @@ fun DoorScreen(
                         modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp),
                     )
                     TextButton(onClick = {
+                        if (readOnly) { onRequirePremium(PremiumFeature.BOOT); return@TextButton }
                         prefs.useExampleBoot()
                         boot = prefs.boot
                         bootTyped = false
@@ -518,6 +542,8 @@ fun DoorScreen(
                     }
                 } else key(space) {
                     LengthFields(
+                        readOnly = readOnly,
+                        onReadOnlyClick = { onRequirePremium(if (space == 0) PremiumFeature.MY_HOME else spaceFeature(space)) },
                         labels = listOf(stringResource(R.string.door_width), stringResource(R.string.door_height)),
                         values = listOf(door.widthCm, door.heightCm),
                         unit = unit,
@@ -543,6 +569,7 @@ fun DoorScreen(
                     },
                     modifier = Modifier.padding(start = 12.dp, top = 4.dp),
                 ) {
+                    if (!canUse(PremiumFeature.TAPE, premiumState)) PremiumLock()
                     Icon(Icons.Outlined.Straighten, null, Modifier.size(ButtonDefaults.IconSize))
                     Spacer(Modifier.width(ButtonDefaults.IconSpacing))
                     Text(stringResource(when (space) {
@@ -626,4 +653,12 @@ private fun NewsOfferCard(onYes: () -> Unit, onNo: () -> Unit) {
             }
         }
     }
+}
+
+/** Keep the old space indices in preferences while access is named by feature. */
+private fun spaceFeature(index: Int): PremiumFeature = when (index) {
+    1 -> PremiumFeature.BOOT
+    2 -> PremiumFeature.HALL
+    3 -> PremiumFeature.LIFT
+    else -> PremiumFeature.DOOR
 }

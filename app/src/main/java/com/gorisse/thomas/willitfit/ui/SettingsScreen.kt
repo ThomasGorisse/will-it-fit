@@ -17,6 +17,8 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.outlined.ViewInAr
+import androidx.compose.material3.TextButton
+import com.gorisse.thomas.willitfit.data.PremiumState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -51,6 +53,9 @@ fun SettingsScreen(
     onBack: () -> Unit,
     newsOn: Boolean = false,
     onNews: (Boolean) -> Unit = {},
+    premiumState: PremiumState = PremiumState.UNKNOWN,
+    onPremium: () -> Unit = {},
+    onManagePremium: () -> Unit = {},
 ) {
     AppScaffold(title = stringResource(R.string.settings_title), onBack = onBack) { padding ->
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
@@ -75,6 +80,25 @@ fun SettingsScreen(
                     },
                 )
                 ListItem(
+                    leadingContent = { Icon(Icons.Outlined.Lock, null) },
+                    headlineContent = { Text(stringResource(R.string.premium_title)) },
+                    supportingContent = {
+                        Column {
+                            Text(stringResource(when (premiumState) {
+                                PremiumState.GRANDFATHERED -> R.string.premium_early
+                                PremiumState.PURCHASED -> R.string.premium_active
+                                PremiumState.UNKNOWN -> R.string.premium_checking
+                                PremiumState.FREE -> R.string.premium_inactive
+                            }))
+                            if (premiumState == PremiumState.PURCHASED) TextButton(onClick = onManagePremium) {
+                                Text(stringResource(R.string.premium_manage))
+                            } else if (premiumState != PremiumState.GRANDFATHERED) TextButton(onClick = onPremium) {
+                                Text(stringResource(R.string.premium_see_offer))
+                            }
+                        }
+                    },
+                )
+                ListItem(
                     leadingContent = { Icon(Icons.Outlined.Notifications, null) },
                     headlineContent = { Text(stringResource(R.string.news_channel)) },
                     supportingContent = { Text(stringResource(R.string.settings_news_body)) },
@@ -89,6 +113,7 @@ fun SettingsScreen(
                         val uriHandler = LocalUriHandler.current
                         Column {
                             Text(stringResource(R.string.settings_privacy))
+                            Text(stringResource(R.string.premium_privacy))
                             Text(
                                 linkText(stringResource(R.string.settings_privacy_policy), PRIVACY_POLICY_URL, MaterialTheme.colorScheme.primary) { url ->
                                     runCatching { uriHandler.openUri(url) }
