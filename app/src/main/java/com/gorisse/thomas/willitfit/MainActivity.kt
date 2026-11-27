@@ -45,6 +45,7 @@ import com.gorisse.thomas.willitfit.data.toUi
 import com.gorisse.thomas.willitfit.data.canUseTape
 import com.gorisse.thomas.willitfit.data.PremiumState
 import com.gorisse.thomas.willitfit.data.TrialReminder
+import com.gorisse.thomas.willitfit.data.takeCheck
 import com.gorisse.thomas.willitfit.data.canUse
 import com.gorisse.thomas.willitfit.ui.OnboardingScreen
 import com.gorisse.thomas.willitfit.ui.PaywallScreen
@@ -577,19 +578,6 @@ private fun Intent.sharedCheck(): SharedCheck? {
     if (uri.scheme != "https" || uri.host != SharedCheck.HOST) return null
     if (uri.path?.trimEnd('/') != SharedCheck.PATH.trimEnd('/')) return null
     return SharedCheck.parse(uri.encodedFragment ?: uri.encodedQuery)
-}
-
-/** Takes a check as the person's own: the object, and the space it was checked against. */
-private fun Prefs.takeCheck(check: SharedCheck) {
-    dimensions = check.dims
-    if (check.space != null) liftSelected = check.space == Space.LIFT
-    when (check.space) {
-        Space.DOOR -> { check.door?.let { door = it }; carBoot = false; hallway = false }
-        Space.BOOT -> { check.boot?.let { boot = it }; carBoot = true; hallway = false }
-        Space.LIFT -> { check.lift?.let { lift = it }; liftSelected = true }
-        Space.HALL -> { check.hall?.let { hall = it }; hallway = true }
-        null -> Unit
-    }
 }
 
 /** The text another app sent: a share, or a selection sent from the text menu. */

@@ -16,7 +16,7 @@ import com.gorisse.thomas.willitfit.fit.withMatchingPreset
 import java.util.Locale
 
 /** The last object, recent sizes, the spaces and the unit. On the phone only; nothing leaves it. */
-class Prefs(context: Context) {
+class Prefs(context: Context) : CheckStore {
     private val p = context.getSharedPreferences("will_it_fit", Context.MODE_PRIVATE)
 
     var unit: LengthUnit
@@ -24,7 +24,7 @@ class Prefs(context: Context) {
             ?: LengthUnit.defaultFor(Locale.getDefault())
         set(value) = p.edit().putString(KEY_UNIT, value.name).apply()
 
-    var dimensions: Dimensions
+    override var dimensions: Dimensions
         get() {
             val u = unit
             if (!p.contains("w")) return Preset.DEFAULT.dimensionsIn(u)
@@ -53,7 +53,7 @@ class Prefs(context: Context) {
         get() = MyThings.decode(runCatching { p.getString(KEY_MY_THINGS, null) }.getOrNull())
         set(value) = p.edit().putString(KEY_MY_THINGS, MyThings.encode(value)).apply()
 
-    var door: Door
+    override var door: Door
         get() {
             val typical = Door.typicalFor(unit)
             return Door(p.getFloat("door_w", typical.widthCm), p.getFloat("door_h", typical.heightCm))
@@ -64,19 +64,19 @@ class Prefs(context: Context) {
     /** The person typed a door in. Until then the door is the typical one for the unit. */
     val doorTyped: Boolean get() = p.contains("door_w")
 
-    var carBoot: Boolean
+    override var carBoot: Boolean
         get() = p.getBoolean("car_boot", false)
         set(value) = p.edit().putBoolean("car_boot", value).apply()
 
     /** The hallway turn was the last space checked; it wins over [carBoot]. */
-    var hallway: Boolean
+    override var hallway: Boolean
         get() = p.getBoolean("hallway", false)
         set(value) = p.edit().putBoolean("hallway", value).apply()
 
     /** The person typed a hallway in. Until then it is the typical one. */
     val hallTyped: Boolean get() = p.contains("hall_w")
 
-    var hall: Hall
+    override var hall: Hall
         get() {
             val typical = Hall.typicalFor(unit)
             return Hall(
@@ -87,13 +87,13 @@ class Prefs(context: Context) {
         set(h) = p.edit().putFloat("hall_w", h.widthCm).putFloat("hall_t", h.turnWidthCm)
             .putFloat("hall_c", h.ceilingCm).apply()
 
-    var liftSelected: Boolean
+    override var liftSelected: Boolean
         get() = p.getBoolean("lift_selected", false)
         set(value) = p.edit { putBoolean("lift_selected", value) }
 
     val liftTyped: Boolean get() = p.contains("lift_dw")
 
-    var lift: Lift
+    override var lift: Lift
         get() {
             val t = Lift.typicalFor(unit)
             return Lift(p.getFloat("lift_dw", t.doorWidthCm), p.getFloat("lift_dh", t.doorHeightCm),
@@ -106,7 +106,7 @@ class Prefs(context: Context) {
             putFloat("lift_ch", value.cabinHeightCm)
         }
 
-    var boot: Boot
+    override var boot: Boot
         get() {
             val example = Boot.ESTATE
             return Boot(
