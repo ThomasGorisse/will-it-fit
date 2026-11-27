@@ -1,5 +1,6 @@
 package com.gorisse.thomas.willitfit.data
 
+import com.gorisse.thomas.willitfit.fit.TapeSet
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.Instant
@@ -30,6 +31,10 @@ fun canUse(feature: PremiumFeature, state: PremiumState, openedFromSharedLink: B
     state == PremiumState.PURCHASED || state == PremiumState.GRANDFATHERED ||
         feature in setOf(PremiumFeature.DOOR, PremiumFeature.ROOM, PremiumFeature.SHARE, PremiumFeature.SETTINGS) ||
         openedFromSharedLink && feature in setOf(PremiumFeature.HALL, PremiumFeature.BOOT, PremiumFeature.LIFT)
+
+/** The listing promises a ruler; only spaces with premium checks keep a premium tape. */
+fun canUseTape(set: TapeSet, state: PremiumState): Boolean =
+    set == TapeSet.OBJECT || set == TapeSet.DOOR || canUse(PremiumFeature.TAPE, state)
 
 /** Play supplies micros, so the comparison never parses a translated price label. A year is 52 weeks. */
 fun yearlyPricePerWeek(priceAmountMicros: Long): BigDecimal =

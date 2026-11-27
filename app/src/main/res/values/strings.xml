@@ -242,10 +242,10 @@
     <string name="premium_headline_hall">Will it turn in the hallway?</string>
     <string name="premium_headline_boot">Will it fit in the car boot?</string>
     <string name="premium_headline_lift">Will it fit in the lift?</string>
-    <string name="premium_headline_tape">Measure with your camera</string>
+    <string name="premium_headline_tape">Measure the hallway, car boot and lift</string>
     <string name="premium_headline_home">Your home, ready for moving day</string>
     <string name="premium_benefit_spaces">Every tight spot: hallway turns, car boots and lifts</string>
-    <string name="premium_benefit_tape">Measure with your camera: the AR tape</string>
+    <string name="premium_benefit_tape">AR tape for the hallway, car boot and lift</string>
     <string name="premium_benefit_home">My home: your spaces and things, ready for moving day</string>
     <string name="premium_unavailable">Premium is not available right now. You can still check a door.</string>
     <string name="premium_yearly">Yearly</string>

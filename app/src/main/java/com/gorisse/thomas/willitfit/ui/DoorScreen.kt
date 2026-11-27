@@ -576,7 +576,7 @@ fun DoorScreen(
                     },
                     modifier = Modifier.padding(start = 12.dp, top = 4.dp),
                 ) {
-                    if (!canUse(PremiumFeature.TAPE, premiumState)) PremiumLock()
+                    if (space != 0 && !canUse(spaceFeature(space), premiumState)) PremiumLock()
                     Icon(Icons.Outlined.Straighten, null, Modifier.size(ButtonDefaults.IconSize))
                     Spacer(Modifier.width(ButtonDefaults.IconSpacing))
                     Text(stringResource(when (space) {

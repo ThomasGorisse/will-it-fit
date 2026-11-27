@@ -1,7 +1,7 @@
 Nouveautés
 • Déjà là avant 3.1.0 ? Tout reste gratuit, pour toujours.
-• Mon logement : gardez vos espaces et vos objets. Partagez la liste du déménagement : ce qui passe, de justesse ou pas du tout.
-• Testez l'ascenseur : porte, cabine et diagonale au sol.
+• Mon logement : gardez espaces et objets. Partagez la liste de ce qui passe, de justesse ou pas.
+• Testez l’ascenseur : porte, cabine et diagonale au sol.
 • Mètre AR dans chaque espace.
-• Porte, dimensions, pièce 3D, placement AR et partage restent gratuits. Premium ajoute virage du couloir, coffre, ascenseur, mètre AR et Mon logement.
+• Porte, dimensions, pièce 3D, placement AR, partage et mètre AR pour meubles et portes sont gratuits. Premium ajoute les tests de couloir, coffre et ascenseur avec leur mètre, et Mon logement.
 Sans pub ni compte, hors ligne.

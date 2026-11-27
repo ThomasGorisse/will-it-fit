@@ -230,10 +230,10 @@
     <string name="premium_headline_hall">Gira nel corridoio?</string>
     <string name="premium_headline_boot">Entra nel bagagliaio?</string>
     <string name="premium_headline_lift">Entra nell’ascensore?</string>
-    <string name="premium_headline_tape">Misura con la fotocamera</string>
+    <string name="premium_headline_tape">Misura corridoio, bagagliaio e ascensore</string>
     <string name="premium_headline_home">La tua casa, pronta per il trasloco</string>
     <string name="premium_benefit_spaces">Ogni passaggio stretto: curve, bagagliai e ascensori</string>
-    <string name="premium_benefit_tape">Misura con la fotocamera: il metro in AR</string>
+    <string name="premium_benefit_tape">Metro AR per corridoio, bagagliaio e ascensore</string>
     <string name="premium_benefit_home">Casa mia: i tuoi spazi e oggetti, pronti per il trasloco</string>
     <string name="premium_unavailable">Premium non è disponibile al momento. Puoi comunque verificare una porta.</string>
     <string name="premium_yearly">Annuale</string>

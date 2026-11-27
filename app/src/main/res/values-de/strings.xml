@@ -230,10 +230,10 @@
     <string name="premium_headline_hall">Passt es um die Ecke im Flur?</string>
     <string name="premium_headline_boot">Passt es in den Kofferraum?</string>
     <string name="premium_headline_lift">Passt es in den Aufzug?</string>
-    <string name="premium_headline_tape">Mit der Kamera messen</string>
+    <string name="premium_headline_tape">Flur, Kofferraum und Aufzug messen</string>
     <string name="premium_headline_home">Dein Zuhause, bereit für den Umzug</string>
     <string name="premium_benefit_spaces">Jede enge Stelle: Flurecken, Kofferräume und Aufzüge</string>
-    <string name="premium_benefit_tape">Mit der Kamera messen: das AR-Maßband</string>
+    <string name="premium_benefit_tape">AR-Maßband für Flur, Kofferraum und Aufzug</string>
     <string name="premium_benefit_home">Mein Zuhause: deine Räume und Dinge, bereit für den Umzug</string>
     <string name="premium_unavailable">Premium ist gerade nicht verfügbar. Du kannst weiterhin eine Tür prüfen.</string>
     <string name="premium_yearly">Jährlich</string>
