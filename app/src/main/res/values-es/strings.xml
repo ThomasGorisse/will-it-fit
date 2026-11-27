@@ -230,10 +230,10 @@
     <string name="premium_headline_hall">¿Gira en el pasillo?</string>
     <string name="premium_headline_boot">¿Cabe en el maletero?</string>
     <string name="premium_headline_lift">¿Cabe en el ascensor?</string>
-    <string name="premium_headline_tape">Mide con la cámara</string>
+    <string name="premium_headline_tape">Mide el pasillo, el maletero y el ascensor</string>
     <string name="premium_headline_home">Tu casa, lista para la mudanza</string>
     <string name="premium_benefit_spaces">Todos los pasos estrechos: giros, maleteros y ascensores</string>
-    <string name="premium_benefit_tape">Mide con la cámara: la cinta en RA</string>
+    <string name="premium_benefit_tape">Cinta RA para el pasillo, el maletero y el ascensor</string>
     <string name="premium_benefit_home">Mi casa: tus espacios y objetos, listos para la mudanza</string>
     <string name="premium_unavailable">Premium no está disponible ahora. Puedes seguir comprobando una puerta.</string>
     <string name="premium_yearly">Anual</string>

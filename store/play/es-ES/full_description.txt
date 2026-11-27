@@ -31,7 +31,7 @@ Comparte una comprobación de puerta, pasillo o maletero con un enlace que la vu
 Reutiliza hasta tres conjuntos de medidas recientes personalizadas sin volver a escribirlas. En los lanzadores compatibles, mantén pulsado el icono de la aplicación para ver los accesos directos a esas medidas.
 
 GRATIS PARA EMPEZAR, SIN CONEXIÓN
-La comprobación de puertas, las medidas, la habitación en 3D, la colocación con RA y compartir son gratis. Premium añade el giro del pasillo, las comprobaciones de maletero y ascensor, la cinta RA y Mi casa, con una suscripción semanal, mensual o anual. Los nuevos suscriptores tienen 3 días gratis con el plan anual. Quien instaló la app antes de 3.1.0 conserva todo gratis para siempre. Sin anuncios ni cuenta; funciona sin conexión. La habitación en 3D y la comprobación de puertas también funcionan en móviles sin RA.
+La comprobación de puertas, las medidas, la habitación en 3D, la colocación con RA, compartir y la cinta RA para tus muebles y la puerta son gratis. Premium añade el giro del pasillo, las comprobaciones de maletero y ascensor, la cinta RA para esos espacios y Mi casa, con una suscripción semanal, mensual o anual. Los nuevos suscriptores tienen 3 días gratis con el plan anual. Quien instaló la app antes de 3.1.0 conserva todo gratis para siempre. Sin anuncios ni cuenta; funciona sin conexión. La habitación en 3D y la comprobación de puertas también funcionan en móviles sin RA.
 
 COMPRUEBA LAS MEDIDAS REALES
 Las medidas de los modelos son un punto de partida, no las de un producto concreto. Revisa las del vendedor, incluidos el bastidor, las patas y los tiradores, e introduce las medidas de tu mueble.

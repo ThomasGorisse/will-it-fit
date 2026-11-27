@@ -168,10 +168,7 @@ fun HomeScreen(
                     }
                     // The AR tape: measure the object (or the space) and its sides fill in.
                     if (arAvailable) IconButton(onClick = onMeasure) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Outlined.Straighten, contentDescription = stringResource(R.string.action_measure))
-                            if (!premium) PremiumLock()
-                        }
+                        Icon(Icons.Outlined.Straighten, contentDescription = stringResource(R.string.action_measure))
                     }
                     // My home: the person's door, hallway and car, and their things for moving day.
                     IconButton(onClick = onMyHome) {

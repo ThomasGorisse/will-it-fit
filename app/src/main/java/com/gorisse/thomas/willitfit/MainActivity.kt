@@ -42,6 +42,7 @@ import com.gorisse.thomas.willitfit.data.Billing
 import com.gorisse.thomas.willitfit.data.PremiumFeature
 import com.gorisse.thomas.willitfit.data.samplePremiumPlans
 import com.gorisse.thomas.willitfit.data.toUi
+import com.gorisse.thomas.willitfit.data.canUseTape
 import com.gorisse.thomas.willitfit.data.PremiumState
 import com.gorisse.thomas.willitfit.data.TrialReminder
 import com.gorisse.thomas.willitfit.data.canUse
@@ -277,7 +278,11 @@ class MainActivity : ComponentActivity() {
                     }
                     /** Only a deliberate premium action opens an offer after welcome. */
                     fun requireFeature(feature: PremiumFeature) {
-                        if (canUse(feature, premiumState)) openFeature(feature) else {
+                        if (feature == PremiumFeature.TAPE && premiumState == PremiumState.UNKNOWN) {
+                            // Wait on the tape route for Play instead of flashing an offer.
+                            openFeature(feature)
+                        } else if (if (feature == PremiumFeature.TAPE) canUseTape(measureSet, premiumState)
+                            else canUse(feature, premiumState)) openFeature(feature) else {
                             onboardingOffer = false; paywall = feature
                         }
                     }
@@ -362,7 +367,11 @@ class MainActivity : ComponentActivity() {
                                     if (premium || prefs.hadPremium || prefs.myThings.isNotEmpty()) route = Route.MY_HOME
                                     else requireFeature(PremiumFeature.MY_HOME)
                                 },
-                                onMeasure = { measureSet = TapeSet.OBJECT; requireFeature(PremiumFeature.TAPE) },
+                                onMeasure = {
+                                    measureSet = TapeSet.OBJECT
+                                    if (canUseTape(measureSet, premiumState)) openFeature(PremiumFeature.TAPE)
+                                    else requireFeature(PremiumFeature.TAPE)
+                                },
                             )
                             Route.AR -> ArScreen(
                                 dims = dims, unit = unit,
@@ -378,15 +387,19 @@ class MainActivity : ComponentActivity() {
                                 onVerdictShown = { doorVerdictSeen = true },
                                 onBack = { route = if (doorFromMyHome) Route.MY_HOME else Route.HOME },
                                 arAvailable = arAvailable,
-                                onMeasure = { measureSet = it; requireFeature(PremiumFeature.TAPE) },
+                                onMeasure = {
+                                    measureSet = it
+                                    if (canUseTape(measureSet, premiumState)) openFeature(PremiumFeature.TAPE)
+                                    else requireFeature(PremiumFeature.TAPE)
+                                },
                                 premiumState = premiumState, openedReadOnly = readOnlyCheck,
                                 onRequirePremium = { requireFeature(it) },
                                 onSegmentChanged = { readOnlyCheck = false },
                             ) }
-                            Route.MEASURE -> if (!premium) {
+                            Route.MEASURE -> if (!canUseTape(measureSet, premiumState)) {
                                 // Play answers a moment after a recreation: a subscriber back on the tape
                                 // waits for that answer here, and only a confirmed free state leaves.
-                                LaunchedEffect(premiumState) {
+                                LaunchedEffect(measureSet, premiumState) {
                                     if (premiumState != PremiumState.FREE) return@LaunchedEffect
                                     route = Route.HOME
                                     requireFeature(PremiumFeature.TAPE)
@@ -395,7 +408,10 @@ class MainActivity : ComponentActivity() {
                                 unit = unit,
                                 targets = measureSet.targets,
                                 onUse = { target, cm ->
-                                    if (!premium) { requireFeature(PremiumFeature.TAPE); return@MeasureScreen }
+                                    if (!canUseTape(measureSet, premiumState)) {
+                                        if (premiumState == PremiumState.FREE) requireFeature(PremiumFeature.TAPE)
+                                        return@MeasureScreen
+                                    }
                                     when (measureSet) {
                                         TapeSet.DOOR -> { door = door.withTape(target, cm); prefs.door = door }
                                         TapeSet.BOOT -> prefs.boot = prefs.boot.withTape(target, cm)

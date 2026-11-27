@@ -230,10 +230,10 @@
     <string name="premium_headline_hall">Faz a curva no corredor?</string>
     <string name="premium_headline_boot">Cabe no porta-malas?</string>
     <string name="premium_headline_lift">Cabe no elevador?</string>
-    <string name="premium_headline_tape">Meça com a câmera</string>
+    <string name="premium_headline_tape">Meça o corredor, o porta-malas e o elevador</string>
     <string name="premium_headline_home">Sua casa, pronta para a mudança</string>
     <string name="premium_benefit_spaces">Todas as passagens apertadas: curvas, porta-malas e elevadores</string>
-    <string name="premium_benefit_tape">Meça com a câmera: a trena em RA</string>
+    <string name="premium_benefit_tape">Trena RA para corredor, porta-malas e elevador</string>
     <string name="premium_benefit_home">Minha casa: seus espaços e objetos, prontos para a mudança</string>
     <string name="premium_unavailable">Premium não está disponível agora. Você ainda pode conferir uma porta.</string>
     <string name="premium_yearly">Anual</string>

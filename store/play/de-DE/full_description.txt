@@ -31,7 +31,7 @@ Teile eine Prüfung für Tür, Flur oder Kofferraum über einen Link, der sie in
 Rufe bis zu drei zuletzt verwendete eigene Maße erneut auf, ohne die Maße neu einzugeben. Bei unterstützten Launchern öffnet ein langer Druck auf das App-Symbol die Verknüpfungen zu diesen Maßen.
 
 KOSTENLOS STARTEN, OFFLINE
-Türcheck, Maße, 3D-Raum, AR-Platzierung und Teilen sind kostenlos. Premium bietet die Flurkurve, Kofferraum- und Aufzugchecks, das AR-Maßband und Mein Zuhause im Wochen-, Monats- oder Jahresabo. Neue Abonnenten erhalten beim Jahresabo 3 Tage kostenlos. Wer die App vor 3.1.0 installiert hat, behält alles für immer kostenlos. Ohne Werbung und Konto; funktioniert offline. Den 3D-Raum und den Türcheck kannst du auch auf Handys ohne AR nutzen.
+Türcheck, Maße, 3D-Raum, AR-Platzierung, Teilen und das AR-Maßband für deine Möbel und die Tür sind kostenlos. Premium bietet die Flurkurve, Kofferraum- und Aufzugchecks, das AR-Maßband für diese Räume und Mein Zuhause im Wochen-, Monats- oder Jahresabo. Neue Abonnenten erhalten beim Jahresabo 3 Tage kostenlos. Wer die App vor 3.1.0 installiert hat, behält alles für immer kostenlos. Ohne Werbung und Konto; funktioniert offline. Den 3D-Raum und den Türcheck kannst du auch auf Handys ohne AR nutzen.
 
 DIE TATSÄCHLICHEN MASSE PRÜFEN
 Die vorgegebenen Größen dienen zur Orientierung und gehören zu keinem bestimmten Produkt. Prüfe die Maße beim Anbieter, einschließlich Rahmen, Füßen und Griffen, und trage die tatsächlichen Werte ein.

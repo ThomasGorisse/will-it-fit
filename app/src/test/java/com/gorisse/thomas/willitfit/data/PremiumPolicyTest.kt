@@ -1,5 +1,6 @@
 package com.gorisse.thomas.willitfit.data
 
+import com.gorisse.thomas.willitfit.fit.TapeSet
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.ZoneId
@@ -34,6 +35,16 @@ class PremiumPolicyTest {
                 assertEquals(always, canUse(feature, state))
                 assertEquals(always || feature in setOf(PremiumFeature.HALL, PremiumFeature.BOOT, PremiumFeature.LIFT),
                     canUse(feature, state, openedFromSharedLink = true))
+            }
+        }
+    }
+
+    @Test fun everyTapeSetAndStateHasAnExplicitAccessRule() {
+        TapeSet.entries.forEach { set ->
+            PremiumState.entries.forEach { state ->
+                val expected = set in setOf(TapeSet.OBJECT, TapeSet.DOOR) ||
+                    state in setOf(PremiumState.PURCHASED, PremiumState.GRANDFATHERED)
+                assertEquals("$set / $state", expected, canUseTape(set, state))
             }
         }
     }
