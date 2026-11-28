@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -40,6 +41,9 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -70,6 +74,9 @@ import androidx.compose.ui.unit.dp
 import com.gorisse.thomas.willitfit.data.Prefs
 import com.gorisse.thomas.willitfit.fit.TapeSet
 import com.gorisse.thomas.willitfit.fit.Boot
+import com.gorisse.thomas.willitfit.fit.BootPreset
+import com.gorisse.thomas.willitfit.fit.checkCarBoot
+import com.gorisse.thomas.willitfit.fit.forVerdict
 import com.gorisse.thomas.willitfit.fit.Lift
 import com.gorisse.thomas.willitfit.fit.LiftLimit
 import com.gorisse.thomas.willitfit.fit.checkLift
@@ -79,7 +86,6 @@ import androidx.compose.foundation.horizontalScroll
 import com.gorisse.thomas.willitfit.fit.Carry
 import com.gorisse.thomas.willitfit.fit.BootLimit
 import com.gorisse.thomas.willitfit.fit.DoorVerdict
-import com.gorisse.thomas.willitfit.fit.checkBoot
 import com.gorisse.thomas.willitfit.fit.HallLimit
 import com.gorisse.thomas.willitfit.fit.checkHall
 import com.gorisse.thomas.willitfit.scene.HallLabels
@@ -128,6 +134,7 @@ fun DoorScreen(
     unit: LengthUnit,
     onDoor: (Door) -> Unit,
     onBack: () -> Unit,
+    onEditObject: () -> Unit = onBack,
     onVerdictShown: () -> Unit = {},
     arAvailable: Boolean = false,
     onMeasure: (TapeSet) -> Unit = {},
@@ -162,7 +169,10 @@ fun DoorScreen(
     var bootFieldsRevision by remember { mutableIntStateOf(0) }
     var openingValid by remember(space) { mutableStateOf(true) }
     var insideValid by remember(space) { mutableStateOf(true) }
-    val bootVerdict = checkBoot(dims, boot)
+    var foldedLengthValid by remember(space) { mutableStateOf(true) }
+    val bootVerdict = remember(dims, boot) { checkCarBoot(dims, boot) }
+    val shownBoot = boot.forVerdict(bootVerdict)
+    val bootSheetMaxHeight = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() * 0.62f }
     val hallVerdict = checkHall(dims, hall)
     val verdict = when {
         elevator -> DoorVerdict(liftVerdict.fits, liftVerdict.carry, liftVerdict.marginCm)
@@ -176,7 +186,8 @@ fun DoorScreen(
     var sheetPx by remember { mutableIntStateOf(0) }
     var doorValid by remember(space) { mutableStateOf(true) }
     val fieldsValid = when {
-        elevator || carBoot -> openingValid && insideValid
+        carBoot -> openingValid && insideValid && foldedLengthValid && boot.isValid && dims.isValid
+        elevator -> openingValid && insideValid
         hallway -> hallValid
         else -> doorValid
     }
@@ -207,7 +218,12 @@ fun DoorScreen(
     val measurer = rememberTextMeasurer()
     val bootBackground = (if (dark) RoomPalette.Night else RoomPalette.Day).wall.toArgb()
 
-    val answer = stringResource(answerFor(space, verdict.fits, verdict.isTight))
+    val answerId = when {
+        carBoot && bootVerdict.rearSeatsDown -> R.string.boot_yes_seats_down
+        carBoot && bootVerdict.diagonal -> R.string.boot_yes_diagonal
+        else -> answerFor(space, verdict.fits, verdict.isTight)
+    }
+    val answer = stringResource(answerId)
     val marginCore = if (elevator) {
         if (verdict.fits) stringResource(R.string.hall_margin_spare, formatMargin(verdict.marginCm, unit), stringResource(liftVerdict.limit.label()))
         else stringResource(R.string.lift_margin_over, formatMargin(verdict.marginCm, unit), stringResource(liftVerdict.limit.label()))
@@ -230,7 +246,7 @@ fun DoorScreen(
             carBoot -> R.string.carry_upright_boot
             else -> R.string.carry_upright_hall
         },
-    )
+    ) + if (carBoot && bootVerdict.diagonal) " · " + stringResource(R.string.boot_diagonal_angle, formatNumber(bootVerdict.angleDeg, LengthUnit.CM)) else ""
     val liftMargin = if (elevator && liftVerdict.diagonal) " · " + stringResource(R.string.lift_diagonally) else ""
     val objectLine = stringResource(R.string.door_object, objectName(dims), formatDimensions(dims, unit))
     val hallLabels = HallLabels(
@@ -249,7 +265,7 @@ fun DoorScreen(
         R.string.photo_boot,
         // One unit for the line, at its end: the photo's caption has room for one line only.
         "${formatNumber(boot.openingWidthCm, unit)} × ${formatNumber(boot.openingHeightCm, unit)}",
-        "${formatNumber(boot.lengthCm, unit)} × ${formatNumber(boot.widthCm, unit)} × ${formatNumber(boot.heightCm, unit)} ${unit.symbol}",
+        "${formatNumber(shownBoot.lengthCm, unit)} × ${formatNumber(shownBoot.widthCm, unit)} × ${formatNumber(shownBoot.heightCm, unit)} ${unit.symbol}",
     ) else stringResource(
         R.string.photo_door, "${formatNumber(door.widthCm, unit)} × ${formatNumber(door.heightCm, unit)} ${unit.symbol}",
     )
@@ -279,7 +295,7 @@ fun DoorScreen(
             accent = FurnitureTeal, palette = if (dark) RoomPalette.Night else RoomPalette.Day,
             modifier = Modifier.fillMaxSize(), contentPadding = scenePadding,
         ) else if (carBoot) BootScene(
-            dims = dims, boot = boot, verdict = bootVerdict,
+            dims = dims, boot = shownBoot, verdict = bootVerdict,
             accent = FurnitureTeal, palette = if (dark) RoomPalette.Night else RoomPalette.Day,
             modifier = Modifier.fillMaxSize(), contentPadding = scenePadding,
         ) else DoorScene(
@@ -374,6 +390,7 @@ fun DoorScreen(
             // Never over the back and share buttons: with very large text the sheet stops below
             // them and scrolls.
             modifier = Modifier.align(Alignment.BottomCenter).statusBarsPadding().padding(top = 72.dp)
+                .then(if (carBoot) Modifier.heightIn(max = bootSheetMaxHeight) else Modifier)
                 .formWidth().fillMaxWidth().onSizeChanged { sheetPx = it.height },
             color = scheme.surfaceContainerLow,
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
@@ -411,23 +428,24 @@ fun DoorScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = scheme.onSurfaceVariant,
                     )
+                    if (carBoot) TextButton(onClick = onEditObject) { Text(stringResource(R.string.boot_change_object)) }
                     Spacer(Modifier.height(8.dp))
                     if (!fieldsValid) {
                         Text(
                             stringResource(when (space) { 3 -> R.string.lift_enter; 1 -> R.string.boot_enter; 2 -> R.string.hall_enter; else -> R.string.door_enter }),
                             style = MaterialTheme.typography.headlineSmall,
                         )
-                    } else AnimatedContent(Triple(space, verdict.fits, verdict.isTight), label = "verdict") { (shown, fits, tight) ->
+                    } else AnimatedContent(answerId, label = "verdict") { shownAnswer ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                if (fits) Icons.Outlined.CheckCircle else Icons.Outlined.Cancel,
+                                if (verdict.fits) Icons.Outlined.CheckCircle else Icons.Outlined.Cancel,
                                 contentDescription = null,
-                                tint = if (fits) FitColors.success() else scheme.error,
+                                tint = if (verdict.fits) FitColors.success() else scheme.error,
                                 modifier = Modifier.size(32.dp),
                             )
                             Spacer(Modifier.width(12.dp))
                             Text(
-                                stringResource(answerFor(shown, fits, tight)),
+                                stringResource(shownAnswer),
                                 style = MaterialTheme.typography.headlineSmall,
                             )
                         }
@@ -510,6 +528,13 @@ fun DoorScreen(
                     )
                 } else if (carBoot) key(space, bootFieldsRevision) {
                     val updateBoot: (Boot) -> Unit = { boot = it; prefs.boot = it; bootTyped = true }
+                    BootPresetPicker(boot, onPick = { preset ->
+                        if (readOnly) onRequirePremium(PremiumFeature.BOOT) else {
+                            updateBoot(preset.boot)
+                            bootFieldsRevision++
+                            openingValid = true; insideValid = true; foldedLengthValid = true
+                        }
+                    })
                     Text(stringResource(R.string.boot_opening), modifier = Modifier.padding(horizontal = 24.dp), style = MaterialTheme.typography.titleSmall)
                     LengthFields(
                         readOnly = readOnly,
@@ -532,8 +557,19 @@ fun DoorScreen(
                         }) },
                         modifier = Modifier.padding(horizontal = 16.dp), onValidChange = { insideValid = it },
                     )
+                    boot.seatsDownLengthCm?.let { down ->
+                        LengthFields(
+                            readOnly = readOnly,
+                            onReadOnlyClick = { onRequirePremium(PremiumFeature.BOOT) },
+                            labels = listOf(stringResource(R.string.boot_length_seats_down)),
+                            values = listOf(down), unit = unit,
+                            onChange = { _, cm -> updateBoot(boot.copy(seatsDownLengthCm = cm)) },
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            onValidChange = { foldedLengthValid = it },
+                        )
+                    }
                     Text(
-                        stringResource(R.string.boot_help) + if (!bootTyped) " " + stringResource(R.string.boot_example_help) else "",
+                        stringResource(R.string.boot_3d_help) + if (!bootTyped) " " + stringResource(R.string.boot_example_help) else "",
                         style = MaterialTheme.typography.bodySmall, color = scheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp),
                     )
@@ -545,6 +581,7 @@ fun DoorScreen(
                         bootFieldsRevision++
                         openingValid = true
                         insideValid = true
+                        foldedLengthValid = true
                     }, modifier = Modifier.padding(start = 12.dp)) {
                         Text(stringResource(R.string.boot_example))
                     }
@@ -589,6 +626,36 @@ fun DoorScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun BootPresetPicker(boot: Boot, onPick: (BootPreset) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val preset = BootPreset.entries.firstOrNull { it.boot == boot }
+    Column(Modifier.padding(horizontal = 24.dp).padding(bottom = 8.dp)) {
+        Box {
+            TextButton(onClick = { expanded = true }) {
+                Text(stringResource(preset?.label() ?: R.string.boot_preset_choose))
+                Icon(Icons.Outlined.ArrowDropDown, null)
+            }
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                BootPreset.entries.forEach { entry ->
+                    DropdownMenuItem(
+                        text = { Text(stringResource(entry.label())) },
+                        onClick = { expanded = false; onPick(entry) },
+                    )
+                }
+            }
+        }
+        Text(
+            stringResource(when (preset) {
+                BootPreset.ESTATE -> R.string.boot_preset_estate_source
+                null -> R.string.boot_preset_custom
+                else -> R.string.boot_preset_typical
+            }),
+            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

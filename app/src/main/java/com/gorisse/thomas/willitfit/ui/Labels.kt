@@ -6,8 +6,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.fit.Carry
+import com.gorisse.thomas.willitfit.fit.BootPreset
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Preset
+
+@StringRes
+fun BootPreset.label(): Int = when (this) {
+    BootPreset.CITY -> R.string.boot_preset_city
+    BootPreset.COMPACT -> R.string.boot_preset_compact
+    BootPreset.ESTATE -> R.string.boot_preset_estate
+    BootPreset.SUV -> R.string.boot_preset_suv
+    BootPreset.VAN -> R.string.boot_preset_van
+}
 
 @StringRes
 fun Preset.label(): Int = when (this) {

@@ -18,6 +18,7 @@ import com.gorisse.thomas.willitfit.fit.Boot
 import com.gorisse.thomas.willitfit.fit.BootVerdict
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.side
+import com.gorisse.thomas.willitfit.fit.bootFootprint
 import io.github.sceneview.Aabb
 import io.github.sceneview.DEFAULT_FILL_LIGHT_INTENSITY
 import io.github.sceneview.SceneView
@@ -57,24 +58,26 @@ fun BootScene(
     val l = boot.lengthCm / 100f
     val ow = boot.openingWidthCm / 100f
     val oh = boot.openingHeightCm / 100f
-    val across = dims.side(verdict.carry.across) / 100f
+    val footprint = bootFootprint(dims, verdict.carry, verdict.angleDeg)
+    val across = footprint.first / 100f
     val up = dims.side(verdict.carry.up) / 100f
-    val along = dims.side(verdict.carry.along) / 100f
+    val along = footprint.second / 100f
     // Width is clear between the arches; the trim above them sits further out.
     val interiorW = maxOf(w + 0.24f, ow)
     val bodyW = maxOf(interiorW + 0.12f, ow + 0.24f)
     val trimH = minOf(h, oh) * 0.65f
     val archH = minOf(0.24f, trimH * 0.7f)
     val seatH = maxOf(h, oh)
-    val top = maxOf(seatH + 0.18f, up) + 0.06f
+    val hatchLength = oh * 0.9f
+    val top = maxOf(seatH + 0.18f, oh + 0.14f + hatchLength * 0.42f, up) + 0.06f
     val bottom = -0.44f
     val halfW = maxOf(bodyW, across) / 2f + 0.06f
     // Include the bumper, reclined seats and any object projecting through the opening.
     // A miss waits on the ground behind the car, in the way it would go in: inside, the solid
     // body would hide whatever is too big. The frame takes it in.
     val outsideZ = 0.4f + along / 2f
-    val front = if (verdict.fits) 0.24f else outsideZ + along / 2f
-    val rear = l + seatH * 0.18f + 0.12f
+    val front = maxOf(hatchLength, if (verdict.fits) 0.24f else outsideZ + along / 2f)
+    val rear = l + seatH * (if (verdict.rearSeatsDown) 1f else 0.18f) + 0.12f
     val bounds = Aabb(
         center = Position(0f, (top + bottom) / 2f, (front - rear) / 2f),
         halfExtent = Position(halfW, (top - bottom) / 2f, (front + rear) / 2f + 0.06f),
@@ -185,8 +188,22 @@ fun BootScene(
         }
         CubeNode(size = Size(ow, 0.08f, 0.12f), position = Position(0f, oh + 0.04f, -0.035f), materialInstance = body)
         CubeNode(size = Size(ow, 0.018f, 0.025f), position = Position(0f, oh + 0.009f, 0.035f), materialInstance = seal)
+        // Raised tailgate: hinge above the opening, frame and glass extending toward the viewer.
+        // Keep glass translucent so the hatch does not hide the measured space from above.
+        val glassColor = if (palette.isNight) Color(0x665F8797) else Color(0x667A9CA8)
+        val glass = remember(materialLoader) { materialLoader.createColorInstance(glassColor, roughness = 0.2f) }
+        SideEffect { glass.setColor(glassColor) }
+        Node(position = Position(0f, oh + 0.1f, -0.035f), rotation = Rotation(x = -25f)) {
+            for (side in listOf(-1f, 1f)) {
+                CubeNode(size = Size(0.055f, 0.035f, hatchLength), position = Position(side * (ow + 0.055f) / 2f, 0f, hatchLength / 2f), materialInstance = body)
+            }
+            for (z in listOf(0f, hatchLength)) {
+                CubeNode(size = Size(ow + 0.11f, 0.04f, 0.055f), position = Position(0f, 0f, z), materialInstance = body)
+            }
+            CubeNode(size = Size(ow, 0.012f, hatchLength * 0.75f), position = Position(0f, 0f, hatchLength * 0.48f), materialInstance = glass)
+        }
         // Reclined split seat backs and headrests identify the far end as a car interior.
-        Node(position = Position(0f, 0f, -l - 0.05f), rotation = Rotation(x = -10f)) {
+        Node(position = Position(0f, 0f, -l - 0.05f), rotation = Rotation(x = if (verdict.rearSeatsDown) -85f else -10f)) {
             for (side in listOf(-1f, 1f)) {
                 CubeNode(size = Size(interiorW / 2f - 0.012f, seatH, 0.08f), position = Position(side * interiorW / 4f, seatH / 2f, 0f), materialInstance = seats)
                 CubeNode(size = Size(interiorW * 0.22f, 0.14f, 0.09f), position = Position(side * interiorW / 4f, seatH + 0.06f, -0.015f), materialInstance = seats)
@@ -199,7 +216,8 @@ fun BootScene(
         CubeNode(size = Size(interiorW, 0.018f, 0.025f), position = Position(0f, h + 0.009f, -l * 0.12f), materialInstance = trim)
         CubeNode(size = Size(interiorW, 0.018f, 0.025f), position = Position(0f, h + 0.009f, -l + 0.0125f), materialInstance = trim)
         val look = rememberFurnitureLook(if (verdict.fits) accent else Color(0xFFB65D54), roomLit = true)
-        Node(position = if (verdict.fits) Position(0f, up / 2f, -l + along / 2f) else Position(0f, bottom + up / 2f, outsideZ)) {
+        Node(position = if (verdict.fits) Position(0f, up / 2f, -l / 2f) else Position(0f, bottom + up / 2f, outsideZ),
+            rotation = Rotation(y = verdict.angleDeg)) {
             Node(rotation = outerRotation(verdict.carry)) {
                 Node(rotation = innerRotation(verdict.carry)) {
                     Node(position = Position(0f, -dims.heightCm / 200f, 0f)) {

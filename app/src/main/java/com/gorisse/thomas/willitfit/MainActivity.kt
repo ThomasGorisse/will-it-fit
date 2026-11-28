@@ -398,6 +398,7 @@ class MainActivity : ComponentActivity() {
                                 onDoor = { door = it; if (it.isValid) prefs.door = it },
                                 onVerdictShown = { doorVerdictSeen = true },
                                 onBack = { route = if (doorFromMyHome) Route.MY_HOME else Route.HOME },
+                                onEditObject = { route = Route.HOME },
                                 arAvailable = arAvailable,
                                 onMeasure = {
                                     measureSet = it

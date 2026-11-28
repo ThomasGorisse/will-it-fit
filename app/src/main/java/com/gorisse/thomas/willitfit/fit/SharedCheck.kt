@@ -34,6 +34,7 @@ data class SharedCheck(
             Space.DOOR -> door?.let { add("door=" + join(it.widthCm, it.heightCm)) }
             Space.BOOT -> boot?.let {
                 add("boot=" + join(it.openingWidthCm, it.openingHeightCm, it.lengthCm, it.widthCm, it.heightCm))
+                it.seatsDownLengthCm?.let { length -> add("bootDown=" + join(length)) }
             }
             Space.HALL -> hall?.let { add("hall=" + join(it.widthCm, it.turnWidthCm, it.ceilingCm)) }
             Space.LIFT -> lift?.let { add("lift=" + join(it.doorWidthCm, it.doorHeightCm, it.cabinWidthCm, it.cabinDepthCm, it.cabinHeightCm)) }
@@ -86,7 +87,12 @@ data class SharedCheck(
             numbers(params["door"], 2)?.let { Door(it[0], it[1]) }?.takeIf { it.isValid }?.let {
                 return SharedCheck(dims, Space.DOOR, door = it, unit = unit)
             }
-            numbers(params["boot"], 5)?.let { Boot(it[0], it[1], it[2], it[3], it[4]) }?.takeIf { it.isValid }?.let {
+            numbers(params["boot"], 5)?.let {
+                // A malformed optional extension must not discard an otherwise valid old check.
+                val down = numbers(params["bootDown"], 1)?.firstOrNull()
+                    ?.takeIf { cm -> cm in Dimensions.MIN_CM..Dimensions.MAX_CM }
+                Boot(it[0], it[1], it[2], it[3], it[4], down)
+            }?.takeIf { it.isValid }?.let {
                 return SharedCheck(dims, Space.BOOT, boot = it, unit = unit)
             }
             numbers(params["hall"], 3)?.let { Hall(it[0], it[1], it[2]) }?.takeIf { it.isValid }?.let {
