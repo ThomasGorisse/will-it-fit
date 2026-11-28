@@ -41,8 +41,6 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -54,6 +52,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import com.gorisse.thomas.willitfit.fit.BootShareLabels
+import com.gorisse.thomas.willitfit.fit.bootShareText
+import com.gorisse.thomas.willitfit.capture.saveBootShareCard
 import androidx.compose.runtime.key
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -279,7 +284,19 @@ fun DoorScreen(
             else -> SharedCheck(dims, Space.DOOR, door = door, unit = unit)
         }.link()
     }
-    val chooser = stringResource(R.string.share_chooser)
+    val chooser = stringResource(if (carBoot) R.string.boot_share_chooser else R.string.share_chooser)
+    val selectedBootPreset = BootPreset.entries.firstOrNull { it.boot == boot }
+    val bootProvenance = stringResource(selectedBootPreset.provenanceLabel())
+    val cardText = bootShareText(
+        stringResource(selectedBootPreset?.label() ?: R.string.boot_share_custom), bootVerdict, unit,
+        BootShareLabels(
+            stringResource(R.string.boot_share_fits), stringResource(R.string.boot_share_misses),
+            stringResource(R.string.boot_share_diagonal), stringResource(R.string.boot_share_seats_down),
+            stringResource(R.string.boot_share_seats_down_diagonal), stringResource(R.string.boot_share_spare),
+            stringResource(R.string.boot_share_over), stringResource(R.string.boot_share_signature),
+        ), context.resources.configuration.locales[0],
+    )
+    val cardCaveat = stringResource(R.string.boot_share_caveat)
 
     Box(Modifier.fillMaxSize().imePadding()) {
         val scenePadding = PaddingValues(
@@ -315,7 +332,14 @@ fun DoorScreen(
             if (shot?.isActive == true) return@share // one picture at a time, saving included
             photoFailure = null
             shot = scope.launch {
-                val result = takePhoto(
+                val result = if (carBoot) takePhoto(
+                    setBusy = {},
+                    capture = { PhotoResult.Success(Unit) },
+                    save = {
+                        saveBootShareCard(context, cardText, verdict.fits, verdict.isTight,
+                            listOf(objectLine, doorLine, margin, bootProvenance, cardCaveat))
+                    },
+                ) else takePhoto(
                     setBusy = { holding = it },
                     capture = {
                         if (hallway) PhotoResult.Success(
@@ -358,7 +382,9 @@ fun DoorScreen(
                 )
                 when (result) {
                     is PhotoResult.Success -> sharePhoto(
-                        context, result.value, chooser, "$answer · $margin$liftMargin\n$objectLine · $doorLine\n${checkLink()}",
+                        context, result.value, chooser,
+                        if (carBoot) "${cardText.caption}\n$objectLine · $doorLine\n$bootProvenance\n$cardCaveat\n${checkLink()}"
+                        else "$answer · $margin$liftMargin\n$objectLine · $doorLine\n${checkLink()}",
                     )
                     is PhotoResult.Failure -> photoFailure = result.reason
                 }
@@ -629,34 +655,52 @@ fun DoorScreen(
     }
 }
 
+/** The dialog owns its scroll; the measurement sheet keeps its existing height and scroll state. */
 @Composable
 private fun BootPresetPicker(boot: Boot, onPick: (BootPreset) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
+    var query by remember { mutableStateOf("") }
     val preset = BootPreset.entries.firstOrNull { it.boot == boot }
+    val labels = BootPreset.entries.associateWith { stringResource(it.label()) }
     Column(Modifier.padding(horizontal = 24.dp).padding(bottom = 8.dp)) {
-        Box {
-            TextButton(onClick = { expanded = true }) {
-                Text(stringResource(preset?.label() ?: R.string.boot_preset_choose))
-                Icon(Icons.Outlined.ArrowDropDown, null)
-            }
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                BootPreset.entries.forEach { entry ->
-                    DropdownMenuItem(
-                        text = { Text(stringResource(entry.label())) },
-                        onClick = { expanded = false; onPick(entry) },
-                    )
+        TextButton(onClick = { query = ""; expanded = true }) {
+            Text(stringResource(preset?.label() ?: R.string.boot_preset_choose), Modifier.weight(1f, fill = false))
+            Icon(Icons.Outlined.ArrowDropDown, null)
+        }
+        Text(stringResource(preset.provenanceLabel()),
+            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+    if (expanded) AlertDialog(
+        onDismissRequest = { expanded = false },
+        title = { Text(stringResource(R.string.boot_preset_choose)) },
+        text = {
+            Column {
+                OutlinedTextField(value = query, onValueChange = { query = it }, singleLine = true,
+                    label = { Text(stringResource(R.string.boot_catalogue_search)) }, modifier = Modifier.fillMaxWidth())
+                val matches = BootPreset.entries.filter { labels.getValue(it).contains(query.trim(), ignoreCase = true) }
+                if (matches.isEmpty()) Text(stringResource(R.string.boot_catalogue_empty), Modifier.padding(vertical = 16.dp))
+                LazyColumn(Modifier.fillMaxWidth().heightIn(max = 360.dp)) {
+                    items(matches, key = { it.name }) { entry ->
+                        TextButton(onClick = { expanded = false; onPick(entry) }, modifier = Modifier.fillMaxWidth()) {
+                            Column(Modifier.fillMaxWidth()) {
+                                Text(labels.getValue(entry))
+                                Text(stringResource(entry.provenanceLabel()), style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                    }
                 }
             }
-        }
-        Text(
-            stringResource(when (preset) {
-                BootPreset.ESTATE -> R.string.boot_preset_estate_source
-                null -> R.string.boot_preset_custom
-                else -> R.string.boot_preset_typical
-            }),
-            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
+        },
+        confirmButton = { TextButton(onClick = { expanded = false }) { Text(stringResource(R.string.boot_catalogue_close)) } },
+    )
+}
+
+private fun BootPreset?.provenanceLabel(): Int = when {
+    this == null -> R.string.boot_preset_custom
+    generic -> R.string.boot_preset_typical
+    this == BootPreset.F150 -> R.string.boot_source_bed
+    this == BootPreset.VAN_6M3 -> R.string.boot_source_van
+    else -> R.string.boot_source_ridc
 }
 
 private fun answerFor(space: Int, fits: Boolean, tight: Boolean): Int = when (space) {

@@ -88,8 +88,8 @@ class CarBootCheckTest {
         }
     }
 
-    @Test fun `all five presets have valid sizes and folding only extends the floor`() {
-        assertEquals(5, BootPreset.entries.size)
+    @Test fun `all catalogue presets have valid sizes and folding only extends the floor`() {
+        assertEquals(25, BootPreset.entries.size)
         for (preset in BootPreset.entries) {
             assertTrue(preset.boot.isValid)
             preset.boot.seatsDownLengthCm?.let { assertTrue(it > preset.boot.lengthCm) }
