@@ -6,8 +6,38 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.gorisse.thomas.willitfit.R
 import com.gorisse.thomas.willitfit.fit.Carry
+import com.gorisse.thomas.willitfit.fit.BootPreset
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Preset
+
+@StringRes
+fun BootPreset.label(): Int = when (this) {
+    BootPreset.CITY -> R.string.boot_preset_city
+    BootPreset.COMPACT -> R.string.boot_preset_compact
+    BootPreset.GENERIC_ESTATE -> R.string.boot_preset_estate
+    BootPreset.SUV -> R.string.boot_preset_suv
+    BootPreset.VAN -> R.string.boot_preset_van
+    BootPreset.ESTATE -> R.string.boot_car_308_sw
+    BootPreset.PEUGEOT_2008 -> R.string.boot_car_2008
+    BootPreset.PEUGEOT_3008 -> R.string.boot_car_3008
+    BootPreset.CLIO -> R.string.boot_car_clio
+    BootPreset.CAPTUR -> R.string.boot_car_captur
+    BootPreset.KANGOO -> R.string.boot_car_kangoo
+    BootPreset.GOLF -> R.string.boot_car_golf
+    BootPreset.TIGUAN -> R.string.boot_car_tiguan
+    BootPreset.MODEL_Y -> R.string.boot_car_model_y
+    BootPreset.MODEL_3 -> R.string.boot_car_model_3
+    BootPreset.DUSTER -> R.string.boot_car_duster
+    BootPreset.YARIS -> R.string.boot_car_yaris
+    BootPreset.RAV4 -> R.string.boot_car_rav4
+    BootPreset.BERLINGO -> R.string.boot_car_berlingo
+    BootPreset.X1 -> R.string.boot_car_x1
+    BootPreset.OCTAVIA -> R.string.boot_car_octavia
+    BootPreset.CRV -> R.string.boot_car_crv
+    BootPreset.TUCSON -> R.string.boot_car_tucson
+    BootPreset.F150 -> R.string.boot_car_f150
+    BootPreset.VAN_6M3 -> R.string.boot_car_van_6m3
+}
 
 @StringRes
 fun Preset.label(): Int = when (this) {

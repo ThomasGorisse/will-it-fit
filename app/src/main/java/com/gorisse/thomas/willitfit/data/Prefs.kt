@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.content.edit
 import com.gorisse.thomas.willitfit.fit.Boot
+import com.gorisse.thomas.willitfit.fit.BootPreset
 import com.gorisse.thomas.willitfit.fit.DimensionSource
 import com.gorisse.thomas.willitfit.fit.Dimensions
 import com.gorisse.thomas.willitfit.fit.Door
@@ -108,21 +109,26 @@ class Prefs(context: Context) : CheckStore {
 
     override var boot: Boot
         get() {
-            val example = Boot.ESTATE
+            val example = BootPreset.ESTATE.boot
             return Boot(
                 p.getFloat("boot_ow", example.openingWidthCm), p.getFloat("boot_oh", example.openingHeightCm),
                 p.getFloat("boot_l", example.lengthCm), p.getFloat("boot_w", example.widthCm),
                 p.getFloat("boot_h", example.heightCm),
+                if (p.contains("boot_down_l")) p.getFloat("boot_down_l", 0f)
+                else if (p.contains("boot_l")) null else example.seatsDownLengthCm,
             ).takeIf { it.isValid } ?: example
         }
-        set(value) = p.edit().putFloat("boot_ow", value.openingWidthCm).putFloat("boot_oh", value.openingHeightCm)
-            .putFloat("boot_l", value.lengthCm).putFloat("boot_w", value.widthCm)
-            .putFloat("boot_h", value.heightCm).putBoolean("boot_typed", true).apply()
+        set(value) = p.edit {
+            putFloat("boot_ow", value.openingWidthCm); putFloat("boot_oh", value.openingHeightCm)
+            putFloat("boot_l", value.lengthCm); putFloat("boot_w", value.widthCm)
+            putFloat("boot_h", value.heightCm); putBoolean("boot_typed", true)
+            value.seatsDownLengthCm?.let { putFloat("boot_down_l", it) } ?: remove("boot_down_l")
+        }
 
     val bootTyped: Boolean get() = p.getBoolean("boot_typed", false)
 
     fun useExampleBoot() {
-        boot = Boot.ESTATE
+        boot = BootPreset.ESTATE.boot
         p.edit().putBoolean("boot_typed", false).apply()
     }
 

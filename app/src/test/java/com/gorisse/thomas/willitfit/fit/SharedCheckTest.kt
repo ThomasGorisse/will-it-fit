@@ -6,6 +6,18 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SharedCheckTest {
+    @Test fun bootFoldedLengthRoundTripsWithoutChangingOldLinks() {
+        val check = SharedCheck(Dimensions(160f, 40f, 50f), Space.BOOT, boot = BootPreset.ESTATE.boot)
+        val parsed = SharedCheck.parse(check.query())!!
+        assertEquals(check, parsed)
+        assertTrue(checkCarBoot(parsed.dims, parsed.boot!!).rearSeatsDown)
+        for (bad in listOf("NaN", "0", "1001", "180x190", "-5")) {
+            val legacy = SharedCheck.parse("o=160x40x50&boot=108x80x103x104x68&bootDown=$bad")!!
+            assertEquals(Boot.ESTATE, legacy.boot)
+        }
+        assertEquals(null, SharedCheck.parse("o=160x40x50&boot=108x80x103x104x68")!!.boot!!.seatsDownLengthCm)
+    }
+
     @Test fun liftLinkRoundTripsAndRejectsInvalidCabins() {
         val check = SharedCheck(Dimensions(60f, 60f, 85f), Space.LIFT, lift = Lift.TYPICAL, unit = LengthUnit.INCH)
         assertTrue(check.query().contains("lift=80x200x100x125x210"))

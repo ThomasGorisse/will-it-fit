@@ -1,0 +1,341 @@
+[
+  {
+    "id": "ESTATE",
+    "key": "308_sw",
+    "name": "Peugeot 308 SW · PureTech 130 Allure (2014)",
+    "cm": [
+      107.4,
+      72.9,
+      105.5,
+      104.3,
+      68,
+      183.6
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/peugeot-308sw-puretech-130-stop-start-allure-5dr",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "PEUGEOT_2008",
+    "key": "2008",
+    "name": "Peugeot 2008 · 1.2 (2020)",
+    "cm": [
+      102,
+      77.5,
+      78,
+      95.5,
+      65,
+      155
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/2008-12-5dr-saloon-2020",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "PEUGEOT_3008",
+    "key": "3008",
+    "name": "Peugeot 3008 · 1.5 (2021)",
+    "cm": [
+      105,
+      82.8,
+      92.5,
+      105,
+      70,
+      168
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/3008-15-5dr-saloon-2021",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "CLIO",
+    "key": "clio",
+    "name": "Renault Clio · TCe (2020)",
+    "cm": [
+      101.2,
+      74,
+      64.5,
+      97.4,
+      60,
+      129.5
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/clio-tce-5dr-hatch-2020",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "CAPTUR",
+    "key": "captur",
+    "name": "Renault Captur · TCe (2020)",
+    "cm": [
+      93.3,
+      81.8,
+      66.5,
+      101.5,
+      65,
+      144
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/captur-tce-5dr-saloon-2020-0",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "KANGOO",
+    "key": "kangoo",
+    "name": "Renault Kangoo · E-Tech EV45 (2023)",
+    "cm": [
+      119.6,
+      111.1,
+      102,
+      119.4,
+      100,
+      176
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/kangoo-e-tech-electric-ev45-5dr-saloon-2023",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "GOLF",
+    "key": "golf",
+    "name": "VW Golf · 1.5 eTSI (2020)",
+    "cm": [
+      103.5,
+      77.5,
+      75.5,
+      101,
+      60,
+      145
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/golf-15-etsi-5dr-hatch-2020",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "TIGUAN",
+    "key": "tiguan",
+    "name": "VW Tiguan · 2.0 TDI (2021)",
+    "cm": [
+      115,
+      82.8,
+      90.5,
+      100.5,
+      70,
+      169
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/tiguan-20-tdi-5dr-saloon-2021-0",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "MODEL_Y",
+    "key": "model_y",
+    "name": "Tesla Model Y · Maximum Range AWD (2021)",
+    "cm": [
+      100.5,
+      69,
+      111,
+      95,
+      65,
+      193.5
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/model-y-maximum-range-awd-5dr-saloon-2021",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "MODEL_3",
+    "key": "model_3",
+    "name": "Tesla Model 3 (2024)",
+    "cm": [
+      99.5,
+      51.5,
+      106.5,
+      94.5,
+      50,
+      186.5
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/model-3-5dr-hatch-2024",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "DUSTER",
+    "key": "duster",
+    "name": "Dacia Duster · Hybrid 140 (2024)",
+    "cm": [
+      98.2,
+      84.5,
+      93,
+      99.5,
+      70,
+      162
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/duster-hybrid-140-5dr-saloon-2024",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "YARIS",
+    "key": "yaris",
+    "name": "Toyota Yaris · Hybrid 130 (2025)",
+    "cm": [
+      89,
+      77.2,
+      63.5,
+      90,
+      55,
+      138
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/yaris-15-hybrid-130-5dr-hatch-2025",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "RAV4",
+    "key": "rav4",
+    "name": "Toyota RAV4 (2019)",
+    "cm": [
+      104,
+      86.5,
+      101,
+      100,
+      75,
+      180.5
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/rav4-5dr-saloon-2019",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "BERLINGO",
+    "key": "berlingo",
+    "name": "Citroën Berlingo · M (2019)",
+    "cm": [
+      119.8,
+      100,
+      99,
+      119.8,
+      95,
+      175.5
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/berlingo-m-5dr-saloon-2019",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "X1",
+    "key": "x1",
+    "name": "BMW X1 · sDrive18i M Sport DKG (2023)",
+    "cm": [
+      106.8,
+      72.1,
+      90,
+      100.2,
+      65,
+      162.5
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/x1-sdrive18i-m-sportpaket-steptronic-dkg-5dr-saloon",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "OCTAVIA",
+    "key": "octavia",
+    "name": "Skoda Octavia Combi · 1.5 TSI (2021)",
+    "cm": [
+      102.5,
+      77.6,
+      109,
+      100,
+      65,
+      186
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/octavia-combi-15-tsi-5dr-estate-2021",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "CRV",
+    "key": "crv",
+    "name": "Honda CR-V · e:HEV Advance (2024)",
+    "cm": [
+      111.3,
+      83,
+      88,
+      100.5,
+      70,
+      186
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/cr-v-20-i-mmd-ehev-advance-5dr-saloon-2024",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "TUCSON",
+    "key": "tucson",
+    "name": "Hyundai Tucson · 1.6 48V (2021)",
+    "cm": [
+      102,
+      72.7,
+      91,
+      104,
+      65,
+      172.5
+    ],
+    "source": "https://ridc.org.uk/features-reviews/out-and-about/choosing-car/car/tucson-16-48v-mildhybrid-5dr-saloon-2021",
+    "estimated": [
+      "HEIGHT"
+    ]
+  },
+  {
+    "id": "F150",
+    "key": "f150",
+    "name": "Ford F-150 · 5.5 ft bed (2024)",
+    "cm": [
+      128.524,
+      54.356,
+      170.434,
+      128.524,
+      54.356
+    ],
+    "source": "https://content.fordpro.com/content/dam/fordpro/us/en-us/pdf/showroom/trucks/f-150/2024/2024_Ford_F-150_Tech_Specs.pdf",
+    "estimated": [
+      "OPENING_WIDTH",
+      "OPENING_HEIGHT"
+    ]
+  },
+  {
+    "id": "VAN_6M3",
+    "key": "van_6m3",
+    "name": "6 m³ van · Renault Trafic L1H1 (5.8 m³)",
+    "cm": [
+      139.1,
+      132,
+      253.7,
+      126.8,
+      138.7
+    ],
+    "source": "https://cdn.group.renault.com/ren/gb/transversal-assets/brochures/van-ebrochures/TRAFIC-eBrochure.pdf.asset.pdf/13742c53ef.pdf",
+    "estimated": [
+      "OPENING_HEIGHT"
+    ]
+  }
+]

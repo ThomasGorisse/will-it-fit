@@ -100,7 +100,7 @@ suspend fun savePhoto(
         drawCard(context, Canvas(card), bitmap, crop, background, title, titleColor, verdict, headline, lines, signature)
         val dir = File(context.cacheDir, "photos").apply { mkdirs() }
         // The last few stay: an app the photo was shared to may read it a while later.
-        dir.listFiles()?.sortedByDescending { it.lastModified() }?.drop(KEPT_PHOTOS)?.forEach { it.delete() }
+        dir.listFiles()?.filter { it.extension == "jpg" }?.sortedByDescending { it.lastModified() }?.drop(KEPT_PHOTOS)?.forEach { it.delete() }
         val file = File(dir, "will-it-fit-${System.currentTimeMillis()}.jpg")
         file.outputStream().use { card.compress(Bitmap.CompressFormat.JPEG, 92, it) }
         card.recycle()
@@ -231,7 +231,7 @@ private fun fit(text: String, paint: TextPaint, maxWidth: Float): String {
 fun sharePhoto(context: Context, file: File, chooserTitle: String, text: String) {
     val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
     val send = Intent(Intent.ACTION_SEND).apply {
-        type = "image/jpeg"
+        type = if (file.extension.equals("png", ignoreCase = true)) "image/png" else "image/jpeg"
         putExtra(Intent.EXTRA_STREAM, uri)
         putExtra(Intent.EXTRA_TEXT, text)
         // The share sheet previews only what the clip data carries, and reads it with the grant:
